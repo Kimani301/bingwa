@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Bn</string>
+    <string name="acc_desc">Lets Bn read Safaricom USSD menus and type the next reply for you, so bundle codes can be dialed step by step. Bn only looks at the phone\'s USSD pop-up windows.</string>
+</resources>

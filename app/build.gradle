@@ -1,0 +1,40 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.bn.dialer'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.bn.dialer"
+        minSdk 26
+        targetSdk 34
+        versionCode 2
+        versionName "1.1"
+    }
+
+    signingConfigs {
+        bn {
+            storeFile file('bn-debug.p12')
+            storePassword 'bnbnbn'
+            keyAlias 'bn'
+            keyPassword 'bnbnbn'
+            storeType 'pkcs12'
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.bn
+        }
+        release {
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}

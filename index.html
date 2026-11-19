@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Install Bn – automatic data bundle selling for Android</title>
+<meta name="description" content="Bn reads each M-Pesa payment, dials the Safaricom code for you and confirms the sale. Install the Android app and set it up in minutes.">
+<meta name="theme-color" content="#0f6b3f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230f6b3f'/%3E%3Cg fill='none' stroke='white' stroke-width='6' stroke-linecap='round'%3E%3Cpath d='M10 26a31 31 0 0 1 44 0'/%3E%3Cpath d='M18 35a20 20 0 0 1 28 0'/%3E%3Cpath d='M26 43a9 9 0 0 1 12 0'/%3E%3C/g%3E%3Ccircle cx='32' cy='52' r='4' fill='%23f5b301'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#f6f5f0; --card:#ffffff; --ink:#14211a; --mute:#5b695f; --line:#e3e1d8;
+  --p:#0f6b3f; --p2:#0b5532; --onp:#ffffff; --soft:#e7f2ea; --softink:#0b5532;
+  --warn:#fdf3dc; --warnink:#7a4a00; --code:#14211a; --codeink:#dff5e7; --ring:#f5b301;
+  --shadow:0 1px 2px rgba(20,33,26,.06),0 6px 18px rgba(20,33,26,.05);
+  color-scheme:light;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#0c1511; --card:#13201a; --ink:#e8f1ec; --mute:#9db0a4; --line:#223329;
+  --p:#4ade80; --p2:#86efac; --onp:#06220f; --soft:#143325; --softink:#a7f3c4;
+  --warn:#352a0d; --warnink:#fcd679; --code:#07100b; --codeink:#c9f2d8; --ring:#f5b301;
+  --shadow:none; color-scheme:dark;
+}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-text-size-adjust:100%}
+a{color:var(--p);text-underline-offset:3px}
+.wrap{max-width:780px;margin:0 auto;padding:0 20px}
+b{font-weight:700}
+
+/* header */
+header.top{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:14px;height:60px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;color:var(--ink);text-decoration:none}
+.brand svg{width:30px;height:30px}
+header nav{margin-left:auto;display:flex;gap:2px}
+header nav a{padding:8px 12px;border-radius:999px;font-weight:600;font-size:14px;color:var(--mute);text-decoration:none}
+header nav a:hover{background:var(--soft);color:var(--softink)}
+@media(max-width:560px){header nav a:nth-child(n+3){display:none}}
+
+/* hero */
+.hero{text-align:center;padding:64px 0 36px}
+body:before{content:"";position:absolute;inset:0 0 auto 0;height:520px;background:radial-gradient(ellipse at 50% 0,color-mix(in srgb,var(--p) 16%,transparent),transparent 70%);z-index:-1;pointer-events:none}
+body{position:relative}
+.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:0 0 30px}
+.chips span{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:14px;font-weight:600;color:var(--mute)}
+.btn.big{font-size:19px;padding:20px 34px;border-radius:16px;min-width:260px}
+details.guide{padding:0 20px;border-radius:18px;margin:10px 0 0}
+details.guide>summary{font-size:17px;padding:18px 0}
+details.guide section{padding:18px 0 8px}
+.hero .logo{width:88px;height:88px;border-radius:22px;box-shadow:var(--shadow)}
+.hero h1{font-size:clamp(30px,6.2vw,46px);line-height:1.12;letter-spacing:-.02em;margin:22px 0 14px;font-weight:800}
+.hero p.lead{font-size:18px;color:var(--mute);max-width:560px;margin:0 auto 28px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--p);color:var(--onp);font:700 17px/1 inherit;padding:17px 28px;border-radius:14px;text-decoration:none;border:0;cursor:pointer;box-shadow:var(--shadow);transition:background .15s,transform .05s}
+.btn:hover{background:var(--p2);color:var(--onp)}
+.btn:active{transform:translateY(1px)}
+.btn:focus-visible,.copy:focus-visible,summary:focus-visible{outline:3px solid var(--ring);outline-offset:2px}
+.btn svg{width:22px;height:22px}
+.meta{margin-top:16px;font-size:14px;color:var(--mute)}
+.meta b{color:var(--ink)}
+.alt{margin-top:6px;font-size:14px}
+.notice{display:none;max-width:520px;margin:22px auto 0;background:var(--warn);color:var(--warnink);border-radius:14px;padding:14px 18px;font-size:15px;text-align:left}
+.notice.show{display:block}
+.notice button{font:inherit;font-weight:700;margin-top:8px;padding:7px 14px;border-radius:10px;border:1px solid currentColor;background:none;color:inherit;cursor:pointer}
+
+/* sections */
+section{padding:34px 0}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--p);margin:0 0 6px}
+h2{font-size:27px;line-height:1.2;letter-spacing:-.01em;margin:0 0 6px;font-weight:800}
+h2+p.sub{margin:0 0 22px;color:var(--mute)}
+.card,.box,details,.steps li,.flow div,.check label,.tabs div{background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}
+
+.steps{list-style:none;counter-reset:s;margin:0;padding:0;display:grid;gap:12px}
+.steps li{counter-increment:s;border-radius:16px;padding:18px 18px 18px 68px;position:relative;transition:border-color .2s}
+.steps li:before{content:counter(s);position:absolute;left:18px;top:18px;width:36px;height:36px;border-radius:50%;background:var(--soft);color:var(--softink);font-weight:800;display:grid;place-items:center}
+.steps li.hl{border-color:var(--p);box-shadow:0 0 0 3px color-mix(in srgb,var(--p) 25%,transparent)}
+.steps li>b:first-child{display:block;margin-bottom:2px}
+.steps span{color:var(--mute);font-size:15px}
+.box{border-radius:16px;padding:16px 18px;margin-top:14px;font-size:15px}
+.box b:first-child{color:var(--ink)}
+
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;counter-reset:f}
+.flow div{border-radius:16px;padding:18px;counter-increment:f}
+.flow div:before{content:counter(f);display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--p);color:var(--onp);font-weight:800;font-size:14px;margin-bottom:10px}
+.flow b{display:block;margin-bottom:2px}
+.flow span{font-size:14.5px;color:var(--mute)}
+
+.check{display:grid;gap:10px}
+.check label{display:flex;gap:14px;border-radius:16px;padding:15px 16px;cursor:pointer;align-items:flex-start;transition:background .15s,border-color .15s}
+.check input{width:22px;height:22px;margin-top:2px;accent-color:var(--p);flex:none}
+.check label>div{min-width:0}
+.check label>div>b:first-child{display:block}
+.check span,.check .d{font-size:15px;color:var(--mute)}
+.check pre{white-space:pre-wrap;word-break:break-all}
+.check label:has(input:checked){background:var(--soft);border-color:var(--p)}
+.check label:has(input:checked) div>b:first-child{opacity:.7}
+.tag{display:inline-block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;border-radius:999px;padding:2px 9px;margin-left:6px;vertical-align:middle;background:var(--soft);color:var(--softink)}
+.tag.opt{background:var(--warn);color:var(--warnink)}
+.prog{font-size:14px;color:var(--mute);margin:0 0 14px;display:flex;align-items:center;gap:12px}
+.bar{flex:1;height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--p);border-radius:99px;transition:width .3s}
+
+.tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.tabs div{border-radius:16px;padding:16px 18px}
+.tabs div>b:first-child{display:block;color:var(--p);margin-bottom:2px}
+.tabs span{font-size:15px;color:var(--mute)}
+
+kbd{background:var(--soft);color:var(--softink);border-radius:6px;padding:1px 7px;font:inherit;font-weight:600;font-size:.92em}
+pre{background:var(--code);color:var(--codeink);border-radius:12px;padding:14px;overflow-x:auto;font-size:13.5px;margin:10px 0 0}
+.copy{margin-top:8px;font:inherit;font-weight:700;font-size:14px;padding:7px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+
+details{border-radius:14px;padding:0 18px;margin-bottom:10px}
+summary{cursor:pointer;font-weight:700;padding:15px 0;list-style:none;display:flex;justify-content:space-between;gap:10px;border-radius:8px}
+summary::-webkit-details-marker{display:none}
+summary:after{content:"+";color:var(--p);font-size:22px;line-height:1}
+details[open] summary:after{content:"\2212"}
+details p{margin:0 0 15px;color:var(--mute);font-size:15px}
+
+.cta{text-align:center;background:var(--p);color:var(--onp);border-radius:24px;padding:40px 20px;margin:26px 0 8px}
+.cta h2{color:var(--onp)}
+.cta p{margin:0 0 20px;opacity:.9}
+.cta .btn{background:var(--onp);color:var(--p);box-shadow:none}
+.cta .btn:hover{background:var(--onp);color:var(--p2);opacity:.92}
+@media(prefers-color-scheme:dark){.cta .btn{background:#06220f;color:#e8f1ec}.cta .btn:hover{background:#06220f;color:#fff}}
+footer{text-align:center;color:var(--mute);font-size:14px;padding:24px 0 48px}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap">
+  <a class="brand" href="#top" aria-label="Bn home"><svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="#0f6b3f"/><g fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"><path d="M10 26a31 31 0 0 1 44 0"/><path d="M18 35a20 20 0 0 1 28 0"/><path d="M26 43a9 9 0 0 1 12 0"/></g><circle cx="32" cy="52" r="4" fill="#f5b301"/></svg>Bn</a>
+</div></header>
+
+<main id="top" class="wrap">
+
+<div class="hero">
+  <svg class="logo" viewBox="0 0 64 64" role="img" aria-label="Bn logo"><rect width="64" height="64" rx="16" fill="#0f6b3f"/><g fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"><path d="M10 26a31 31 0 0 1 44 0"/><path d="M18 35a20 20 0 0 1 28 0"/><path d="M26 43a9 9 0 0 1 12 0"/></g><circle cx="32" cy="52" r="4" fill="#f5b301"/></svg>
+  <h1>Sell data bundles automatically</h1>
+  <p class="lead">Bn reads each M-Pesa payment, dials the Safaricom code for you, confirms the sale and texts your customer. All from one Android phone.</p>
+  <div class="chips"><span>Reads M-Pesa payments</span><span>Dials codes for you</span><span>Texts your customer</span></div>
+  <a id="dl" class="btn big" href="Bn.apk" download="Bn.apk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 20h16"/></svg>Install Bn for Android</a>
+  <div class="meta" id="meta">Android 8.0 or newer</div>
+  <div class="alt"><a href="#install">How to install</a></div>
+  <div class="notice" id="desk">
+    <b>This is an Android app.</b> Open this page on the Android phone you will sell from, then tap Install. Bn needs a real phone because it dials USSD codes and reads SMS, which a website or an iPhone cannot do.
+    <br><button id="copylink" type="button">Copy this page's link</button>
+  </div>
+</div>
+
+<section id="install">
+  <p class="eyebrow">Step by step</p>
+  <h2>Install in 4 steps</h2>
+  <p class="sub">Takes about two minutes. Do this on the phone you will use for selling.</p>
+  <ol class="steps" id="steps">
+    <li><b>Tap Install Bn</b><span>The file <kbd>Bn.apk</kbd> downloads to your phone. If Chrome says "This type of file can harm your device", choose <b>Download anyway</b>. Bn is not on the Play Store, so Android always shows this warning.</span></li>
+    <li><b>Open the file and allow the install</b><span>Tap <b>Open</b> on the download. If Android says your phone is not allowed to install unknown apps from this source, tap <b>Settings</b>, turn on <b>Allow from this source</b>, go back and tap <b>Install</b>. If Play Protect warns about an unknown app, tap <b>More details &rarr; Install anyway</b>.</span></li>
+    <li><b>Open Bn and allow what it asks for</b><span>Bn walks you through it one step at a time: <b>Phone</b>, <b>SMS</b> and <b>Notifications</b>. Tap <b>Allow</b> each time.</span></li>
+    <li><b>Turn on the helper and check the top of the app</b><span>Switch on <b>Bn</b> under Settings &rarr; Accessibility, and set battery to <b>Don't optimise</b>. When the top of Bn says <b>Connected</b>, you are ready.</span></li>
+  </ol>
+  <div class="box"><b>Permissions greyed out, or "Restricted setting"?</b><br>
+    Android 13 and newer blocks some permissions for apps installed from a file. Go to <kbd>Settings &rarr; Apps &rarr; Bn</kbd>, tap the <b>&#8942;</b> menu at the top right, choose <b>Allow restricted settings</b>, then open Bn again.</div>
+  <div class="box"><b>Updating later?</b><br>Install the new <kbd>Bn.apk</kbd> over the old one. Your sales, offers, settings and permissions are kept. Do not uninstall first.</div>
+</section>
+
+<details class="guide" id="guide"><summary>Setup guide, daily use &amp; help</summary>
+<section id="how">
+  <p class="eyebrow">Overview</p>
+  <h2>How Bn works</h2>
+  <p class="sub">Once it is set up, a sale needs no tapping from you.</p>
+  <div class="flow">
+    <div><b>Customer pays</b><span>An M-Pesa message arrives on your phone.</span></div>
+    <div><b>Bn matches it</b><span>The amount is matched to one of your offers.</span></div>
+    <div><b>Bn dials</b><span>It runs the code and sends each menu step for you.</span></div>
+    <div><b>Safaricom confirms</b><span>The sale shows as Success. If no confirmation comes in time, it shows as Failed so you can retry.</span></div>
+    <div><b>Customer is told</b><span>Bn texts them that the offer was renewed.</span></div>
+  </div>
+</section>
+
+<section id="setup">
+  <p class="eyebrow">Checklist</p>
+  <h2>Key settings to get right</h2>
+  <p class="sub">Tick each one off as you finish it. Your ticks are saved on this phone.</p>
+  <div class="prog"><span id="prog"></span><div class="bar"><i id="barfill"></i></div></div>
+  <div class="check" id="list">
+    <label><input type="checkbox" data-k="perm"><div><b>Allow Phone, SMS and Notifications <span class="tag">Required</span></b><span>Without these Bn cannot dial, read payments or text customers. Greyed out? Use <kbd>Allow restricted settings</kbd> (see Install, above).</span></div></label>
+    <label><input type="checkbox" data-k="acc"><div><b>Turn on Bn in Accessibility <span class="tag">Required</span></b><span><kbd>Settings &rarr; Accessibility &rarr; Bn</kbd>. This lets Bn read USSD menus and type the replies. The top of Bn should then say <b>Connected</b>.</span></div></label>
+    <label><input type="checkbox" data-k="bat"><div><b>Battery: Don't optimise <span class="tag">Required</span></b><span>Stops Android from putting Bn to sleep between payments. Leave the phone charging and on a good signal.</span></div></label>
+    <label><input type="checkbox" data-k="sim"><div><b>Choose your SIMs <span class="tag">Required</span></b><span><kbd>Settings &rarr; Dialing &rarr; SIM cards</kbd>. Pick the SIM that dials codes, and the SIM(s) that receive M-Pesa messages. Use the one that has your airtime and data offers.</span></div></label>
+    <label><input type="checkbox" data-k="off"><div><b>Check your offers <span class="tag">Required</span></b><span><kbd>Offers</kbd> tab. Make sure each price matches what customers pay and each code is current. Use <b>Advanced</b> for offers that need several menu steps (use <b>n</b> where the customer's number goes).</span></div></label>
+    <label><input type="checkbox" data-k="cal"><div><b>Calibrate your advanced offers <span class="tag">Recommended</span></b><span><kbd>Offers &rarr; Advanced &rarr; Calibrate</kbd>. Bn walks through the menus but stops before the last option, so nothing is bought. Do it after Safaricom changes codes. Add words like <b>2GB</b> in "Last menu must show" to make the check automatic.</span></div></label>
+    <label><input type="checkbox" data-k="wait"><div><b>Confirmation wait <span class="tag">Recommended</span></b><span><kbd>Settings &rarr; Dialing</kbd>. How many minutes Bn waits for Safaricom's success message before marking a sale Failed. The default is 3.</span></div></label>
+    <label><input type="checkbox" data-k="txt"><div><b>Customer messages <span class="tag">Recommended</span></b><span><kbd>Settings &rarr; Texts</kbd>. Edit the wording and use <b>{amount}</b>, <b>{phone}</b> and <b>{name}</b>. Tap <b>Send me a test</b> to try it on your own number.</span></div></label>
+    <label><input type="checkbox" data-k="bal"><div><b>Airtime balance and profit <span class="tag">Recommended</span></b><span><kbd>Settings &rarr; Dialing</kbd> for the balance code (<b>*144#</b> by default) and <kbd>Settings &rarr; General</kbd> for your commission percentage.</span></div></label>
+    <label><input type="checkbox" data-k="pin"><div><b>Screen-off selling <span class="tag opt">Optional</span></b><span><kbd>Settings &rarr; Phone &rarr; Screen off</kbd>. Save your phone PIN or password and Bn will wake the phone, unlock it, sell and lock it again. PIN or password only (not pattern or fingerprint). Use the <b>Test</b> button first.</span></div></label>
+    <label><input type="checkbox" data-k="adb"><div><b>Helper auto-restart <span class="tag opt">Optional</span></b><div class="d">Lets Bn restart its accessibility helper every 20 minutes so it never freezes. One-time setup from a computer: turn on USB debugging (Settings &rarr; About phone &rarr; tap Build number 7 times &rarr; Developer options), connect the phone and run:
+      <pre id="adbcmd">adb shell pm grant com.bn.dialer android.permission.WRITE_SECURE_SETTINGS</pre>
+      <button class="copy" type="button" id="copyadb">Copy command</button></div></div></label>
+  </div>
+</section>
+
+<section id="use">
+  <p class="eyebrow">Daily use</p>
+  <h2>Using Bn every day</h2>
+  <p class="sub">Five tabs along the bottom of the app.</p>
+  <div class="tabs">
+    <div><b>Home</b><span>Today's, this week's and this month's sales, your profit, a 7-day chart and recent activity.</span></div>
+    <div><b>Sales</b><span>Filter by All, <b>Live</b> (in progress), Success or Failed. Retry a failed sale with one tap.</span></div>
+    <div><b>Offers</b><span>Your Normal and Advanced offers. Calibrate advanced ones here. A badge shows if one was paused.</span></div>
+    <div><b>Team</b><span>Owner only. Let attendants sign in with their own accounts (needs the optional Firebase setup).</span></div>
+    <div><b>Settings</b><span>Four tabs: General, Dialing, Texts and Phone (helper, screen off, activity log).</span></div>
+  </div>
+  <div class="box"><b>Good habits</b><br>Keep the phone charged and the screen set to stay on. Keep enough airtime for the codes and customer texts. Check the <b>Live</b> filter if a customer says they have not received their bundle, and calibrate your advanced offers whenever Safaricom updates its menus.</div>
+</section>
+
+<section id="help">
+  <p class="eyebrow">Support</p>
+  <h2>Help</h2>
+  <p class="sub">Common problems and quick fixes.</p>
+  <details><summary>The top of Bn does not say Connected</summary><p>Open Settings &rarr; Accessibility and make sure <b>Bn</b> is switched on. Then open Bn &rarr; Settings &rarr; Phone &rarr; <b>Restart helper now</b>.</p></details>
+  <details><summary>Bn skips steps or sends the wrong menu number</summary><p>Your phone is probably slow. Go to Settings &rarr; Dialing and set <b>Dialing speed</b> to <b>Careful</b>.</p></details>
+  <details><summary>A sale shows Failed but the customer got the bundle</summary><p>Safaricom's confirmation message arrived late or did not match. Raise the <b>Confirmation wait</b> minutes in Settings &rarr; Dialing, and check the sale before retrying so you do not sell twice.</p></details>
+  <details><summary>Customers get a text saying the number was already recommended</summary><p>Safaricom allows one recommendation per number per day. Bn tells the customer to send a different number. You can change the wording in Settings &rarr; Texts.</p></details>
+  <details><summary>An offer switched itself off</summary><p>Calibration paused it because Safaricom's menu changed or the check failed. Open Offers &rarr; Advanced, tap <b>Review</b> to see the menu, then <b>Looks right</b> if it is correct, or fix the code and calibrate again.</p></details>
+  <details><summary>Will it work on an iPhone or in a browser?</summary><p>No. Dialing USSD codes and reading SMS needs the Android app.</p></details>
+  <details><summary>Is my data safe when I update?</summary><p>Yes. Install the new file over the old app and everything is kept. If you uninstall Bn first, your data and the optional helper setup are lost.</p></details>
+</section>
+
+</details>
+
+</main>
+<footer><div class="wrap" id="foot">Bn &middot; Automatic data bundle selling</div></footer>
+
+<script>
+(function(){
+  var $=function(s){return document.querySelector(s)};
+  if(!/Android/i.test(navigator.userAgent))$('#desk').classList.add('show');
+
+  var meta=$('#meta');
+  function setMeta(v,d,sz){
+    var p=[];if(v)p.push('Version <b>'+v+'</b>');if(sz)p.push(sz);p.push('Android 8.0 or newer');
+    var s=p.join(' \u00b7 ');if(d)s+='<br>Updated '+d;meta.innerHTML=s;
+    var f=$('#foot');if(f&&v)f.textContent='Bn \u00b7 Version '+v+(d?' \u00b7 Updated '+d:'');
+  }
+  var apkUrl='Bn.apk',rel='';
+  (function(){
+    var m=location.hostname.match(/^([^.]+)\.github\.io$/),seg=location.pathname.split('/')[1];
+    if(m&&seg)rel='https://github.com/'+m[1]+'/'+seg+'/releases/latest/download/Bn.apk';
+  })();
+  function useRelease(){if(rel){var a=$('#dl');a.href=rel;a.removeAttribute('download')}}
+  if(location.protocol.indexOf('http')===0){
+    var ver='',dt='',size='';
+    fetch('version.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){
+      if(j){ver=j.version;dt=j.date}
+      return fetch('Bn.apk',{method:'HEAD',cache:'no-store'});
+    }).then(function(r){
+      if(!r.ok){useRelease();setMeta(ver,dt,'');return}
+      var n=+r.headers.get('content-length');if(n)size=(n/1048576).toFixed(1)+' MB';
+      setMeta(ver,dt,size);
+    }).catch(function(){useRelease();setMeta(ver,dt,size)});
+  }
+
+  function started(){
+    var li=document.querySelectorAll('#steps li');
+    li.forEach(function(x){x.classList.remove('hl')});
+    if(li[1])li[1].classList.add('hl');
+    setTimeout(function(){if(li[1])li[1].scrollIntoView({behavior:'smooth',block:'center'})},900);
+  }
+  $('#dl').addEventListener('click',started);
+
+  function copy(t,btn,ok){
+    function done(){var o=btn.textContent;btn.textContent=ok;setTimeout(function(){btn.textContent=o},1800)}
+    if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(t).then(done,done);
+    else{var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(e){}a.remove();done()}
+  }
+  $('#copylink').onclick=function(e){copy(location.href.split('#')[0],e.target,'Copied!')};
+  $('#copyadb').onclick=function(e){e.preventDefault();copy($('#adbcmd').textContent,e.target,'Copied!')};
+  $('#copyadb').addEventListener('click',function(e){e.stopPropagation()});
+
+  var boxes=document.querySelectorAll('#list input'),KEY='bn_install_checklist',saved={};
+  try{saved=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  function prog(){
+    var n=0;boxes.forEach(function(b){if(b.checked)n++});
+    $('#prog').textContent=n===boxes.length?'All done. Bn is fully set up':n+' of '+boxes.length+' done';
+    $('#barfill').style.width=(n/boxes.length*100)+'%';
+  }
+  boxes.forEach(function(b){
+    b.checked=!!saved[b.dataset.k];
+    b.addEventListener('change',function(){saved[b.dataset.k]=b.checked;try{localStorage.setItem(KEY,JSON.stringify(saved))}catch(e){}prog()});
+  });
+  prog();
+})();
+</script>
+</body>
+</html>

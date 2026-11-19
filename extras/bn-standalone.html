@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bn</title>
+<meta name="theme-color" content="#16a34a">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%2316a34a'/><g fill='none' stroke='white' stroke-width='6' stroke-linecap='round'><path d='M10 26a31 31 0 0 1 44 0'/><path d='M18 35a20 20 0 0 1 28 0'/><path d='M26 43a9 9 0 0 1 12 0'/></g><circle cx='32' cy='52' r='4' fill='%23ffb703'/></svg>">
+<script>try{var t=JSON.parse(localStorage.getItem("bs_set")||"{}").theme||"light";document.documentElement.dataset.theme=(t==="dark"||(t==="auto"&&matchMedia("(prefers-color-scheme:dark)").matches))?"dark":"light"}catch(e){}</script>
+<style>
+:root{--bg:#effaf1;--ink:#0f2a1a;--mute:#5b7a68;--line:#d3ecd9;--card:#fff;--hd:#00b84d;--hd2:#008a3a;--g:#00a94f;--gs:#d9f7e4;--gold:#ffc700;--r:#ff4757;--rs:#ffe3e6;--a:#a85f00;--as:#fff1c2;--b:#1e88ff;--bs:#dcecff;--onp:#fff;--sh:0 6px 0 rgba(0,90,40,.08);--font:ui-rounded,"SF Pro Rounded",Nunito,Poppins,"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;--serif:var(--font);color-scheme:light}
+[data-theme=dark]{color-scheme:dark;--bg:#07130c;--ink:#eaf7ee;--mute:#92b09f;--line:#1b3326;--card:#10211a;--hd:#0aa347;--hd2:#056b2b;--g:#3deb7c;--gs:#10392a;--gold:#ffd33d;--r:#ff6b78;--rs:#3d1c22;--a:#ffd36b;--as:#3a2e0c;--b:#6cb2ff;--bs:#15305a;--onp:#04200c;--sh:0 6px 0 rgba(0,0,0,.35)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.4 var(--font);padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+header{position:relative;overflow:hidden;padding:18px 18px 26px;background:var(--hd);color:#fff;border-radius:0 0 34px 34px;box-shadow:0 8px 0 rgba(0,90,40,.15)}
+header>*{position:relative;z-index:1}
+.top,.brand,.tr{display:flex;align-items:center;gap:12px}.top{justify-content:space-between}
+.logo{width:46px;height:46px;border-radius:15px;background:#fff;display:grid;place-items:center;color:var(--hd2);box-shadow:0 4px 0 rgba(0,0,0,.18);flex:none}
+h1{font:900 26px var(--font);margin:0;letter-spacing:.5px}header p{margin:1px 0 0;font-size:13px;font-weight:600;opacity:.95}
+.tb{width:42px;height:42px;border-radius:50%;border:0;background:rgba(255,255,255,.25);font-size:20px;line-height:1;color:#fff;flex:none}
+.sw{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800}
+.sw input{display:none}.sw span{width:50px;height:30px;border-radius:15px;background:rgba(255,255,255,.3);position:relative;transition:.15s}
+.sw span:after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:.15s;box-shadow:0 2px 4px rgba(0,0,0,.2)}
+.sw input:checked+span{background:var(--gold)}.sw input:checked+span:after{left:23px}
+.bal{display:flex;width:100%;justify-content:space-between;align-items:center;gap:10px;margin-top:18px;padding:14px 18px;border:0;border-radius:24px;background:var(--card);color:var(--ink);font:inherit;text-align:left;box-shadow:0 6px 0 rgba(0,0,0,.14)}
+.bal small{display:block;font-size:13px;font-weight:700;color:var(--mute)}
+.bal b{display:block;font:900 34px/1.15 var(--font);color:var(--g);font-variant-numeric:tabular-nums}
+.rf{font-size:28px;display:inline-block;color:var(--g)}.rf.spin{animation:sp 1s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.rf.spin{animation:none}}
+nav{display:flex;position:fixed;left:0;right:0;bottom:0;background:var(--card);border-radius:30px 30px 0 0;box-shadow:0 -6px 24px rgba(0,60,25,.16);z-index:5;padding:8px 8px calc(10px + env(safe-area-inset-bottom));gap:2px}
+nav button{--tc:#00a94f;flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 2px;border:0;background:none;color:var(--mute);font:inherit;font-size:12px;font-weight:800;position:relative}
+nav button:nth-child(2){--tc:#1e88ff}nav button:nth-child(3){--tc:#ff8a1f}nav button:nth-child(4){--tc:#e91e8c}nav button:nth-child(5){--tc:#8e5cf7}nav button[hidden]{display:none}
+nav svg{width:58px;height:34px;padding:5px 17px;border-radius:17px;stroke-width:2.2;transition:.15s}
+nav button.on{color:var(--tc)}nav button.on svg{background:var(--tc);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.18)}
+.per+h2,.per+.own>h2:first-child,.per+.note{margin-top:14px}
+nav i.ob{background:var(--a)}
+nav i{position:absolute;top:0;left:calc(50% + 8px);font-style:normal;background:var(--r);color:#fff;border-radius:10px;padding:0 6px;font-size:11px;font-weight:800;line-height:18px;border:2px solid var(--card)}
+main{padding:14px 16px 140px;max-width:640px;margin:auto}
+ul{list-style:none;margin:0;padding:0}
+.row{display:flex;gap:14px;align-items:center;background:var(--card);border:2px solid var(--line);border-radius:24px;padding:14px;margin:12px 0;box-shadow:var(--sh)}
+.amt{min-width:66px;padding:10px 6px;border-radius:18px;background:var(--gs);color:var(--g);text-align:center;font:900 23px/1 var(--font);font-variant-numeric:tabular-nums}.amt small{display:block;font:800 10px var(--font);opacity:.85;margin-bottom:3px;letter-spacing:.5px}
+.row.success .amt{background:var(--g);color:var(--onp)}.row.failed .amt{background:var(--r);color:#fff}.row.pending .amt,.row.dialing .amt{background:var(--gold);color:#3b2a00}.row.queued .amt{background:var(--b);color:#fff}
+.mid{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}.mid b{font-weight:800;font-size:17px}.mid span{font-size:14px;color:var(--mute);font-variant-numeric:tabular-nums;word-break:break-word}
+.mid em{font-style:normal;font-size:13px;font-weight:600;color:var(--r);margin-top:2px;word-break:break-word}
+.end{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.chip{font-size:12px;font-weight:800;padding:5px 12px;border-radius:999px}
+.chip:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:currentColor;margin-right:6px;vertical-align:1px}
+.chip.g{background:var(--gs);color:var(--g)}.chip.r{background:var(--rs);color:var(--r)}.chip.a{background:var(--as);color:var(--a)}.chip.b{background:var(--bs);color:var(--b)}
+.ic{width:48px;height:48px;border-radius:50%;border:0;background:var(--gs);color:var(--g);font-size:22px;font-weight:900}
+.btns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.btn{border:2px solid var(--line);background:var(--card);color:var(--ink);min-height:44px;padding:10px 18px;border-radius:16px;font:inherit;font-size:15px;font-weight:800;transition:transform .1s,box-shadow .1s;box-shadow:0 4px 0 var(--line)}
+.btn:active,.ic:active,.per button:active,.tb:active{transform:translateY(3px) scale(.97);box-shadow:none}
+nav button:active svg{transform:scale(.9)}
+.btn.p{background:var(--g);color:var(--onp);border-color:var(--g);box-shadow:0 5px 0 var(--hd2)}.btn.d{color:var(--r)}
+.per{display:flex;gap:6px;margin:4px 0 8px;background:var(--card);border:2px solid var(--line);border-radius:20px;padding:5px}.per button{flex:1;min-height:42px;padding:8px 4px;border:0;background:none;color:var(--mute);border-radius:15px;font:inherit;font-size:14px;font-weight:800}.per button.on{background:var(--g);color:var(--onp);box-shadow:0 4px 0 var(--hd2)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.stat{border-radius:26px;padding:16px;color:#fff;box-shadow:0 6px 0 rgba(0,0,0,.14)}.stat small{font-size:14px;font-weight:800;opacity:.95}.stat b{display:block;font:900 25px/1.15 var(--font);font-variant-numeric:tabular-nums;margin:6px 0 4px}.stat span{font-size:13px;font-weight:600;opacity:.92}
+.stat.s1{background:linear-gradient(135deg,#00c853,#00963f)}.stat.s2{background:linear-gradient(135deg,#ffd426,#ff9f0a);color:#3b2a00}.stat.s3{background:linear-gradient(135deg,#3d9bff,#1769e0)}.stat.s4{background:linear-gradient(135deg,#ff6b78,#e0293b)}
+.stat.s1 b{font-size:28px}.stat.s2 b{font-size:28px}
+.chartbox{background:var(--card);border:2px solid var(--line);border-radius:26px;padding:16px 10px 8px;box-shadow:var(--sh)}.chartbox svg{display:block;width:100%;height:auto}
+.hd2,.hd{display:flex;justify-content:space-between;align-items:center}.hd .btn{min-height:38px;padding:6px 14px;font-size:13px}
+h2{font:900 20px var(--font);margin:28px 2px 8px}
+.note{background:var(--as);color:var(--a);border-radius:20px;padding:13px 16px;font-size:14px;font-weight:600;margin:14px 0 6px}
+.hint{font-size:13px;color:var(--mute);margin:8px 0 0}
+.empty{text-align:center;color:var(--mute);font-weight:600;padding:40px 16px}.empty big{display:block;font-size:54px;margin-bottom:8px}
+label.f{display:block;font-size:14px;font-weight:800;color:var(--mute);margin:16px 0 6px}
+input[type=text],input[type=number],input[type=password],textarea,select{width:100%;min-height:50px;padding:12px 14px;border:2px solid var(--line);border-radius:16px;background:var(--card);color:var(--ink);font:inherit;font-weight:600}
+input:focus,textarea:focus,select:focus{border-color:var(--g);outline:0}
+textarea{min-height:90px}
+#loglist{font-size:12px;color:var(--mute);font-family:ui-monospace,Menlo,monospace;word-break:break-word}#loglist div{padding:4px 0;border-bottom:1px solid var(--line)}
+dialog{border:2px solid var(--line);border-radius:28px;background:var(--card);color:var(--ink);width:min(92vw,430px);padding:20px;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+#toast{position:fixed;left:50%;bottom:112px;z-index:6;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 20px;border-radius:999px;font-size:15px;font-weight:800;opacity:0;pointer-events:none;transition:.2s;max-width:90vw;text-align:center}#toast.on{opacity:1}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+button.stat{border:0;font:inherit;text-align:left;width:100%;cursor:pointer;color:#fff}button.stat:active{transform:scale(.97)}
+.ic.retry{width:60px;height:60px;border-radius:18px;background:var(--r);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:26px;line-height:1;box-shadow:0 4px 0 rgba(0,0,0,.18)}.ic.retry small{font-size:11px;font-weight:800;margin-top:2px}
+.greet{margin-top:18px}.greet b{display:block;font:900 23px/1.2 var(--font)}.greet span{font-size:14px;font-weight:700;opacity:.95}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.55);margin-right:7px}.dot.on{background:var(--gold);animation:pulse 1.6s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,199,0,.7)}70%{box-shadow:0 0 0 8px rgba(255,199,0,0)}100%{box-shadow:0 0 0 0 rgba(255,199,0,0)}}
+h2{display:flex;align-items:center;gap:9px}h2:before{content:"";width:7px;height:22px;border-radius:4px;background:var(--gold);flex:none}#dT:before,#aT:before,dialog h2:before{display:none}
+.row.o:nth-child(4n+1) .amt{background:#00a94f;color:#fff}.row.o:nth-child(4n+2) .amt{background:#1e88ff;color:#fff}.row.o:nth-child(4n+3) .amt{background:#ff8a1f;color:#fff}.row.o:nth-child(4n) .amt{background:#8e5cf7;color:#fff}
+.empty big{width:132px;height:132px;margin:0 auto 10px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='62' r='50' fill='%2300c853' fill-opacity='.16'/%3E%3Ccircle cx='60' cy='62' r='36' fill='%2300c853' fill-opacity='.18'/%3E%3Cg fill='none' stroke='%2300a94f' stroke-width='7' stroke-linecap='round'%3E%3Cpath d='M30 52a42 42 0 0 1 60 0'/%3E%3Cpath d='M41 63a27 27 0 0 1 38 0'/%3E%3Cpath d='M51 74a12 12 0 0 1 18 0'/%3E%3C/g%3E%3Ccircle cx='60' cy='86' r='6' fill='%23ffc700'/%3E%3Cpath d='M98 20l3 8 8 3-8 3-3 8-3-8-8-3 8-3z' fill='%23ffc700'/%3E%3Cpath d='M20 34l2 5 5 2-5 2-2 5-2-5-5-2 5-2z' fill='%231e88ff'/%3E%3Ccircle cx='100' cy='90' r='4' fill='%23ff4757'/%3E%3C/svg%3E") center/contain no-repeat;animation:float 3.2s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-9px)}}
+@keyframes rise{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:scale(.8)}60%{transform:scale(1.05)}to{opacity:1;transform:none}}
+@keyframes bump{0%{transform:scale(.75)}60%{transform:scale(1.14)}100%{transform:scale(1)}}
+.anim>*{animation:rise .5s cubic-bezier(.2,.8,.2,1) both}.anim>ul,.anim>.stats{animation:none}
+.anim>*:nth-child(2){animation-delay:.05s}.anim>*:nth-child(3){animation-delay:.1s}.anim>*:nth-child(4){animation-delay:.15s}.anim>*:nth-child(n+5){animation-delay:.2s}
+.anim li{animation:rise .45s cubic-bezier(.2,.8,.2,1) both}.anim li:nth-child(2){animation-delay:.05s}.anim li:nth-child(3){animation-delay:.1s}.anim li:nth-child(4){animation-delay:.15s}.anim li:nth-child(5){animation-delay:.2s}.anim li:nth-child(n+6){animation-delay:.25s}
+.anim .stat{animation:pop .55s cubic-bezier(.2,.8,.2,1) both}.anim .stat:nth-child(2){animation-delay:.07s}.anim .stat:nth-child(3){animation-delay:.14s}.anim .stat:nth-child(4){animation-delay:.21s}
+nav button.on svg{animation:bump .4s ease}
+.cf{position:fixed;top:-14px;width:10px;height:15px;border-radius:3px;z-index:9;pointer-events:none;animation:cfall 1.6s ease-in forwards}
+@keyframes cfall{to{transform:translate(var(--dx),105vh) rotate(var(--rot))}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.cf{display:none}}
+body.att .own{display:none!important}
+#gate{position:fixed;inset:0;z-index:30;background:var(--hd);display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}#gate[hidden]{display:none}
+.gcard{width:100%;max-width:380px;background:var(--card);border-radius:30px;padding:26px 22px;box-shadow:0 8px 0 rgba(0,0,0,.16);text-align:center;display:flex;flex-direction:column;gap:12px}
+.gcard .logo{margin:0 auto;background:var(--g);color:#fff;transform:none}.gcard h1{color:var(--g);margin:0}.gcard p{margin:0;color:var(--mute);font-weight:700}
+.gcard .gerr{color:var(--r);font-size:14px;font-weight:700;min-height:0}
+.gcard .btn.p{width:100%;min-height:52px;font-size:17px}
+.gl{border:0;background:none;color:var(--g);font:inherit;font-weight:800;font-size:14px;padding:8px}
+</style>
+</head>
+<body>
+<header>
+  <div class="top"><div class="brand"><div class="logo" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M2.5 9.2a14 14 0 0 1 19 0"/><path d="M5.8 12.7a9.3 9.3 0 0 1 12.4 0"/><path d="M9.2 16.1a4.6 4.6 0 0 1 5.6 0"/><circle cx="12" cy="19.6" r="1.6" fill="#f59e0b" stroke="none"/></svg></div><div><h1>Bn</h1><p id="mode"></p></div></div>
+  <div class="tr"><button type="button" class="tb" id="tbtn" onclick="toggleTheme()" aria-label="Switch between light and dark mode">&#127769;</button><label class="sw"><input type="checkbox" id="auto"><span></span>Auto-dial</label></div></div>
+  <div class="greet"><b id="gh"></b><span id="gs"></span></div>
+  <button class="bal" onclick="refreshBal()" aria-label="Check airtime balance"><span><small>Airtime balance</small><b id="balv"></b><small id="balt"></small></span><span class="rf" id="rf">&#8635;</span></button>
+</header>
+<main id="view"></main>
+<nav id="nav">
+  <button data-t="home" class="on"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Home</span></button>
+  <button data-t="sales"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg><span>Sales</span><i id="nb" hidden></i></button>
+  <button data-t="offers"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1"/></svg><span>Offers</span><i id="ob" class="ob" hidden></i></button>
+  <button data-t="team" hidden><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg><span>Team</span></button>
+  <button data-t="settings"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><span>Settings</span></button>
+</nav>
+
+<div id="gate" hidden><div class="gcard">
+  <div class="logo" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M2.5 9.2a14 14 0 0 1 19 0"/><path d="M5.8 12.7a9.3 9.3 0 0 1 12.4 0"/><path d="M9.2 16.1a4.6 4.6 0 0 1 5.6 0"/><circle cx="12" cy="19.6" r="1.6" fill="#f59e0b" stroke="none"/></svg></div>
+  <h1>Bn</h1><p id="gmode">Sign in to continue</p>
+  <input type="text" id="gname" placeholder="Your name" autocomplete="name" hidden>
+  <input type="text" id="gemail" inputmode="email" autocapitalize="off" autocomplete="username" placeholder="Email">
+  <input type="password" id="gpw" autocomplete="current-password" placeholder="Password">
+  <p id="gerr" class="gerr"></p>
+  <button type="button" class="btn p" id="gbtn" onclick="Team.submit()">Sign in</button>
+  <button type="button" class="gl" id="gswitch" onclick="Team.toggleMode()">New shop? Create the owner account</button>
+  <button type="button" class="gl" onclick="Team.forgot()">Forgot password</button>
+</div></div>
+<dialog id="tdlg">
+  <h2 style="margin-top:0">Add attendant</h2>
+  <label class="f" for="tn">Name</label><input type="text" id="tn" placeholder="Mary">
+  <label class="f" for="te">Email</label><input type="text" id="te" inputmode="email" autocapitalize="off" placeholder="mary@example.com">
+  <label class="f" for="tp">Password (at least 6 characters)</label><input type="text" id="tp" autocomplete="off" autocapitalize="off">
+  <p class="hint" id="tmsg"></p>
+  <div class="btns"><button type="button" class="btn p" id="tgo" onclick="Team.addAttendant()">Create</button><button type="button" class="btn" onclick="tdlg.close()">Cancel</button></div>
+</dialog>
+<dialog id="dlg">
+  <h2 id="dT" style="margin-top:0">Offer</h2>
+  <input type="hidden" id="oId">
+  <label class="f" for="oName">Name</label><input type="text" id="oName" placeholder="Bingwa 250MB - 24hrs">
+  <label class="f" for="oAmt">Price (KSh)</label><input type="number" id="oAmt" inputmode="numeric" placeholder="20">
+  <label class="f" for="oUssd">USSD code (use n where the phone number goes)</label><input type="text" id="oUssd" placeholder="*180*5*2*n*2*1#">
+  <div class="btns"><button type="button" class="btn p" onclick="saveOffer()">Save offer</button><button type="button" class="btn" onclick="dlg.close()">Cancel</button></div>
+</dialog>
+<dialog id="adlg">
+  <h2 id="aT" style="margin-top:0">Advanced offer</h2>
+  <input type="hidden" id="aId">
+  <label class="f" for="aName">Name</label><input type="text" id="aName" placeholder="Bingwa 2GB - 30 days">
+  <label class="f" for="aAmt">Price (KSh)</label><input type="number" id="aAmt" inputmode="numeric" placeholder="250">
+  <label class="f" for="aCode">Full USSD code</label><input type="text" id="aCode" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="*444*5*3*2*1*n*2#" oninput="advPreview()">
+  <p class="hint">Write the whole code. The app dials the first part, then sends each number as a reply, one step at a time. Write n where the client's phone number goes.</p>
+  <label class="f" for="aExp">Last menu must show (optional)</label><input type="text" id="aExp" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="2GB, 250">
+  <p class="hint">Words that must appear on the menu just before the last option, e.g. the bundle size. Separate with commas. Calibrate checks it, and a real sale is stopped before the last option if the menu does not show it.</p>
+  <div id="aPrev" class="hint" style="margin-top:8px"></div>
+  <div class="btns"><button type="button" class="btn p" onclick="saveAdv()">Save offer</button><button type="button" class="btn" onclick="adlg.close()">Cancel</button></div>
+</dialog>
+<dialog id="cdlg">
+  <h2 id="cT" style="margin-top:0">Calibrate</h2>
+  <div id="cB"></div>
+  <div class="btns" id="cBtns"></div>
+</dialog>
+<div id="toast" role="status"></div>
+
+<script src="firebase-config.js"></script>
+<script>
+/* ===== NATIVE BRIDGE (what the Android wrapper must provide) =====
+   1. NativeBridge.dialUssd(code, simSlot)  -> wrapper dials the code on that SIM (0 = SIM 1, 1 = SIM 2, -1 = phone default)
+   2. Wrapper calls window.onSmsReceived(sender, "<sms text>", simSlot) for every incoming SMS (simSlot 0 or 1)
+   2b. NativeBridge.replyUssd("2") sends a reply inside the USSD session that is open (used by Advanced offers);
+       NativeBridge.endUssd() (optional) closes that session
+   3. Wrapper calls window.onUssdResponse("<reply text>") with the on-screen reply of a USSD session
+      (this is how the airtime balance reply from *144# is read).
+   In a normal browser none of these exist, so the app runs in Test mode (dialing is simulated). */
+
+const $=s=>document.querySelector(s);
+const L=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
+const W=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const tm=t=>new Date(t).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+
+const DEF=[[19,'1GB - 1 hour',1],[20,'Bingwa 250MB - 24hrs',2],[48,'Bingwa 750MB - 24hrs',3],[49,'Bingwa 1.5GB - 3hrs',7],[51,'400MB - 7 days',4],[55,'Bingwa 1GB - till midnight',6],[99,'1.5GB - 24hrs',5]]
+  .map(([a,n,k])=>({id:uid()+k,amount:a,name:n,ussd:'*180*5*2*n*'+k+'*1#',on:true}));
+let offers=L('bs_offers',DEF), sales=L('bs_sales',[]), set=Object.assign({auto:true,wait:3,rate:10,balCode:'*144#',dialSim:'auto',readSim:'both',autoBal:true,theme:'light',speed:'balanced',smsOn:true,smsFailOn:true,smsSim:'auto',smsOk:'Your offer of Ksh{amount} has been successfully renewed.',smsDup:'Hi, the number {phone} has already been recommended today. Kindly send a new number.'},L('bs_set',{})), bal=L('bs_bal',null), logs=[], tab='home', per='today', sf='all', ot='normal';
+const save=()=>{W('bs_offers',offers);W('bs_sales',sales.slice(0,500));W('bs_set',set);window.Team&&Team.dirty()};
+const hasBridge=()=>!!(window.NativeBridge&&window.NativeBridge.dialUssd);
+
+function applyTheme(){
+  const d=set.theme==='dark'||(set.theme==='auto'&&matchMedia('(prefers-color-scheme:dark)').matches);
+  document.documentElement.dataset.theme=d?'dark':'light';
+  const tb=$('#tbtn');if(tb)tb.textContent=d?'\u2600\uFE0F':'\uD83C\uDF19';
+  const mt=document.querySelector('meta[name=theme-color]');if(mt)mt.content=d?'#094d20':'#16a34a';
+}
+function toggleTheme(){set.theme=document.documentElement.dataset.theme==='dark'?'light':'dark';save();applyTheme();const t=$('#th');if(t)t.value=set.theme}
+applyTheme();
+try{matchMedia('(prefers-color-scheme:dark)').addEventListener('change',applyTheme)}catch(e){}
+function addLog(m){logs.unshift(tm(Date.now())+'  '+m);logs=logs.slice(0,80);const e=$('#loglist');if(e)e.innerHTML=logs.map(x=>'<div>'+esc(x)+'</div>').join('')}
+function celebrate(s){
+  toast('\uD83C\uDF89 Sold KSh '+s.amount+(s.phone?' to '+s.phone:''));
+  if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const cols=['#00c853','#ffc700','#1e88ff','#ff4757','#8e5cf7','#ff8a1f'];
+  for(let i=0;i<28;i++){const d=document.createElement('div');d.className='cf';
+    d.style.left=(4+Math.random()*92)+'vw';d.style.background=cols[i%cols.length];
+    d.style.setProperty('--dx',(Math.random()*120-60)+'px');d.style.setProperty('--rot',(360+Math.random()*540)+'deg');
+    d.style.animationDelay=(Math.random()*.35)+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),2200)}
+}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2600)}
+
+/* ---------- phone + SMS parsing ---------- */
+function normPhone(p){if(!p)return null;let d=String(p).replace(/\D/g,'');if(d.startsWith('254')&&d.length===12)d='0'+d.slice(3);else if(d.length===9&&/^[17]/.test(d))d='0'+d;return /^0[17]\d{8}$/.test(d)?d:null}
+const PH='((?:\\+?254|0)[17]\\d{8})';
+
+window.onSmsReceived=function(sender,body,slot){
+  body=String(body||'');let m;
+  if(cal&&/^ussd$/i.test(String(sender)))return calReply(body);
+  if(balWait&&/^ussd$/i.test(String(sender))){
+    const x=body.match(/(?:ksh|kes)\.?\s?([\d,]+(?:\.\d+)?)/i)||body.match(/balance[^\d]{0,40}([\d,]+(?:\.\d+)?)/i);
+    if(x){clearTimeout(balWait);balWait=null;return setBal(parseFloat(x[1].replace(/,/g,'')))}
+  }
+  if(/airtime/i.test(body)&&/balance/i.test(body)&&(m=body.match(/airtime[^\d]{0,40}([\d,]+(?:\.\d+)?)/i)))return setBal(parseFloat(m[1].replace(/,/g,'')));
+  if(/^ussd$/i.test(String(sender))){const a=sales.find(x=>x.status==='dialing'&&x.steps);if(a)return ussdStep(a,body)}
+  if(/recommendation for/i.test(body)&&(m=body.match(/for\s+(\S+)\s+submitted successfully/i)))return gotSubmitted(normPhone(m[1]),body);
+  if(/purchased a gift bundle/i.test(body)&&(m=body.match(new RegExp('for\\s+'+PH,'i'))))return gotSuccess(normPhone(m[1]));
+  if(/recommendation failed/i.test(body)){m=body.match(new RegExp(PH));return gotFail(m?normPhone(m[1]):null,/already been recommended/i.test(body)?'Customer already recommended':body.trim().slice(0,160))}
+  if(/received/i.test(body)&&/confirmed/i.test(body)){
+    if(!/mpesa/i.test(String(sender||'')))return addLog('Ignored payment text from '+sender);
+    if(set.readSim!=='both'&&slot!=null&&String(slot)!==set.readSim)return addLog('Ignored payment text from SIM '+(+slot+1));
+    return gotPayment(body);
+  }
+  addLog('Unrecognised SMS from '+sender+': '+body.slice(0,100));
+};
+
+function gotPayment(body){
+  const code=(body.match(/\b(?=[A-Z0-9]*[A-Z])[A-Z0-9]{10}\b/)||[])[0]||('NOCODE'+uid());
+  if(sales.some(s=>s.code===code))return addLog('Duplicate ignored: '+code);
+  const am=body.match(/Ksh\.?\s?([\d,]+(?:\.\d+)?)/i);
+  const pm=body.match(new RegExp(PH));
+  const amount=am?parseFloat(am[1].replace(/,/g,'')):0;
+  const phone=pm?normPhone(pm[1]):null;
+  const o=offers.find(x=>x.on&&x.amount===amount);
+  const s={id:uid(),code,amount,phone,name:o?o.name:'',ussd:'',status:'queued',reason:'',t:Date.now(),ts:Date.now()};
+  if(!phone)fail(s,'No valid phone number in the payment SMS');
+  else if(!o)fail(s,'No active offer priced KSh '+amount);
+  else build(s,o);
+  sales.unshift(s);addLog('Payment '+code+' KSh '+amount+' from '+(phone||'?'));
+  save();pump();render();
+}
+function fail(s,r){s.status='failed';s.reason=r;s.ts=Date.now();if(s.steps)endSession()}
+const open=(ph,sts)=>sales.slice().reverse().find(s=>sts.includes(s.status)&&(!ph||s.phone===ph));
+function gotSubmitted(ph){const s=open(ph,['dialing','queued']);if(!s)return addLog('Submitted reply with no matching sale: '+ph);s.status='pending';s.ts=Date.now();done()}
+function gotSuccess(ph){const s=open(ph,['pending','dialing']);if(!s)return addLog('Success reply with no matching sale: '+ph);s.status='success';s.reason='';s.ts=Date.now();try{celebrate(s)}catch(e){}textClient(s,'ok');needBal=true;balAt=Date.now()+4000;done()}
+function gotFail(ph,r){const s=open(ph,['dialing','pending']);if(!s)return addLog('Failure reply with no matching sale: '+(ph||'?'));fail(s,r);if(isDup(r))textClient(s,'dup');needBal=true;balAt=Date.now()+4000;done()}
+/* ---------- texts to the customer ---------- */
+const isDup=r=>/already\s+(?:been\s+)?recommended/i.test(String(r||''));
+const smsSimSlot=()=>set.smsSim==='auto'?-1:+set.smsSim;
+const fillMsg=(t,s)=>String(t||'').replace(/\{amount\}/gi,s.amount).replace(/\{phone\}/gi,s.phone||'').replace(/\{name\}/gi,s.name||'');
+function sendText(to,msg){
+  if(!hasBridge()||!NativeBridge.sendSms){addLog('TEST MODE - would text '+to+': '+msg);return 'test'}
+  let r;try{r=NativeBridge.sendSms(to,msg,smsSimSlot())}catch(e){r='error: '+e}
+  if(r==='ok')addLog('Texted '+to+': '+msg.slice(0,70));
+  else{addLog('Could not text '+to+' ('+r+')');toast(r==='no_permission'?'Allow SMS permission for Bn to text customers':'Could not text the customer')}
+  return r;
+}
+/* kind: 'ok' = bundle renewed, 'dup' = number already recommended. Each sale texts each kind at most once. */
+function textClient(s,kind){
+  if(window.Team&&!Team.canDial())return;
+  const flag=kind==='ok'?'smsOk':'smsDup';
+  if(s[flag]||!s.phone)return;
+  const on=kind==='ok'?set.smsOn:set.smsFailOn,tpl=kind==='ok'?set.smsOk:set.smsDup;
+  const msg=fillMsg(tpl,s).trim();
+  if(!on||!msg)return;
+  s[flag]=1;sendText(s.phone,msg);
+}
+function smsTest(){
+  const x=prompt('Send a test of both messages to this number (use your own):',set.calNum||'');if(x===null)return;
+  const n=normPhone(x);if(!n)return toast('Enter a valid number like 0712345678');
+  const s={amount:22,phone:n,name:'Test offer'};
+  sendText(n,fillMsg(set.smsOk,s));setTimeout(()=>sendText(n,fillMsg(set.smsDup,s)),2500);
+  toast('Test messages sent to '+n);
+}
+function done(){nextAt=Date.now()+spd()[1];save();pump();render()}
+
+/* ---------- dialing (one USSD at a time, no automatic retries) ---------- */
+let balWait=null,needBal=false,balAt=0;
+let cal=null,calQ=[],calSum=[];
+const SPD={fast:[300,500],balanced:[700,1000],safe:[1400,2500]};/* [ms before each reply step, ms gap between customers] */
+const spd=()=>SPD[set.speed]||SPD.balanced;
+let nextAt=0,pt=null;
+const simSlot=()=>set.dialSim==='auto'?-1:+set.dialSim;
+const busy=()=>!!balWait||!!cal||sales.some(s=>s.status==='dialing');
+function build(s,o){
+  s.name=o.name;
+  if(o.adv){s.steps=o.steps.map(t=>t.replace(/\bn\b/gi,s.phone));s.ussd=s.steps[0];s.expect=o.expect||''}
+  else{delete s.steps;s.ussd=o.ussd.replace(/\bn\b/i,s.phone)}
+}
+const FAILRE=/(invalid|incorrect|unable|insufficient|not (?:allowed|eligible|available|registered)|failed|error|connection problem|already|unsuccessful)/i;
+function endSession(){try{if(hasBridge()&&NativeBridge.endUssd)NativeBridge.endUssd()}catch(e){}}
+function ussdStep(s,txt){
+  addLog('USSD step '+(s.step+1)+' reply: '+txt.replace(/\s+/g,' ').slice(0,90));
+  if(FAILRE.test(txt)){const why=txt.replace(/\s+/g,' ').trim().slice(0,160);fail(s,why);if(isDup(why))textClient(s,'dup');return done()}
+  s.step++;s.ts=Date.now();
+  if(s.step<s.steps.length){
+    const i=s.step;
+    if(i===s.steps.length-1&&s.expect){const miss=calMiss(s.expect,txt);if(miss.length){fail(s,'Menu changed ('+miss.join(', ')+' not shown). Offer NOT sent.');return done()}}
+    save();render();
+    setTimeout(()=>{
+      if(s.status!=='dialing'||s.step!==i)return;
+      if(hasBridge()){try{NativeBridge.replyUssd(s.steps[i])}catch(e){fail(s,'Could not send step '+(i+1));return done()}}
+      else addLog('TEST MODE - would reply: '+s.steps[i]);
+    },spd()[0]);
+  }else{s.status='pending';endSession();done()}
+}
+function dial(s){
+  s.status='dialing';s.reason='';s.ts=Date.now();s.step=0;save();render();
+  if(hasBridge()){try{if(s.steps&&NativeBridge.dialUssdWake)NativeBridge.dialUssdWake(s.ussd,simSlot(),true);else NativeBridge.dialUssd(s.ussd,simSlot())}catch(e){fail(s,'Could not dial: '+e);save();render()}}
+  else addLog('TEST MODE - would dial '+(s.steps?s.steps.join(' > '):s.ussd));
+}
+function pump(){
+  if(window.Team&&!Team.canDial())return;
+  if(busy())return;
+  const q=sales.slice().reverse().find(x=>x.status==='queued');
+  const w=nextAt-Date.now();
+  if(w>0){clearTimeout(pt);pt=setTimeout(pump,w+20);return}
+  /* customers first: the balance check waits until the queue is empty */
+  if(needBal&&Date.now()>=balAt&&!(set.auto&&q)){needBal=false;if(set.autoBal&&hasBridge()){refreshBal(true);return}}
+  if(!set.auto)return;if(q)dial(q)}
+function dialNow(id){
+  const s=sales.find(x=>x.id===id);if(!s)return;
+  if(s.status==='failed'&&!confirm('The earlier try may have gone through. Dial again for '+s.phone+'?'))return;
+  if(!s.ussd){const o=offers.find(x=>x.amount===s.amount&&x.on);if(!o||!s.phone)return toast('Still no active offer or number for this sale');build(s,o)}
+  if(busy()){s.status='queued';s.reason='';save();render();return toast('Queued - another dial is running')}
+  dial(s);
+}
+setInterval(()=>{
+  const now=Date.now();
+  if(cal&&now-cal.ts>45000)calEnd('fail','No reply from Safaricom at step '+(cal.step+1));
+  sales.forEach(s=>{
+    if(s.status==='dialing'&&now-s.ts>45000)fail(s,s.steps?'No reply at step '+(s.step+1):'No reply after dialing');
+    else if(s.status==='pending'&&now-s.ts>set.wait*60000)fail(s,'No confirmation from Safaricom');
+  });
+  save();pump();render();
+},5000);
+setInterval(pump,1000);
+
+/* ---------- calibrate: walk an advanced offer up to (not including) its last option ---------- */
+const normMenu=t=>String(t||'').toLowerCase().replace(/\s+/g,' ').trim();
+const calMiss=(exp,txt)=>{const m=normMenu(txt);return String(exp||'').split(',').map(x=>x.trim()).filter(Boolean).filter(k=>!m.includes(k.toLowerCase()))};
+function calStart(id,quiet){
+  const o=offers.find(x=>x.id===id&&x.adv);if(!o){calQ=[];return}
+  if(!hasBridge()||!NativeBridge.replyUssd){calQ=[];return toast('Calibrate only works in the Android app')}
+  if(busy()){calQ=[];return toast('Another dial is running. Try again in a moment.')}
+  let n=normPhone(set.calNum);
+  if(!n){
+    const x=prompt('Calibrate sends this number inside the code but NEVER the last option, so nothing is bought.\nType your OWN phone number to test with:','');
+    if(x===null){calQ=[];return}
+    n=normPhone(x);if(!n){calQ=[];return toast('Enter a valid number like 0712345678')}
+    set.calNum=n;save();
+  }
+  cal={o,quiet:!!quiet,steps:o.steps.map(t=>t.replace(/\bn\b/gi,n)),step:0,ts:Date.now()};
+  addLog('Calibrating '+o.name+' (stops before the last option)');
+  toast('Calibrating '+o.name+'... do not touch the phone');
+  try{NativeBridge.dialUssd(cal.steps[0],simSlot())}catch(e){calEnd('fail','Could not dial: '+e)}
+  render();
+}
+function calReply(txt){
+  const c=cal;if(!c)return;
+  const clean=String(txt).replace(/\s+/g,' ').trim();
+  c.ts=Date.now();
+  addLog('Calibrate step '+(c.step+1)+' reply: '+clean.slice(0,90));
+  if(FAILRE.test(clean))return calEnd('fail','Safaricom said: '+clean.slice(0,160));
+  c.step++;
+  if(c.step<c.steps.length-1){            /* more steps to go, and the next one is not the last */
+    const i=c.step;
+    setTimeout(()=>{
+      if(cal!==c||c.step!==i)return;
+      try{NativeBridge.replyUssd(c.steps[i])}catch(e){calEnd('fail','Could not send step '+(i+1))}
+    },spd()[0]);
+  }else calEnd('reached',String(txt).trim());   /* the next one IS the last option: stop here, never send it */
+}
+function calEnd(kind,text){
+  const c=cal;if(!c)return;
+  cal=null;endSession();
+  const o=c.o,prev=o.cal||{};
+  let state,msg,fp=prev.fp||'';
+  if(kind!=='reached'){state='bad';msg=text}
+  else{
+    const nf=normMenu(text);
+    if(o.expect&&o.expect.trim()){
+      const miss=calMiss(o.expect,text);
+      if(miss.length){state='bad';msg='The last menu no longer shows: '+miss.join(', ')}
+      else{state='ok';msg='The last menu shows what you expect.';fp=nf}
+    }else if(prev.fp){
+      if(prev.fp===nf){state='ok';msg='Same last menu as your last approved check.'}
+      else{state='changed';msg='The last menu is DIFFERENT from your last approved check.'}
+    }else{state='ask';msg='First check. Read the menu below: is this the offer you want?'}
+  }
+  o.cal={t:Date.now(),state,msg,text:kind==='reached'?String(text).slice(0,600):'',fp};
+  let paused=false;
+  if((state==='bad'||state==='changed')&&set.calOff!==false&&o.on){o.on=false;paused=true;o.cal.paused=true}
+  addLog('Calibrate '+o.name+': '+state.toUpperCase()+' - '+msg+(paused?' Offer paused.':''));
+  save();nextAt=Date.now()+spd()[1];
+  calSum.push(o.name+': '+({ok:'OK',bad:'FAILED',changed:'CHANGED',ask:'needs your OK'}[state]));
+  if(calQ.length){setTimeout(calNext,2500)}
+  else{
+    const all=calSum.length>1;const sm=calSum.slice();calSum=[];
+    if(!c.quiet&&!all)calShow(o.id);
+    else if(all)calSummary(sm);
+  }
+  render();pump();
+}
+function calNext(){
+  const id=calQ[0];if(!id)return;
+  if(busy())return setTimeout(calNext,4000);
+  calQ.shift();calStart(id,true);
+}
+function calAll(){
+  const l=offers.filter(o=>o.adv&&o.on);
+  if(!l.length)return toast('No active advanced offers to calibrate');
+  if(!confirm('Calibrate '+l.length+' advanced offer'+(l.length>1?'s':'')+'? Each is walked up to its last option and never completed.'))return;
+  calSum=[];calQ=l.map(o=>o.id);calNext();
+}
+function calSummary(list){
+  $('#cT').textContent='Calibration done';
+  $('#cB').innerHTML='<p class="hint" style="margin-top:0">'+list.map(esc).join('<br>')+'</p><p class="hint">Offers marked CHANGED or FAILED were paused so no client gets the wrong bundle. Tap Review on an offer to see its menu.</p>';
+  $('#cBtns').innerHTML='<button type="button" class="btn p" onclick="cdlg.close()">Close</button>';
+  cdlg.showModal();
+}
+const cdlg=$('#cdlg');
+function calShow(id){
+  const o=offers.find(x=>x.id===id);if(!o||!o.cal)return;
+  const c=o.cal,ico={ok:'\u2705',bad:'\u274C',changed:'\u26A0\uFE0F',ask:'\u2753'}[c.state]||'';
+  $('#cT').textContent=ico+' '+o.name;
+  $('#cB').innerHTML='<p class="hint" style="margin-top:0"><b>'+esc(c.msg)+'</b></p>'
+    +(c.text?'<label class="f">Menu where the last option would be chosen</label><pre style="white-space:pre-wrap;background:var(--card);border:2px solid var(--line);border-radius:12px;padding:10px;font:inherit;font-size:14px;margin:4px 0 0">'+esc(c.text)+'</pre><p class="hint">Bn would now send: <b>'+esc(o.steps[o.steps.length-1])+'</b> (not sent).</p>':'')
+    +(c.paused?'<p class="hint">\u23F8 This offer was paused so no client gets the wrong bundle.</p>':'');
+  let b='';
+  if(c.state==='ask'||c.state==='changed')b='<button type="button" class="btn p" onclick="calOk(\''+o.id+'\')">Looks right</button><button type="button" class="btn d" onclick="calNo(\''+o.id+'\')">Not right</button>';
+  else if(c.state==='bad')b='<button type="button" class="btn" onclick="cdlg.close();calStart(\''+o.id+'\')">Test again</button>';
+  $('#cBtns').innerHTML=b+'<button type="button" class="btn" onclick="cdlg.close()">Close</button>';
+  if(!cdlg.open)cdlg.showModal();
+}
+function calOk(id){const o=offers.find(x=>x.id===id);if(!o||!o.cal)return;o.cal.state='ok';o.cal.fp=normMenu(o.cal.text);o.cal.msg='Approved by you.';delete o.cal.paused;o.on=true;save();cdlg.close();render();toast('Approved. Offer is active')}
+function calNo(id){const o=offers.find(x=>x.id===id);if(!o)return;o.on=false;if(o.cal){o.cal.state='bad';o.cal.msg='You marked this menu as not right.';o.cal.paused=true}save();cdlg.close();render();toast('Offer paused. Fix its code, then calibrate again')}
+function calLine(o){
+  const c=o.cal;
+  if(!c)return '<span>\uD83E\uDDEA Not calibrated yet</span>';
+  const t=tm(c.t),lab={ok:'\u2705 Calibrated '+t,bad:'',changed:'',ask:'\u2753 Needs your OK ('+t+')'}[c.state];
+  if(c.state==='bad'||c.state==='changed')return '<em>'+(c.state==='bad'?'\u274C Calibration failed ':'\u26A0\uFE0F Menu changed ')+t+': '+esc(c.msg)+'</em>';
+  return '<span>'+lab+'</span>';
+}
+
+/* ---------- airtime balance ---------- */
+window.onUssdResponse=t=>onSmsReceived('USSD',t);
+function setBal(v){bal={v,t:Date.now()};W('bs_bal',bal);addLog('Airtime balance KSh '+v);render();pump()}
+function editBal(){const x=prompt('Airtime balance (KSh)',bal?bal.v:'');if(x===null)return;const v=parseFloat(String(x).replace(/,/g,''));if(isNaN(v))return toast('Enter a number');setBal(v)}
+function refreshBal(q){
+  const say=m=>{if(!q)toast(m)};
+  if(busy())return say('Another dial is running. Try again in a moment.');
+  if(!set.balCode)return say('Set the balance code in Settings');
+  if(!hasBridge()){addLog('TEST MODE - would dial '+set.balCode);return say('Test mode: send a test balance SMS from Settings')}
+  balWait=setTimeout(()=>{balWait=null;say('No balance reply. Try again.');render()},40000);
+  try{NativeBridge.dialUssd(set.balCode,simSlot())}catch(e){clearTimeout(balWait);balWait=null;say('Could not dial')}
+  render();
+}
+
+/* ---------- dashboard ---------- */
+const startOf=i=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-i);return +d};
+const PER={today:['Today',0],week:['7 days',6],month:['30 days',29],all:['All',null]};
+const fmt=n=>n.toLocaleString(undefined,{maximumFractionDigits:2});
+function home(){
+  const st=PER[per][1]===null?0:startOf(PER[per][1]);
+  const inP=sales.filter(s=>s.t>=st),ok=inP.filter(s=>s.status==='success');
+  const tot=ok.reduce((a,s)=>a+s.amount,0),nfail=inP.filter(s=>s.status==='failed').length;
+  const days=[];
+  for(let i=6;i>=0;i--){const a=startOf(i),b=a+864e5;days.push({l:new Date(a).toLocaleDateString([],{weekday:'short'}),v:sales.filter(s=>s.status==='success'&&s.t>=a&&s.t<b).reduce((x,s)=>x+s.amount,0)})}
+  const mx=Math.max(...days.map(d=>d.v),1),wk=days.reduce((a,d)=>a+d.v,0);
+  const bars=days.map((d,i)=>{const h=Math.round(d.v/mx*74),x=i*45.7+8.9,y=104-h;
+    return `<rect x="${x}" y="${y}" width="28" height="${d.v?Math.max(h,2):0}" rx="9" fill="url(#${i===6?'gb':'gg'})"/>${d.v?`<text x="${x+14}" y="${y-4}" text-anchor="middle" font-size="10" fill="var(--ink)">${d.v}</text>`:''}<text x="${x+14}" y="120" text-anchor="middle" font-size="11" fill="var(--mute)">${d.l}</text>`}).join('');
+  const rec=sales.slice(0,10);
+  return `<div class="per">${Object.keys(PER).map(k=>`<button class="${k===per?'on':''}" onclick="per='${k}';fresh=true;render()">${PER[k][0]}</button>`).join('')}</div>
+  <div class="stats"><div class="stat s1"><small>\uD83D\uDCB0 Total sales</small><b>KSh ${fmt(tot)}</b><span>${PER[per][0]}</span></div><div class="stat s2 own"><small>\uD83D\uDCC8 Profit</small><b>KSh ${fmt(tot*set.rate/100)}</b><span>${set.rate}% commission</span></div><div class="stat s3"><small>\u2705 Sold</small><b>${ok.length}</b><span>bundles delivered</span></div><button class="stat s4" onclick="tab='sales';sf='failed';fresh=true;render()" aria-label="Open failed sales"><small>\u26A0\uFE0F Failed</small><b>${sales.filter(x=>x.status==='failed').length}</b><span>tap to view and retry</span></button></div>
+  <div class="hd"><h2>Sales per day</h2><span style="font-size:13px;color:var(--mute)">7 days: KSh ${fmt(wk)}</span></div>
+  <div class="chartbox"><svg viewBox="0 0 320 126" role="img" aria-label="Sales per day for the last 7 days"><defs><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#00d35f"/><stop offset="1" stop-color="#00a94f"/></linearGradient><linearGradient id="gb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd426"/><stop offset="1" stop-color="#ff9f0a"/></linearGradient></defs><g stroke="var(--line)" stroke-dasharray="3 5"><line x1="0" y1="30.5" x2="320" y2="30.5"/><line x1="0" y1="55.5" x2="320" y2="55.5"/><line x1="0" y1="80.5" x2="320" y2="80.5"/></g><line x1="0" y1="104.5" x2="320" y2="104.5" stroke="var(--line)" stroke-width="2"/>${bars}</svg></div>
+  <div class="hd"><h2>Recent activity</h2><button class="btn" onclick="tab='sales';fresh=true;render()">View all</button></div>
+  ${rec.length?'<ul>'+rec.map(saleRow).join('')+'</ul>':'<p class="empty"><big></big>No activity yet. Payments sent to your till will appear here.</p>'}`;
+}
+
+/* ---------- offers ---------- */
+const dlg=$('#dlg');
+function openOffer(id){
+  const o=offers.find(x=>x.id===id)||{};
+  $('#dT').textContent=id?'Edit offer':'Add offer';
+  $('#oId').value=id||'';$('#oName').value=o.name||'';$('#oAmt').value=o.amount||'';$('#oUssd').value=o.ussd||'';
+  dlg.showModal();
+}
+function saveOffer(){
+  const name=$('#oName').value.trim(),amount=+$('#oAmt').value,ussd=$('#oUssd').value.trim(),id=$('#oId').value;
+  if(!name||!(amount>0)||!/\bn\b/i.test(ussd)||!/^\*.*#$/.test(ussd))return toast('Add a name, a price, and a code like *180*5*2*n*2*1#');
+  if(id){Object.assign(offers.find(x=>x.id===id),{name,amount,ussd})}else offers.push({id:uid(),name,amount,ussd,on:true});
+  offers.sort((a,b)=>a.amount-b.amount);save();dlg.close();render();
+}
+function togOffer(id){const o=offers.find(x=>x.id===id);o.on=!o.on;save();render()}
+function delOffer(id){const o=offers.find(x=>x.id===id);if(confirm('Delete '+o.name+'?')){offers=offers.filter(x=>x.id!==id);save();render()}}
+
+/* ---------- rendering ---------- */
+const ST={queued:['Queued','b'],dialing:['Dialing','a'],pending:['Waiting','a'],success:['Success','g'],failed:['Failed','r']};
+function saleRow(s){
+  const [lab,c]=ST[s.status];let act='';
+  if(s.status==='failed')act=`<button class="ic retry" title="Retry" aria-label="Retry ${esc(s.phone||'')}" onclick="dialNow('${s.id}')">&#8635;<small>Retry</small></button>`;
+  if(s.status==='queued'&&!set.auto)act=`<button class="ic" title="Dial now" aria-label="Dial now" onclick="dialNow('${s.id}')">&#9654;</button>`;
+  return `<li class="row ${s.status}"><div class="amt">${s.amount}<small>KSh</small></div><div class="mid"><b>${esc(s.name||'No offer')}</b><span>\uD83D\uDCF1 ${esc(s.phone||'No number')}</span><span>\uD83D\uDD52 ${tm(s.t)}</span>${s.reason?`<em>${esc(s.reason)}</em>`:''}</div><div class="end"><span class="chip ${c}">${lab}</span>${act}</div></li>`;
+}
+function advRow(o){
+  return `<li class="row o"><div class="amt">${o.amount}<small>KSh</small></div><div class="mid"><b>${esc(o.name)}</b><span>${o.steps.map(esc).join('  \u2192  ')}</span>${calLine(o)}<div class="btns own"><button class="btn" onclick="calStart('${o.id}')">\uD83E\uDDEA Calibrate</button>${o.cal&&o.cal.text?`<button class="btn" onclick="calShow('${o.id}')">\uD83D\uDC41 Review</button>`:''}<button class="btn" onclick="openAdv('${o.id}')">\u270F\uFE0F Edit</button><button class="btn" onclick="togOffer('${o.id}')">${o.on?'\u23F8 Disable':'\u25B6 Enable'}</button><button class="btn d" onclick="delOffer('${o.id}')">\uD83D\uDDD1 Delete</button></div></div><div class="end"><span class="chip ${o.on?'g':'r'}">${o.on?'Active':'Off'}</span></div></li>`;
+}
+const adlg=$('#adlg');
+function openAdv(id){
+  const o=offers.find(x=>x.id===id)||{};
+  $('#aT').textContent=id?'Edit advanced offer':'Add advanced offer';
+  $('#aId').value=id||'';$('#aName').value=o.name||'';$('#aAmt').value=o.amount||'';$('#aCode').value=advCode(o.steps);$('#aExp').value=o.expect||'';advPreview();
+  adlg.showModal();
+}
+/* *444*5*3*2*1*n*2#  ->  ["*444#","5","3","2","1","n","2"] */
+function parseUssd(code){
+  const c=String(code||'').replace(/\s+/g,'');
+  if(!/^\*[0-9a-z*]+#$/i.test(c))return null;
+  const p=c.slice(1,-1).split('*');
+  if(p.length<2||p.some(x=>!x))return null;
+  return ['*'+p[0]+'#'].concat(p.slice(1));
+}
+function advCode(steps){
+  if(!steps||!steps.length)return '';
+  return steps[0].replace(/#$/,'')+(steps.length>1?'*'+steps.slice(1).join('*'):'')+'#';
+}
+function advPreview(){
+  const e=$('#aPrev'),c=$('#aCode').value.trim();
+  if(!c){e.textContent='';return}
+  const st=parseUssd(c);
+  if(!st){e.textContent='Check the code: it must start with *, end with #, and have at least one reply after the first part.';return}
+  e.innerHTML='Dial <b>'+esc(st[0])+'</b>'+st.slice(1).map((x,i)=>'<br>Step '+(i+1)+': select <b>'+esc(/^n$/i.test(x)?'phone number':x)+'</b>').join('')+'<br>Then done.';
+}
+function saveAdv(){
+  const name=$('#aName').value.trim(),amount=+$('#aAmt').value,id=$('#aId').value;
+  const steps=parseUssd($('#aCode').value);
+  if(!name||!(amount>0)||!steps||!steps.some(x=>/^n$/i.test(x)))return toast('Add a name, a price, and a full code like *444*5*3*n*2# (with n for the phone number)');
+  const expect=$('#aExp').value.trim();
+  if(id){const o=offers.find(x=>x.id===id);const changed=advCode(o.steps)!==advCode(steps)||(o.expect||'')!==expect;Object.assign(o,{name,amount,steps,expect});if(changed)delete o.cal}else offers.push({id:uid(),name,amount,steps,expect,adv:true,on:true});
+  offers.sort((a,b)=>a.amount-b.amount);save();adlg.close();render();
+}
+function offerRow(o){
+  return `<li class="row o"><div class="amt">${o.amount}<small>KSh</small></div><div class="mid"><b>${esc(o.name)}</b><span>${esc(o.ussd)}</span><div class="btns own"><button class="btn" onclick="openOffer('${o.id}')">\u270F\uFE0F Edit</button><button class="btn" onclick="togOffer('${o.id}')">${o.on?'\u23F8 Disable':'\u25B6 Enable'}</button><button class="btn d" onclick="delOffer('${o.id}')">\uD83D\uDDD1 Delete</button></div></div><div class="end"><span class="chip ${o.on?'g':'r'}">${o.on?'Active':'Off'}</span></div></li>`;
+}
+const SAMPLES=[
+  ()=>['MPESA','QK'+Math.random().toString(36).slice(2,10).toUpperCase()+' Confirmed. You have received Ksh20.00 from JOHN DOE 0712345678 on 18/11/26 at 8:54 AM.'],
+  ()=>['Safaricom','Recommendation for 0712345678 submitted successfully. Keep selling!! Be a Bingwa Sokoni Champion.'],
+  ()=>['Safaricom','Thank you for choosing Safaricom. You have purchased a gift bundle of 250 MBs for 0712345678. Continue connecting with Family & Friends!'],
+  ()=>['Safaricom','Recommendation failed. The customer 0712345678 has already been recommended. Kindly recommend to another customer. Thank you'],
+  ()=>['USSD','1. Bingwa offers\n2. Other offers\n3. Go back'],
+  ()=>['USSD','Your airtime balance is Ksh 120.50. Dial *544# to buy bundles.']
+];
+function fill(i){const [f,b]=SAMPLES[i]();$('#smsF').value=f;$('#smsT').value=b}
+function sim(){onSmsReceived($('#smsF').value,$('#smsT').value)}
+
+var fresh=true;
+function render(){
+  const nf=sales.filter(s=>s.status==='failed').length;
+  $('#balv').textContent=bal?'KSh '+bal.v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'KSh --';
+  $('#balt').textContent=balWait?'Checking balance...':bal?'Updated '+new Date(bal.t).toLocaleString([],{weekday:'short',hour:'2-digit',minute:'2-digit'}):'Tap to check';
+  $('#rf').classList.toggle('spin',!!balWait);
+  $('#mode').innerHTML='<i class="dot'+(set.auto?' on':'')+'"></i>'+(hasBridge()?'Connected':'Test mode')+(set.auto?' \u00B7 Auto-dial on':' \u00B7 Auto-dial paused');
+  $('#auto').checked=set.auto;
+  {const hr=new Date().getHours(),t0=startOf(0),td=sales.filter(x=>x.status==='success'&&x.t>=t0);
+   $('#gh').textContent=(hr<12?'Good morning \u2600\uFE0F':hr<17?'Good afternoon \uD83C\uDF24\uFE0F':'Good evening \uD83C\uDF19');
+   $('#gs').textContent=td.length?'Today: KSh '+fmt(td.reduce((a,x)=>a+x.amount,0))+' from '+td.length+(td.length===1?' bundle':' bundles'):'No bundles sold yet today. Let\'s go! \uD83D\uDE80'}
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===tab));
+  $('#nb').textContent=nf;$('#nb').hidden=!nf;
+  {const np=offers.filter(o=>o.cal&&(o.cal.paused||o.cal.state==='ask')&&(!o.on||o.cal.state==='ask')).length;$('#ob').textContent=np;$('#ob').hidden=!np}
+  const v=$('#view');
+  const seg=(cur,opts,v2)=>`<div class="per">${opts.map(([k,l])=>`<button class="${k===cur?'on':''}" onclick="${v2}='${k}';fresh=true;render()">${l}</button>`).join('')}</div>`;
+  if(tab==='home')v.innerHTML=home();
+  else if(tab==='sales'){
+    const LIVE=['queued','dialing','pending'],nl=sales.filter(x=>LIVE.includes(x.status)).length;
+    const f=sales.filter(x=>sf==='all'||(sf==='failed'?x.status==='failed':sf==='live'?LIVE.includes(x.status):x.status==='success'));
+    v.innerHTML=seg(sf,[['all','All'],['live','Live'+(nl?' ('+nl+')':'')],['success','Success'],['failed','Failed'+(nf?' ('+nf+')':'')]],'sf')+(sf==='failed'&&f.length?'<p class="hint" style="margin:8px 2px 0">\u26A0\uFE0F '+f.length+' failed. Tap \u21BB Retry on a sale to dial it again (check first that it did not go through).</p>':'')+(f.length?'<ul>'+f.slice(0,150).map(saleRow).join('')+'</ul>':'<p class="empty"><big></big>'+(sales.length?(sf==='live'?'Nothing in progress right now.':'Nothing here.'):'No sales yet. Payments sent to your till will appear here.')+'</p>');
+  }else if(tab==='offers'){
+    const head=seg(ot,[['normal','Normal ('+offers.filter(o=>!o.adv).length+')'],['adv','Advanced ('+offers.filter(o=>o.adv).length+')']],'ot');
+    if(ot==='adv'){const a=offers.filter(o=>o.adv);v.innerHTML=head+'<p class="note">Advanced offers are never dialed in one go. Write the full code once. The app dials the first part, waits for Safaricom\'s menu, then sends each next number one at a time.</p><p class="note">\uD83E\uDDEA <b>Calibrate</b> tests an offer without selling it: Bn goes through the menus but stops before the last option. Do it after Safaricom changes codes, so no client gets a bundle they did not pay for.</p><div class="btns own"><button class="btn p" onclick="openAdv()">+ Add advanced offer</button><button class="btn" onclick="calAll()">\uD83E\uDDEA Calibrate all</button></div>'+(a.length?'<ul>'+a.map(advRow).join('')+'</ul>':'<p class="empty"><big></big>No advanced offers yet.</p>')}
+    else v.innerHTML=head+'<div class="btns own"><button class="btn p" onclick="openOffer()">+ Add offer</button></div><ul>'+offers.filter(o=>!o.adv).map(offerRow).join('')+'</ul>';
+  }else if(tab==='team'&&window.Team)Team.view();
+  if(fresh){fresh=false;v.classList.remove('anim');void v.offsetWidth;v.classList.add('anim');clearTimeout(window._an);window._an=setTimeout(()=>v.classList.remove('anim'),900)}
+}
+const sel=(id,k,o)=>`<select id="${id}" onchange="set.${k}=this.value;save();applyTheme()">${o.map(([v,l])=>`<option value="${v}"${String(set[k])===v?' selected':''}>${l}</option>`).join('')}</select>`;
+let ss='general';
+const SS=[['general','General'],['dialing','Dialing'],['texts','Texts'],['phone','Phone']];
+function settingsView(){
+  const P={
+    general:`${window.Team?Team.account():''}<h2>Appearance</h2><label class="f" for="th">Theme</label>${sel('th','theme',[['light','Light'],['dark','Dark'],['auto','Match phone']])}
+  <div class="own"><h2>Profit</h2><label class="f" for="rate">Your commission on each sale (%)</label><input type="number" id="rate" min="0" step="0.5" value="${set.rate}" onchange="set.rate=Math.max(0,+this.value||0);save();render()"></div>
+  <div class="own"><h2>Data</h2><div class="btns"><button class="btn d" onclick="if(confirm('Delete all sales history?')){sales=[];save();render();settingsView()}">Clear sales history</button></div></div>`,
+    dialing:`  <h2>Dialing speed</h2><label class="f" for="sp">How fast Bn sends each step and moves to the next customer</label>${sel('sp','speed',[['fast','Fast'],['balanced','Balanced (recommended)'],['safe','Careful (slow phones)']])}<p class="hint">Fast waits 0.3s between steps, Balanced 0.7s, Careful 1.4s. If your phone skips steps, pick a slower option.</p>
+  <h2>Confirmation wait</h2><label class="f" for="wait">Minutes to wait for Safaricom's success message before marking a sale Failed</label><input type="number" id="wait" min="1" value="${set.wait}" onchange="set.wait=Math.max(1,+this.value||3);save()">
+  <h2>Airtime balance</h2><label class="f" for="bc">USSD code that shows your airtime balance</label><input type="text" id="bc" value="${esc(set.balCode)}" onchange="set.balCode=this.value.trim();save()">
+  <label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="ab" ${set.autoBal?'checked':''} onchange="set.autoBal=this.checked;save()" style="width:auto">Check balance after every sale</label>
+  <h2>SIM cards</h2>
+  <label class="f" for="ds">SIM used to dial codes</label>${sel('ds','dialSim',[['auto','Phone default'],['0','SIM 1'],['1','SIM 2']])}
+  <label class="f" for="rs">Read M-Pesa payment messages from</label>${sel('rs','readSim',[['both','Both SIMs'],['0','SIM 1 only'],['1','SIM 2 only']])}
+  <div class="own"><h2>Calibrate offers</h2><label class="f" for="cn">Your own number, used when calibrating (nothing is bought)</label><input type="text" id="cn" inputmode="numeric" placeholder="0712345678" value="${esc(set.calNum||'')}" onchange="const v=normPhone(this.value);if(v||!this.value.trim()){set.calNum=v||'';save();this.value=set.calNum}else toast('Enter a valid number')">
+  <label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" ${set.calOff!==false?'checked':''} onchange="set.calOff=this.checked;save()" style="width:auto">Pause an offer automatically if calibration fails or its menu changed</label></div>
+`,
+    texts:`  <div class="own"><h2>Customer messages</h2><p class="hint" style="margin-top:0">Bn texts the customer's number automatically. Use {amount}, {phone} and {name} in your message. Each text uses a little airtime from the SIM below.</p>
+  <label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" ${set.smsOn?'checked':''} onchange="set.smsOn=this.checked;save()" style="width:auto">Text after a successful sale</label>
+  <textarea id="mo" rows="3" onchange="set.smsOk=this.value.trim();save()">${esc(set.smsOk)}</textarea>
+  <label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" ${set.smsFailOn?'checked':''} onchange="set.smsFailOn=this.checked;save()" style="width:auto">Text when the number was already recommended</label>
+  <textarea id="md" rows="3" onchange="set.smsDup=this.value.trim();save()">${esc(set.smsDup)}</textarea>
+  <label class="f" for="ms">SIM used to send these texts</label>${sel('ms','smsSim',[['auto','Phone default'],['0','SIM 1'],['1','SIM 2']])}
+  <div class="btns"><button class="btn" onclick="smsTest()">\uD83D\uDCE8 Send me a test</button></div></div>
+`,
+    phone:`  <h2>USSD helper</h2><p class="hint" id="a11y"></p><div class="btns"><button class="btn" onclick="a11yRestart()">\uD83D\uDD04 Restart helper now</button></div>
+  <h2>Screen off</h2><p class="hint">When a customer pays for an advanced offer while the phone is locked, Bn wakes the screen, types your phone PIN or password, runs the codes, then locks the phone again. Works with a PIN or password (not pattern or fingerprint). The PIN is stored encrypted on this phone only.</p>
+  <label class="f" for="pin">Phone PIN or password</label><input type="password" id="pin" autocomplete="off"><p class="hint" id="pinst"></p>
+  <div class="btns"><button class="btn p" onclick="savePin()">Save</button><button class="btn" onclick="clearPin()">Remove</button><button class="btn" onclick="testWake()">\uD83E\uDDEA Test</button></div>
+  <div class="own"><h2>Test an SMS</h2><div class="btns" style="flex-wrap:wrap"><button class="btn" onclick="fill(0)">Payment</button><button class="btn" onclick="fill(1)">Submitted</button><button class="btn" onclick="fill(2)">Success</button><button class="btn" onclick="fill(3)">Failed</button><button class="btn" onclick="fill(4)">USSD menu</button><button class="btn" onclick="fill(5)">Balance</button></div>
+  <label class="f" for="smsF">Sender</label><input type="text" id="smsF" value="MPESA"><label class="f" for="smsT">Message</label><textarea id="smsT"></textarea><div class="btns"><button class="btn p" onclick="sim()">Send test SMS</button></div>
+  </div><h2>Activity log</h2><div id="loglist"></div>
+`
+  };
+  const tabs='<div class="per">'+SS.map(([k,l])=>'<button class="'+(k===ss?'on':'')+'" onclick="ss=\''+k+'\';settingsView()">'+l+'</button>').join('')+'</div>';
+  $('#view').innerHTML=tabs+P[ss];
+  if(ss==='phone'){addLog('Log opened');a11yInfo();pinInfo()}
+}
+function a11yInfo(){
+  const e=$('#a11y');if(!e)return;
+  if(!hasBridge()||!NativeBridge.a11yState){e.textContent='Only available in the Android app.';return}
+  let st={};try{st=JSON.parse(NativeBridge.a11yState())}catch(x){}
+  const run=st.on?'\u2705 Helper is running.':'\u26A0\uFE0F Helper is off or not responding.';
+  e.textContent=st.perm?run+' Bn restarts it automatically every 20 minutes and switches it back on if it turns off.':run+' Automatic restart needs a one-time setup: connect the phone to a computer with USB debugging on and run: adb shell pm grant com.bn.dialer android.permission.WRITE_SECURE_SETTINGS';
+}
+function pinInfo(){
+  const e=$('#pinst');if(!e)return;
+  if(!hasBridge()||!NativeBridge.hasUnlockPin){e.textContent='Only available in the Android app.';return}
+  e.textContent=NativeBridge.hasUnlockPin()==='true'?'\u2705 PIN saved. Bn will wake and unlock the phone for advanced offers.':'Not set. Advanced offers can fail while the screen is off.';
+}
+function savePin(){
+  const i=$('#pin'),v=i.value.trim();
+  if(!v)return toast('Type your phone PIN or password first');
+  if(!(hasBridge()&&NativeBridge.setUnlockPin))return toast('Only available in the Android app');
+  NativeBridge.setUnlockPin(v);i.value='';pinInfo();toast('PIN saved');
+}
+function clearPin(){if(hasBridge()&&NativeBridge.clearUnlockPin){NativeBridge.clearUnlockPin();pinInfo();toast('PIN removed')}}
+function testWake(){
+  if(!(hasBridge()&&NativeBridge.testWake))return toast('Only available in the Android app');
+  if(confirm('This locks your phone now. 8 seconds later Bn wakes it, unlocks it with the saved PIN and locks it again. Continue?'))NativeBridge.testWake();
+}
+function a11yRestart(){if(hasBridge()&&NativeBridge.a11yRestartNow){NativeBridge.a11yRestartNow();setTimeout(a11yInfo,4500)}else toast('Only available in the Android app')}
+/* ===== TEAM / FIREBASE (optional: switched on by filling firebase-config.js) ===== */
+const Team=(()=>{
+  const cfg=window.BN_FIREBASE||{};
+  const T={on:!!(cfg.apiKey&&cfg.projectId),ses:L('bn_ses',null),me:L('bn_me',null),users:[],tsales:[],range:'today',loading:false,loadedAt:0,busy:false,gateNew:false,pushed:L('bn_pushed',{})};
+  const KEY='?key='+encodeURIComponent(cfg.apiKey||'');
+  const AUTH='https://identitytoolkit.googleapis.com/v1/accounts:';
+  const FSB=()=>'https://firestore.googleapis.com/v1/projects/'+cfg.projectId+'/databases/(default)/documents';
+  const nice=m=>{m=String(m||'');
+    if(/EMAIL_EXISTS/.test(m))return 'That email already has an account.';
+    if(/INVALID_LOGIN|INVALID_PASSWORD|EMAIL_NOT_FOUND|INVALID_EMAIL|MISSING_PASSWORD/.test(m))return 'Wrong email or password.';
+    if(/WEAK_PASSWORD/.test(m))return 'Password must be at least 6 characters.';
+    if(/TOO_MANY/.test(m))return 'Too many tries. Wait a few minutes.';
+    if(/USER_DISABLED/.test(m))return 'This account has been disabled.';
+    if(/Failed to fetch|NetworkError|abort/i.test(m))return 'No internet connection.';
+    if(/permission/i.test(m))return 'Not allowed. Check the Firestore rules.';
+    return m||'Something went wrong.'};
+  async function api(url,o){
+    o=o||{};const ac=new AbortController();const to=setTimeout(()=>ac.abort(),20000);
+    try{
+      const r=await fetch(url,{method:o.method||'GET',headers:Object.assign({'Content-Type':'application/json'},o.headers||{}),body:o.body,signal:ac.signal});
+      const j=await r.json().catch(()=>({}));
+      if(!r.ok){const e=new Error((j.error&&j.error.message)||('HTTP '+r.status));e.status=r.status;throw e}
+      return j;
+    }finally{clearTimeout(to)}
+  }
+  const authCall=(op,b)=>api(AUTH+op+KEY,{method:'POST',body:JSON.stringify(b)});
+  function setSes(j,email){
+    T.ses={tok:j.idToken||j.id_token,ref:j.refreshToken||j.refresh_token,uid:j.localId||j.user_id,exp:Date.now()+(+(j.expiresIn||j.expires_in||3600))*1000-60000,email:email||j.email||(T.ses&&T.ses.email)||''};
+    W('bn_ses',T.ses);
+  }
+  async function token(){
+    if(!T.ses)throw new Error('Not signed in');
+    if(Date.now()<T.ses.exp)return T.ses.tok;
+    const j=await api('https://securetoken.googleapis.com/v1/token'+KEY,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(T.ses.ref)});
+    setSes(j);return T.ses.tok;
+  }
+  /* Firestore value helpers */
+  const enc=v=>v===null||v===undefined?{nullValue:null}:typeof v==='number'?(Number.isInteger(v)?{integerValue:String(v)}:{doubleValue:v}):typeof v==='boolean'?{booleanValue:v}:{stringValue:String(v)};
+  const encDoc=o=>({fields:Object.fromEntries(Object.entries(o).map(([k,v])=>[k,enc(v)]))});
+  const dec=f=>f.stringValue!==undefined?f.stringValue:f.integerValue!==undefined?+f.integerValue:f.doubleValue!==undefined?f.doubleValue:f.booleanValue!==undefined?f.booleanValue:null;
+  const decDoc=d=>d&&d.fields?Object.fromEntries(Object.entries(d.fields).map(([k,v])=>[k,dec(v)])):{};
+  async function fsGet(path){
+    const t=await token();
+    try{return decDoc(await api(FSB()+'/'+path,{headers:{Authorization:'Bearer '+t}}))}
+    catch(e){if(e.status===404)return null;throw e}
+  }
+  async function fsSet(path,obj,mask){
+    const t=await token();
+    const q=mask?'?'+mask.map(m=>'updateMask.fieldPaths='+encodeURIComponent(m)).join('&'):'';
+    return api(FSB()+'/'+path+q,{method:'PATCH',headers:{Authorization:'Bearer '+t},body:JSON.stringify(encDoc(obj))});
+  }
+  async function fsQuery(coll,filters){
+    const t=await token();
+    const F=([k,v])=>({fieldFilter:{field:{fieldPath:k},op:'EQUAL',value:enc(v)}});
+    const where=filters.length===1?F(filters[0]):{compositeFilter:{op:'AND',filters:filters.map(F)}};
+    const r=await api(FSB()+':runQuery',{method:'POST',headers:{Authorization:'Bearer '+t},body:JSON.stringify({structuredQuery:{from:[{collectionId:coll}],where,limit:500}})});
+    return r.filter(x=>x.document).map(x=>Object.assign(decDoc(x.document),{_id:x.document.name.split('/').pop()}));
+  }
+  const dayKey=t=>{const d=new Date(t);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+  const isOwner=()=>!!(T.on&&T.me&&T.me.role==='owner');
+
+  /* ---------- who is using the app ---------- */
+  function applyRole(){
+    document.body.classList.toggle('att',!!(T.on&&T.me&&T.me.role==='attendant'));
+    const tb=document.querySelector('nav button[data-t=team]');if(tb)tb.hidden=!isOwner();
+    if(tab==='team'&&!isOwner())tab='home';
+    const g=$('#gate');if(g)g.hidden=!T.on||!!(T.ses&&T.me);
+  }
+  function signOut(){
+    T.ses=null;T.me=null;T.users=[];T.tsales=[];
+    try{localStorage.removeItem('bn_ses');localStorage.removeItem('bn_me')}catch(e){}
+    applyRole();render();
+  }
+  async function loadMe(strict){
+    const d=await fsGet('users/'+T.ses.uid);
+    if(!d){if(strict){signOut();throw new Error('No access yet. Ask the owner to add you.')}return}
+    if(d.active===false){signOut();gerr('Your account is switched off. Contact the owner.');throw new Error('Your account is switched off. Contact the owner.')}
+    T.me={role:d.role,name:d.name||'',ownerUid:d.ownerUid,email:d.email||T.ses.email,uid:T.ses.uid};
+    W('bn_me',T.me);applyRole();
+  }
+  function gerr(m){const e=$('#gerr');if(e)e.textContent=m||''}
+  function toggleMode(){
+    T.gateNew=!T.gateNew;
+    $('#gname').hidden=!T.gateNew;
+    $('#gbtn').textContent=T.gateNew?'Create owner account':'Sign in';
+    $('#gmode').textContent=T.gateNew?'Set up the owner account for your shop':'Sign in to continue';
+    $('#gswitch').textContent=T.gateNew?'I already have an account':'New shop? Create the owner account';
+    gerr('');
+  }
+  async function submit(){
+    const email=$('#gemail').value.trim(),pw=$('#gpw').value,name=$('#gname').value.trim();
+    if(!email||!pw)return gerr('Type your email and password.');
+    if(T.gateNew&&!name)return gerr('Type your name.');
+    const b=$('#gbtn');b.disabled=true;gerr('');
+    try{
+      if(T.gateNew){
+        const j=await authCall('signUp',{email,password:pw,returnSecureToken:true});
+        setSes(j,email);
+        await fsSet('users/'+T.ses.uid,{email,name,role:'owner',ownerUid:T.ses.uid,active:true,createdAt:Date.now(),lastSeen:Date.now()});
+      }else{
+        const j=await authCall('signInWithPassword',{email,password:pw,returnSecureToken:true});
+        setSes(j,email);
+      }
+      await loadMe(true);
+      $('#gpw').value='';
+      render();tick();
+    }catch(e){if(!/switched off/.test(e.message))gerr(nice(e.message))}
+    finally{b.disabled=false}
+  }
+  async function forgot(){
+    const email=$('#gemail').value.trim();
+    if(!email)return gerr('Type your email first, then tap Forgot password.');
+    try{await authCall('sendOobCode',{requestType:'PASSWORD_RESET',email});gerr('A reset link was sent to '+email+'.')}catch(e){gerr(nice(e.message))}
+  }
+
+  /* ---------- background sync ---------- */
+  async function pushOffers(){
+    const j=JSON.stringify(offers);
+    if(j===localStorage.getItem('bn_oh'))return;
+    await fsSet('offers/'+T.ses.uid,{json:j,v:Date.now()});
+    localStorage.setItem('bn_oh',j);
+  }
+  async function pullOffers(){
+    const d=await fsGet('offers/'+T.me.ownerUid);
+    if(d&&d.json&&String(d.v)!==localStorage.getItem('bn_ov')){
+      offers=JSON.parse(d.json);W('bs_offers',offers);localStorage.setItem('bn_ov',String(d.v));render();
+    }
+  }
+  const sig=s=>s.status+'|'+s.ts;
+  const recent=s=>s.t>Date.now()-7*864e5;
+  async function pushSales(){
+    let n=0;
+    try{
+      for(const s of sales){
+        if(!recent(s)||T.pushed[s.id]===sig(s))continue;
+        if(++n>25)break;
+        await fsSet('sales/'+T.ses.uid.slice(0,8)+'_'+String(s.id).replace(/[^A-Za-z0-9_-]/g,''),{
+          ownerUid:T.me.ownerUid,uid:T.ses.uid,by:T.me.name||T.me.email||'',day:dayKey(s.t),t:s.t,ts:s.ts,
+          amount:s.amount,phone:s.phone||'',offer:s.name||'',status:s.status,reason:s.reason||'',code:s.code||''});
+        T.pushed[s.id]=sig(s);
+      }
+    }finally{W('bn_pushed',T.pushed)}
+  }
+  async function tick(){
+    if(!T.on||!T.ses||!T.me||T.busy)return;
+    T.busy=true;
+    try{
+      await loadMe(false);
+      if(!T.ses)return;
+      const now=Date.now();
+      if(now-(T.seen||0)>300000){T.seen=now;fsSet('users/'+T.ses.uid,{lastSeen:now},['lastSeen']).catch(()=>{})}
+      if(isOwner())await pushOffers();else await pullOffers();
+      await pushSales();
+    }catch(e){T.err=e.message}
+    finally{T.busy=false}
+  }
+  function dirty(){
+    if(!T.on||!T.ses||!T.me||T._t)return;
+    let need=sales.some(s=>recent(s)&&T.pushed[s.id]!==sig(s));
+    if(!need&&isOwner())need=JSON.stringify(offers)!==localStorage.getItem('bn_oh');
+    if(need)T._t=setTimeout(()=>{T._t=0;tick()},3000);
+  }
+
+  /* ---------- owner: team screen ---------- */
+  async function load(force){
+    if(!isOwner()||T.loading)return;
+    if(!force&&Date.now()-T.loadedAt<30000)return;
+    T.loading=true;
+    try{
+      T.users=await fsQuery('users',[['ownerUid',T.ses.uid]]);
+      const days=T.range==='today'?[0]:T.range==='yest'?[1]:[0,1,2,3,4,5,6];
+      let all=[];
+      for(const i of days){all=all.concat(await fsQuery('sales',[['ownerUid',T.ses.uid],['day',dayKey(startOf(i))]]))}
+      T.tsales=all.sort((a,b)=>b.t-a.t);
+      T.loadedAt=Date.now();T.err='';
+    }catch(e){T.err=nice(e.message)}
+    finally{T.loading=false;if(tab==='team')render()}
+  }
+  function setRange(r){T.range=r;T.loadedAt=0;T.tsales=[];fresh=true;render();load(true)}
+  const ago=t=>{if(!t)return 'never';const m=Math.round((Date.now()-t)/60000);return m<2?'just now':m<60?m+' min ago':m<1440?Math.round(m/60)+' h ago':Math.round(m/1440)+' days ago'};
+  function view(){
+    const v=$('#view');
+    if(!isOwner()){v.innerHTML='';return}
+    load();
+    const per=(k,l)=>`<button class="${T.range===k?'on':''}" onclick="Team.setRange('${k}')">${l}</button>`;
+    const people=[{uid:T.ses.uid,name:(T.me.name||'Owner')+' (you)',active:true,owner:true}].concat(T.users.filter(u=>u._id!==T.ses.uid).map(u=>({uid:u._id,name:u.name||u.email,email:u.email,active:u.active!==false,lastSeen:u.lastSeen})));
+    const stat=p=>{const l=T.tsales.filter(s=>s.uid===p.uid),ok=l.filter(s=>s.status==='success');return{n:ok.length,sum:ok.reduce((a,s)=>a+s.amount,0),f:l.filter(s=>s.status==='failed').length}};
+    const members=people.map(p=>{const s=stat(p);return `<li class="row o"><div class="amt">${fmt(s.sum)}<small>KSh</small></div><div class="mid"><b>${esc(p.name)}</b><span>${s.n} sold \u00B7 ${s.f} failed</span></div></li>`}).join('');
+    const team=people.filter(p=>!p.owner).map(p=>`<li class="row ${p.active?'success':'failed'}"><div class="mid"><b>${esc(p.name)}</b><span>${esc(p.email||'')}</span><span>Last seen: ${ago(p.lastSeen)}</span><div class="btns"><button class="btn ${p.active?'d':''}" onclick="Team.setActive('${p.uid}',${!p.active})">${p.active?'\u23F8 Switch off':'\u25B6 Switch on'}</button><button class="btn" onclick="Team.reset('${esc(p.email||'')}')">\uD83D\uDD11 Reset password</button></div></div><div class="end"><span class="chip ${p.active?'g':'r'}">${p.active?'Active':'Off'}</span></div></li>`).join('');
+    const recentRows=T.tsales.slice(0,40).map(s=>`<li class="row ${esc(s.status)}"><div class="amt">${s.amount}<small>KSh</small></div><div class="mid"><b>${esc(s.by||'')}</b><span>\uD83D\uDCF1 ${esc(s.phone||'')}</span><span>\uD83D\uDD52 ${tm(s.t)} \u00B7 ${esc(s.offer||'')}</span>${s.reason?`<em>${esc(s.reason)}</em>`:''}</div><div class="end"><span class="chip ${s.status==='success'?'g':s.status==='failed'?'r':s.status==='queued'?'b':'a'}">${esc(s.status)}</span></div></li>`).join('');
+    v.innerHTML=`<div class="hd"><h2 style="margin:12px 2px 6px">Team</h2><button class="btn" onclick="Team.load(true)">${T.loading?'Loading...':'\u21BB Refresh'}</button></div>
+    <div class="per">${per('today','Today')}${per('yest','Yesterday')}${per('week','7 days')}</div>
+    ${T.err?`<p class="note">${esc(T.err)}</p>`:''}
+    <ul>${members}</ul>
+    <div class="hd"><h2>People</h2><button class="btn p" onclick="Team.openAdd()">+ Add attendant</button></div>
+    ${team?`<ul>${team}</ul>`:'<p class="empty"><big></big>No attendants yet. Add one so they can sell from their own phone.</p>'}
+    <h2>Team sales</h2>${recentRows?`<ul>${recentRows}</ul>`:'<p class="hint">No sales in this period.</p>'}`;
+  }
+  function openAdd(){['tn','te','tp'].forEach(i=>$('#'+i).value='');$('#tmsg').textContent='';$('#tdlg').showModal()}
+  async function addAttendant(){
+    const name=$('#tn').value.trim(),email=$('#te').value.trim(),pw=$('#tp').value;
+    if(!name||!email||pw.length<6)return $('#tmsg').textContent='Type a name, an email and a password of at least 6 characters.';
+    const b=$('#tgo');b.disabled=true;$('#tmsg').textContent='Creating...';
+    try{
+      const j=await authCall('signUp',{email,password:pw,returnSecureToken:true});   /* the new account's own tokens are not used here */
+      await fsSet('users/'+j.localId,{email,name,role:'attendant',ownerUid:T.ses.uid,active:true,createdAt:Date.now(),lastSeen:0});
+      $('#tdlg').close();toast('Added '+name+'. Give them the email and password.');load(true);
+    }catch(e){$('#tmsg').textContent=nice(e.message)}
+    finally{b.disabled=false}
+  }
+  async function setActive(uid,on){
+    if(!on&&!confirm('Switch this person off? They will not be able to sell or see sales.'))return;
+    try{await fsSet('users/'+uid,{active:on},['active']);toast(on?'Switched on':'Switched off');load(true)}catch(e){toast(nice(e.message))}
+  }
+  async function reset(email){
+    if(!email)return;
+    try{await authCall('sendOobCode',{requestType:'PASSWORD_RESET',email});toast('Reset link sent to '+email)}catch(e){toast(nice(e.message))}
+  }
+  const account=()=>!T.on?'':`<h2 style="margin-top:12px">Account</h2><p class="hint">${T.me?'Signed in as <b>'+esc(T.me.name||T.me.email)+'</b> ('+(T.me.role==='owner'?'owner':'attendant')+') \u00B7 '+esc(T.me.email||''):'Not signed in'}</p><div class="btns"><button class="btn d" onclick="Team.out()">Sign out</button></div>`;
+  function out(){if(confirm('Sign out? Bn will stop selling until you sign in again.'))signOut()}
+  const canDial=()=>!T.on||!!(T.ses&&T.me);
+  function init(){
+    applyRole();
+    if(T.on&&T.ses&&T.me){tick()}
+    if(T.on){setInterval(tick,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick()})}
+  }
+  return {T,init,submit,toggleMode,forgot,view,load,setRange,openAdd,addAttendant,setActive,reset,account,out,canDial,dirty,isOwner,_:{enc,decDoc,dayKey,fsSet,fsGet,fsQuery,tick,pushSales}};
+})();
+window.Team=Team;
+Team.init();
+
+$('#nav').onclick=e=>{const t=e.target.closest('button');if(!t)return;tab=t.dataset.t;fresh=true;render();if(tab==='settings')settingsView();window.scrollTo(0,0)};
+$('#auto').onchange=e=>{set.auto=e.target.checked;save();pump();render()};
+render();pump();
+</script>
+</body>
+</html>
