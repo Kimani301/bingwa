@@ -4,10 +4,12 @@ Bn wraps the Bn web app (app/src/main/assets/index.html) in an Android app that 
 dial USSD codes, send step-by-step replies, and read payment SMS.
 
 ## How the screens are arranged
-- **Home**: totals, profit, sales per day, recent activity. The Failed card jumps to failed sales.
+- **Home**: totals, profit, sales per day, recent activity (shows the client's name, taken from the M-Pesa message or typed on the Sell tab). The Failed card jumps to failed sales.
+- **Sell**: tap an offer, type the client's phone number (and optionally their name), tap Sell. The sale is dialed straight away,
+  even if Auto-dial is off, and shows under Latest. Attendants can use it too.
 - **Sales**: All, **Live** (queued, dialing or waiting for Safaricom), Success, Failed. Retry failed sales here.
 - **Offers**: Normal and Advanced, with a count on each. Advanced offers have Calibrate / Calibrate all.
-  A badge on the tab shows offers that were paused by calibration or are waiting for your OK.
+  A badge on the tab shows offers that were paused because calibration failed.
 - **Team** (owner only): attendants and their sales.
 - **Settings**, split into four tabs: **General** (account, theme, profit, data), **Dialing** (speed, wait,
   airtime balance, SIMs, calibrate), **Texts** (customer messages), **Phone** (USSD helper, screen off, test SMS, activity log).
@@ -87,17 +89,15 @@ so the phone does not get locked out.
 Safaricom sometimes changes its USSD menus. If option 2 becomes a different bundle, a customer could get an
 offer they did not pay for. **Calibrate** catches this before a customer does.
 
-Offers > Advanced > **Calibrate** (one offer) or **Calibrate all**. Bn dials the code and sends each step,
-but **stops at the menu where the last option would be chosen and never sends it**, then cancels the session.
-Nothing is bought. Bn uses your own number (Settings > Calibrate offers) where the code has `n`.
+Offers > Advanced > **Calibrate** (one offer) or **Calibrate all**. Just tap it: Bn dials the code and sends every step by itself,
+then shows a **list of the steps it went through** and what Safaricom answered at each one. It **stops before the last option and never sends it**,
+so nothing is bought. Bn uses your own number (Settings > Calibrate offers, asked once) where the code has `n`.
 
 What you get:
-- **Last menu must show** (optional, on each advanced offer): words like `2GB`. If they are missing, calibration fails.
-- With no words set, the first calibration shows you the last menu. Tap **Looks right** to approve it; later checks
-  compare against that approved menu and flag any change.
-- A failed or changed offer is **paused automatically** (switch off in Settings > Calibrate offers), so payments
-  for it fail safely instead of delivering the wrong bundle. Tap **Review** to see the menu, then Looks right to re-enable.
-- If you set "Last menu must show", real sales use it too: the sale is stopped before the last option if the menu does not match.
+- A green tick for each step that worked, and a note that the last step was not sent. Tap **Steps** on an offer to see the list again.
+- If Safaricom answers with an error, or does not answer, the list stops with a red cross and the reason.
+- A failed offer is **paused automatically** (switch off in Settings > Calibrate offers), so payments
+  for it fail safely instead of delivering the wrong bundle. Fix the code, then calibrate again.
 
 Calibrate needs the screen on and the Bn USSD helper running.
 

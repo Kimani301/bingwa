@@ -28,9 +28,9 @@ h1{font:900 26px var(--font);margin:0;letter-spacing:.5px}header p{margin:1px 0 
 .rf{font-size:28px;display:inline-block;color:var(--g)}.rf.spin{animation:sp 1s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.rf.spin{animation:none}}
 nav{display:flex;position:fixed;left:0;right:0;bottom:0;background:var(--card);border-radius:30px 30px 0 0;box-shadow:0 -6px 24px rgba(0,60,25,.16);z-index:5;padding:8px 8px calc(10px + env(safe-area-inset-bottom));gap:2px}
-nav button{--tc:#00a94f;flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 2px;border:0;background:none;color:var(--mute);font:inherit;font-size:12px;font-weight:800;position:relative}
-nav button:nth-child(2){--tc:#1e88ff}nav button:nth-child(3){--tc:#ff8a1f}nav button:nth-child(4){--tc:#e91e8c}nav button:nth-child(5){--tc:#8e5cf7}nav button[hidden]{display:none}
-nav svg{width:58px;height:34px;padding:5px 17px;border-radius:17px;stroke-width:2.2;transition:.15s}
+nav button{--tc:#00a94f;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 2px;border:0;background:none;color:var(--mute);font:inherit;font-size:12px;font-weight:800;position:relative}
+nav button:nth-child(2){--tc:#ff8a1f}nav button:nth-child(3){--tc:#1e88ff}nav button:nth-child(4){--tc:#e91e8c}nav button:nth-child(5){--tc:#8e5cf7}nav button:nth-child(6){--tc:#14b8a6}nav button[hidden]{display:none}
+nav svg{width:50px;height:32px;padding:5px 14px;border-radius:17px;stroke-width:2.2;transition:.15s}
 nav button.on{color:var(--tc)}nav button.on svg{background:var(--tc);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.18)}
 .per+h2,.per+.own>h2:first-child,.per+.note{margin-top:14px}
 nav i.ob{background:var(--a)}
@@ -99,6 +99,17 @@ body.att .own{display:none!important}
 .gcard .gerr{color:var(--r);font-size:14px;font-weight:700;min-height:0}
 .gcard .btn.p{width:100%;min-height:52px;font-size:17px}
 .gl{border:0;background:none;color:var(--g);font:inherit;font-weight:800;font-size:14px;padding:8px}
+.pick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0 4px}
+.pk{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;padding:12px;border:2px solid var(--line);border-radius:20px;background:var(--card);color:var(--ink);font:inherit;box-shadow:0 4px 0 var(--line);min-height:76px}
+.pk b{font:900 22px/1 var(--font);color:var(--g);font-variant-numeric:tabular-nums}.pk b small{font-size:11px;font-weight:800;margin-left:3px}
+.pk span{font-size:13px;font-weight:700;color:var(--mute);line-height:1.25}
+.pk.on{border-color:var(--g);background:var(--gs);box-shadow:0 4px 0 var(--hd2)}
+.pk:active{transform:translateY(3px);box-shadow:none}
+.sellbtn{width:100%;min-height:56px;font-size:18px;margin-top:16px}
+.stp{margin:6px 0 0;padding:0;list-style:none}.stp li{padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}.stp li:last-child{border:0}
+.stp b{display:block;font-weight:800}.stp pre{white-space:pre-wrap;margin:3px 0 0;font:inherit;font-size:13px;color:var(--mute);word-break:break-word}
+.stp li.bad b{color:var(--r)}.stp li.skip b{color:var(--a)}
+details.cd{margin:6px 0 10px;padding:8px 12px;border:2px solid var(--line);border-radius:16px}details.cd summary{font-weight:800;font-size:14px}
 </style>
 </head>
 <body>
@@ -111,6 +122,7 @@ body.att .own{display:none!important}
 <main id="view"></main>
 <nav id="nav">
   <button data-t="home" class="on"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Home</span></button>
+  <button data-t="sell"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg><span>Sell</span></button>
   <button data-t="sales"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg><span>Sales</span><i id="nb" hidden></i></button>
   <button data-t="offers"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1"/></svg><span>Offers</span><i id="ob" class="ob" hidden></i></button>
   <button data-t="team" hidden><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg><span>Team</span></button>
@@ -151,8 +163,6 @@ body.att .own{display:none!important}
   <label class="f" for="aAmt">Price (KSh)</label><input type="number" id="aAmt" inputmode="numeric" placeholder="250">
   <label class="f" for="aCode">Full USSD code</label><input type="text" id="aCode" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="*444*5*3*2*1*n*2#" oninput="advPreview()">
   <p class="hint">Write the whole code. The app dials the first part, then sends each number as a reply, one step at a time. Write n where the client's phone number goes.</p>
-  <label class="f" for="aExp">Last menu must show (optional)</label><input type="text" id="aExp" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="2GB, 250">
-  <p class="hint">Words that must appear on the menu just before the last option, e.g. the bundle size. Separate with commas. Calibrate checks it, and a real sale is stopped before the last option if the menu does not show it.</p>
   <div id="aPrev" class="hint" style="margin-top:8px"></div>
   <div class="btns"><button type="button" class="btn p" onclick="saveAdv()">Save offer</button><button type="button" class="btn" onclick="adlg.close()">Cancel</button></div>
 </dialog>
@@ -232,6 +242,11 @@ window.onSmsReceived=function(sender,body,slot){
   addLog('Unrecognised SMS from '+sender+': '+body.slice(0,100));
 };
 
+function smsName(body){
+  const m=String(body||'').match(/\bfrom\s+([^\d]+?)\s*(?:\+?\d|\bon\b)/i);
+  if(!m)return '';
+  return m[1].replace(/[^A-Za-z .'\-]/g,' ').replace(/\s+/g,' ').trim().toLowerCase().replace(/(^|[ .'\-])([a-z])/g,(x,a,b)=>a+b.toUpperCase()).slice(0,40);
+}
 function gotPayment(body){
   const code=(body.match(/\b(?=[A-Z0-9]*[A-Z])[A-Z0-9]{10}\b/)||[])[0]||('NOCODE'+uid());
   if(sales.some(s=>s.code===code))return addLog('Duplicate ignored: '+code);
@@ -240,7 +255,7 @@ function gotPayment(body){
   const amount=am?parseFloat(am[1].replace(/,/g,'')):0;
   const phone=pm?normPhone(pm[1]):null;
   const o=offers.find(x=>x.on&&x.amount===amount);
-  const s={id:uid(),code,amount,phone,name:o?o.name:'',ussd:'',status:'queued',reason:'',t:Date.now(),ts:Date.now()};
+  const s={id:uid(),code,amount,phone,client:smsName(body),name:o?o.name:'',ussd:'',status:'queued',reason:'',t:Date.now(),ts:Date.now()};
   if(!phone)fail(s,'No valid phone number in the payment SMS');
   else if(!o)fail(s,'No active offer priced KSh '+amount);
   else build(s,o);
@@ -292,7 +307,7 @@ const simSlot=()=>set.dialSim==='auto'?-1:+set.dialSim;
 const busy=()=>!!balWait||!!cal||sales.some(s=>s.status==='dialing');
 function build(s,o){
   s.name=o.name;
-  if(o.adv){s.steps=o.steps.map(t=>t.replace(/\bn\b/gi,s.phone));s.ussd=s.steps[0];s.expect=o.expect||''}
+  if(o.adv){s.steps=o.steps.map(t=>t.replace(/\bn\b/gi,s.phone));s.ussd=s.steps[0]}
   else{delete s.steps;s.ussd=o.ussd.replace(/\bn\b/i,s.phone)}
 }
 const FAILRE=/(invalid|incorrect|unable|insufficient|not (?:allowed|eligible|available|registered)|failed|error|connection problem|already|unsuccessful)/i;
@@ -303,7 +318,6 @@ function ussdStep(s,txt){
   s.step++;s.ts=Date.now();
   if(s.step<s.steps.length){
     const i=s.step;
-    if(i===s.steps.length-1&&s.expect){const miss=calMiss(s.expect,txt);if(miss.length){fail(s,'Menu changed ('+miss.join(', ')+' not shown). Offer NOT sent.');return done()}}
     save();render();
     setTimeout(()=>{
       if(s.status!=='dialing'||s.step!==i)return;
@@ -320,12 +334,12 @@ function dial(s){
 function pump(){
   if(window.Team&&!Team.canDial())return;
   if(busy())return;
-  const q=sales.slice().reverse().find(x=>x.status==='queued');
+  const q=sales.slice().reverse().find(x=>x.status==='queued'&&(set.auto||x.manual));
   const w=nextAt-Date.now();
   if(w>0){clearTimeout(pt);pt=setTimeout(pump,w+20);return}
   /* customers first: the balance check waits until the queue is empty */
-  if(needBal&&Date.now()>=balAt&&!(set.auto&&q)){needBal=false;if(set.autoBal&&hasBridge()){refreshBal(true);return}}
-  if(!set.auto)return;if(q)dial(q)}
+  if(needBal&&Date.now()>=balAt&&!q){needBal=false;if(set.autoBal&&hasBridge()){refreshBal(true);return}}
+  if(q)dial(q)}
 function dialNow(id){
   const s=sales.find(x=>x.id===id);if(!s)return;
   if(s.status==='failed'&&!confirm('The earlier try may have gone through. Dial again for '+s.phone+'?'))return;
@@ -344,21 +358,20 @@ setInterval(()=>{
 },5000);
 setInterval(pump,1000);
 
-/* ---------- calibrate: walk an advanced offer up to (not including) its last option ---------- */
+/* ---------- calibrate: run every step of an advanced offer except the last option, and list what happened ---------- */
 const normMenu=t=>String(t||'').toLowerCase().replace(/\s+/g,' ').trim();
-const calMiss=(exp,txt)=>{const m=normMenu(txt);return String(exp||'').split(',').map(x=>x.trim()).filter(Boolean).filter(k=>!m.includes(k.toLowerCase()))};
 function calStart(id,quiet){
   const o=offers.find(x=>x.id===id&&x.adv);if(!o){calQ=[];return}
   if(!hasBridge()||!NativeBridge.replyUssd){calQ=[];return toast('Calibrate only works in the Android app')}
   if(busy()){calQ=[];return toast('Another dial is running. Try again in a moment.')}
   let n=normPhone(set.calNum);
   if(!n){
-    const x=prompt('Calibrate sends this number inside the code but NEVER the last option, so nothing is bought.\nType your OWN phone number to test with:','');
+    const x=prompt('Calibrate runs the offer on a number of yours but never sends the last option, so nothing is bought.\nType your OWN phone number (asked only once):','');
     if(x===null){calQ=[];return}
     n=normPhone(x);if(!n){calQ=[];return toast('Enter a valid number like 0712345678')}
     set.calNum=n;save();
   }
-  cal={o,quiet:!!quiet,steps:o.steps.map(t=>t.replace(/\bn\b/gi,n)),step:0,ts:Date.now()};
+  cal={o,quiet:!!quiet,steps:o.steps.map(t=>t.replace(/\bn\b/gi,n)),step:0,ts:Date.now(),trail:[]};
   addLog('Calibrating '+o.name+' (stops before the last option)');
   toast('Calibrating '+o.name+'... do not touch the phone');
   try{NativeBridge.dialUssd(cal.steps[0],simSlot())}catch(e){calEnd('fail','Could not dial: '+e)}
@@ -368,8 +381,10 @@ function calReply(txt){
   const c=cal;if(!c)return;
   const clean=String(txt).replace(/\s+/g,' ').trim();
   c.ts=Date.now();
+  const row={did:c.step===0?'Dialed '+c.steps[0]:'Sent '+c.steps[c.step],menu:String(txt).trim().slice(0,400)};
+  c.trail.push(row);
   addLog('Calibrate step '+(c.step+1)+' reply: '+clean.slice(0,90));
-  if(FAILRE.test(clean))return calEnd('fail','Safaricom said: '+clean.slice(0,160));
+  if(FAILRE.test(clean)){row.bad=1;return calEnd('fail','Safaricom said: '+clean.slice(0,160))}
   c.step++;
   if(c.step<c.steps.length-1){            /* more steps to go, and the next one is not the last */
     const i=c.step;
@@ -377,36 +392,30 @@ function calReply(txt){
       if(cal!==c||c.step!==i)return;
       try{NativeBridge.replyUssd(c.steps[i])}catch(e){calEnd('fail','Could not send step '+(i+1))}
     },spd()[0]);
-  }else calEnd('reached',String(txt).trim());   /* the next one IS the last option: stop here, never send it */
+  }else calEnd('reached','')              /* the next one IS the last option: stop here, never send it */
 }
 function calEnd(kind,text){
   const c=cal;if(!c)return;
   cal=null;endSession();
-  const o=c.o,prev=o.cal||{};
-  let state,msg,fp=prev.fp||'';
-  if(kind!=='reached'){state='bad';msg=text}
-  else{
-    const nf=normMenu(text);
-    if(o.expect&&o.expect.trim()){
-      const miss=calMiss(o.expect,text);
-      if(miss.length){state='bad';msg='The last menu no longer shows: '+miss.join(', ')}
-      else{state='ok';msg='The last menu shows what you expect.';fp=nf}
-    }else if(prev.fp){
-      if(prev.fp===nf){state='ok';msg='Same last menu as your last approved check.'}
-      else{state='changed';msg='The last menu is DIFFERENT from your last approved check.'}
-    }else{state='ask';msg='First check. Read the menu below: is this the offer you want?'}
+  const o=c.o,last=c.steps[c.steps.length-1];
+  let state,msg;
+  if(kind==='reached'){
+    c.trail.push({did:'Last step "'+last+'" NOT sent',menu:'Bn stops here so nothing is bought.',skip:1});
+    state='ok';msg='All '+(c.steps.length-1)+' steps worked. Stopped before the last option so nothing was bought.';
+  }else{
+    if(!c.trail.length||!c.trail[c.trail.length-1].bad)c.trail.push({did:'Stopped',menu:text,bad:1});
+    state='bad';msg=text;
   }
-  o.cal={t:Date.now(),state,msg,text:kind==='reached'?String(text).slice(0,600):'',fp};
+  o.cal={t:Date.now(),state,msg,trail:c.trail};
   let paused=false;
-  if((state==='bad'||state==='changed')&&set.calOff!==false&&o.on){o.on=false;paused=true;o.cal.paused=true}
+  if(state==='bad'&&set.calOff!==false&&o.on){o.on=false;paused=true;o.cal.paused=true}
   addLog('Calibrate '+o.name+': '+state.toUpperCase()+' - '+msg+(paused?' Offer paused.':''));
   save();nextAt=Date.now()+spd()[1];
-  calSum.push(o.name+': '+({ok:'OK',bad:'FAILED',changed:'CHANGED',ask:'needs your OK'}[state]));
+  calSum.push(o.id);
   if(calQ.length){setTimeout(calNext,2500)}
   else{
-    const all=calSum.length>1;const sm=calSum.slice();calSum=[];
-    if(!c.quiet&&!all)calShow(o.id);
-    else if(all)calSummary(sm);
+    const ids=calSum.slice();calSum=[];
+    if(ids.length>1)calSummary(ids);else calShow(o.id);
   }
   render();pump();
 }
@@ -418,37 +427,32 @@ function calNext(){
 function calAll(){
   const l=offers.filter(o=>o.adv&&o.on);
   if(!l.length)return toast('No active advanced offers to calibrate');
-  if(!confirm('Calibrate '+l.length+' advanced offer'+(l.length>1?'s':'')+'? Each is walked up to its last option and never completed.'))return;
+  if(!confirm('Calibrate '+l.length+' advanced offer'+(l.length>1?'s':'')+'? Each one is run step by step but the last option is never sent.'))return;
   calSum=[];calQ=l.map(o=>o.id);calNext();
 }
-function calSummary(list){
+const calSteps=o=>'<ol class="stp">'+((o.cal&&o.cal.trail)||[]).map((r,i)=>'<li class="'+(r.bad?'bad':r.skip?'skip':'')+'"><b>'+(r.bad?'\u274C':r.skip?'\u23F9':'\u2705')+' '+(i+1)+'. '+esc(r.did)+'</b>'+(r.menu?'<pre>'+esc(r.menu)+'</pre>':'')+'</li>').join('')+'</ol>';
+const calIco=o=>o.cal&&o.cal.state==='ok'?'\u2705':'\u274C';
+function calSummary(ids){
+  const list=ids.map(id=>offers.find(x=>x.id===id)).filter(o=>o&&o.cal);
   $('#cT').textContent='Calibration done';
-  $('#cB').innerHTML='<p class="hint" style="margin-top:0">'+list.map(esc).join('<br>')+'</p><p class="hint">Offers marked CHANGED or FAILED were paused so no client gets the wrong bundle. Tap Review on an offer to see its menu.</p>';
+  $('#cB').innerHTML=list.map(o=>'<p style="margin:10px 0 0"><b>'+calIco(o)+' '+esc(o.name)+'</b><br><span class="hint">'+esc(o.cal.msg)+(o.cal.paused?' Offer paused.':'')+'</span></p><details class="cd"><summary>See the steps</summary>'+calSteps(o)+'</details>').join('')
+    +(list.some(o=>o.cal.paused)?'<p class="hint">Failed offers were paused so no client gets the wrong bundle. Fix the code, then calibrate again.</p>':'');
   $('#cBtns').innerHTML='<button type="button" class="btn p" onclick="cdlg.close()">Close</button>';
   cdlg.showModal();
 }
 const cdlg=$('#cdlg');
 function calShow(id){
-  const o=offers.find(x=>x.id===id);if(!o||!o.cal)return;
-  const c=o.cal,ico={ok:'\u2705',bad:'\u274C',changed:'\u26A0\uFE0F',ask:'\u2753'}[c.state]||'';
-  $('#cT').textContent=ico+' '+o.name;
-  $('#cB').innerHTML='<p class="hint" style="margin-top:0"><b>'+esc(c.msg)+'</b></p>'
-    +(c.text?'<label class="f">Menu where the last option would be chosen</label><pre style="white-space:pre-wrap;background:var(--card);border:2px solid var(--line);border-radius:12px;padding:10px;font:inherit;font-size:14px;margin:4px 0 0">'+esc(c.text)+'</pre><p class="hint">Bn would now send: <b>'+esc(o.steps[o.steps.length-1])+'</b> (not sent).</p>':'')
-    +(c.paused?'<p class="hint">\u23F8 This offer was paused so no client gets the wrong bundle.</p>':'');
-  let b='';
-  if(c.state==='ask'||c.state==='changed')b='<button type="button" class="btn p" onclick="calOk(\''+o.id+'\')">Looks right</button><button type="button" class="btn d" onclick="calNo(\''+o.id+'\')">Not right</button>';
-  else if(c.state==='bad')b='<button type="button" class="btn" onclick="cdlg.close();calStart(\''+o.id+'\')">Test again</button>';
-  $('#cBtns').innerHTML=b+'<button type="button" class="btn" onclick="cdlg.close()">Close</button>';
+  const o=offers.find(x=>x.id===id);if(!o||!o.cal||!o.cal.trail)return;
+  $('#cT').textContent=calIco(o)+' '+o.name;
+  $('#cB').innerHTML='<p class="hint" style="margin-top:0"><b>'+esc(o.cal.msg)+'</b></p>'+calSteps(o)+(o.cal.paused?'<p class="hint">\u23F8 This offer was paused so no client gets the wrong bundle.</p>':'');
+  $('#cBtns').innerHTML=(o.cal.state==='bad'?'<button type="button" class="btn p" onclick="cdlg.close();calStart(\''+o.id+'\')">Calibrate again</button>':'')+'<button type="button" class="btn" onclick="cdlg.close()">Close</button>';
   if(!cdlg.open)cdlg.showModal();
 }
-function calOk(id){const o=offers.find(x=>x.id===id);if(!o||!o.cal)return;o.cal.state='ok';o.cal.fp=normMenu(o.cal.text);o.cal.msg='Approved by you.';delete o.cal.paused;o.on=true;save();cdlg.close();render();toast('Approved. Offer is active')}
-function calNo(id){const o=offers.find(x=>x.id===id);if(!o)return;o.on=false;if(o.cal){o.cal.state='bad';o.cal.msg='You marked this menu as not right.';o.cal.paused=true}save();cdlg.close();render();toast('Offer paused. Fix its code, then calibrate again')}
 function calLine(o){
   const c=o.cal;
-  if(!c)return '<span>\uD83E\uDDEA Not calibrated yet</span>';
-  const t=tm(c.t),lab={ok:'\u2705 Calibrated '+t,bad:'',changed:'',ask:'\u2753 Needs your OK ('+t+')'}[c.state];
-  if(c.state==='bad'||c.state==='changed')return '<em>'+(c.state==='bad'?'\u274C Calibration failed ':'\u26A0\uFE0F Menu changed ')+t+': '+esc(c.msg)+'</em>';
-  return '<span>'+lab+'</span>';
+  if(!c||!c.trail||(c.state!=='ok'&&c.state!=='bad'))return '<span>\uD83E\uDDEA Not calibrated yet</span>';
+  const t=tm(c.t);
+  return c.state==='ok'?'<span>\u2705 Calibrated '+t+'</span>':'<em>\u274C Calibration failed '+t+': '+esc(c.msg)+'</em>';
 }
 
 /* ---------- airtime balance ---------- */
@@ -504,22 +508,52 @@ function saveOffer(){
 function togOffer(id){const o=offers.find(x=>x.id===id);o.on=!o.on;save();render()}
 function delOffer(id){const o=offers.find(x=>x.id===id);if(confirm('Delete '+o.name+'?')){offers=offers.filter(x=>x.id!==id);save();render()}}
 
+/* ---------- sell tab: pick an offer, type the number, sell ---------- */
+let sellId='',sellPhone='',sellName='',sellBuilt=false;
+function sellView(){
+  const act=offers.filter(o=>o.on).sort((a,b)=>a.amount-b.amount);
+  if(sellId&&!act.some(o=>o.id===sellId))sellId='';
+  const o=act.find(x=>x.id===sellId);
+  const grid=act.length?'<div class="pick">'+act.map(x=>'<button type="button" class="pk'+(x.id===sellId?' on':'')+'" onclick="sellPick(\''+x.id+'\')" aria-pressed="'+(x.id===sellId)+'"><b>'+x.amount+'<small>KSh</small></b><span>'+esc(x.name)+'</span></button>').join('')+'</div>'
+    :'<p class="empty"><big></big>No active offers. Add or enable one in the Offers tab.</p>';
+  const rec=sales.slice(0,5);
+  return '<h2 style="margin-top:12px">1. Choose the offer</h2>'+grid
+    +'<h2>2. Client</h2><label class="f" for="sPh" style="margin-top:4px">Phone number</label><input type="text" id="sPh" inputmode="tel" autocomplete="off" placeholder="0712345678" value="'+esc(sellPhone)+'" oninput="sellPhone=this.value">'
+    +'<label class="f" for="sNm">Client name (optional)</label><input type="text" id="sNm" autocomplete="off" placeholder="Mary" value="'+esc(sellName)+'" oninput="sellName=this.value">'
+    +'<button type="button" class="btn p sellbtn" onclick="sellNow()">'+(o?'Sell '+esc(o.name)+' \u00B7 KSh '+o.amount:'Sell')+'</button>'
+    +(rec.length?'<div class="hd"><h2>Latest</h2><button class="btn" onclick="tab=\'sales\';fresh=true;render()">View all</button></div><ul>'+rec.map(saleRow).join('')+'</ul>':'');
+}
+function sellPick(id){sellId=id;fresh=false;sellBuilt=false;render()}
+function sellNow(){
+  const o=offers.find(x=>x.id===sellId&&x.on);
+  if(!o)return toast('Choose an offer first');
+  const ph=normPhone(sellPhone);
+  if(!ph)return toast('Enter a valid number like 0712345678');
+  if(window.Team&&!Team.canDial())return toast('Sign in first');
+  const s={id:uid(),code:'SELL'+uid(),amount:o.amount,phone:ph,client:sellName.trim().slice(0,40),name:o.name,ussd:'',status:'queued',reason:'',t:Date.now(),ts:Date.now(),manual:1};
+  build(s,o);sales.unshift(s);addLog('Manual sale: '+o.name+' to '+ph);
+  sellPhone='';sellName='';sellBuilt=false;
+  save();
+  if(busy())toast('Queued - another dial is running');else toast('Sending '+o.name+' to '+ph+'...');
+  pump();render();
+}
+
 /* ---------- rendering ---------- */
 const ST={queued:['Queued','b'],dialing:['Dialing','a'],pending:['Waiting','a'],success:['Success','g'],failed:['Failed','r']};
 function saleRow(s){
   const [lab,c]=ST[s.status];let act='';
   if(s.status==='failed')act=`<button class="ic retry" title="Retry" aria-label="Retry ${esc(s.phone||'')}" onclick="dialNow('${s.id}')">&#8635;<small>Retry</small></button>`;
   if(s.status==='queued'&&!set.auto)act=`<button class="ic" title="Dial now" aria-label="Dial now" onclick="dialNow('${s.id}')">&#9654;</button>`;
-  return `<li class="row ${s.status}"><div class="amt">${s.amount}<small>KSh</small></div><div class="mid"><b>${esc(s.name||'No offer')}</b><span>\uD83D\uDCF1 ${esc(s.phone||'No number')}</span><span>\uD83D\uDD52 ${tm(s.t)}</span>${s.reason?`<em>${esc(s.reason)}</em>`:''}</div><div class="end"><span class="chip ${c}">${lab}</span>${act}</div></li>`;
+  return `<li class="row ${s.status}"><div class="amt">${s.amount}<small>KSh</small></div><div class="mid"><b>${esc(s.client||'Unnamed client')}</b><span>\uD83D\uDCF1 ${esc(s.phone||'No number')}</span><span>\uD83D\uDD52 ${tm(s.t)}</span>${s.reason?`<em>${esc(s.reason)}</em>`:''}</div><div class="end"><span class="chip ${c}">${lab}</span>${act}</div></li>`;
 }
 function advRow(o){
-  return `<li class="row o"><div class="amt">${o.amount}<small>KSh</small></div><div class="mid"><b>${esc(o.name)}</b><span>${o.steps.map(esc).join('  \u2192  ')}</span>${calLine(o)}<div class="btns own"><button class="btn" onclick="calStart('${o.id}')">\uD83E\uDDEA Calibrate</button>${o.cal&&o.cal.text?`<button class="btn" onclick="calShow('${o.id}')">\uD83D\uDC41 Review</button>`:''}<button class="btn" onclick="openAdv('${o.id}')">\u270F\uFE0F Edit</button><button class="btn" onclick="togOffer('${o.id}')">${o.on?'\u23F8 Disable':'\u25B6 Enable'}</button><button class="btn d" onclick="delOffer('${o.id}')">\uD83D\uDDD1 Delete</button></div></div><div class="end"><span class="chip ${o.on?'g':'r'}">${o.on?'Active':'Off'}</span></div></li>`;
+  return `<li class="row o"><div class="amt">${o.amount}<small>KSh</small></div><div class="mid"><b>${esc(o.name)}</b><span>${o.steps.map(esc).join('  \u2192  ')}</span>${calLine(o)}<div class="btns own"><button class="btn" onclick="calStart('${o.id}')">\uD83E\uDDEA Calibrate</button>${o.cal&&o.cal.trail?`<button class="btn" onclick="calShow('${o.id}')">\uD83D\uDCCB Steps</button>`:''}<button class="btn" onclick="openAdv('${o.id}')">\u270F\uFE0F Edit</button><button class="btn" onclick="togOffer('${o.id}')">${o.on?'\u23F8 Disable':'\u25B6 Enable'}</button><button class="btn d" onclick="delOffer('${o.id}')">\uD83D\uDDD1 Delete</button></div></div><div class="end"><span class="chip ${o.on?'g':'r'}">${o.on?'Active':'Off'}</span></div></li>`;
 }
 const adlg=$('#adlg');
 function openAdv(id){
   const o=offers.find(x=>x.id===id)||{};
   $('#aT').textContent=id?'Edit advanced offer':'Add advanced offer';
-  $('#aId').value=id||'';$('#aName').value=o.name||'';$('#aAmt').value=o.amount||'';$('#aCode').value=advCode(o.steps);$('#aExp').value=o.expect||'';advPreview();
+  $('#aId').value=id||'';$('#aName').value=o.name||'';$('#aAmt').value=o.amount||'';$('#aCode').value=advCode(o.steps);advPreview();
   adlg.showModal();
 }
 /* *444*5*3*2*1*n*2#  ->  ["*444#","5","3","2","1","n","2"] */
@@ -545,8 +579,7 @@ function saveAdv(){
   const name=$('#aName').value.trim(),amount=+$('#aAmt').value,id=$('#aId').value;
   const steps=parseUssd($('#aCode').value);
   if(!name||!(amount>0)||!steps||!steps.some(x=>/^n$/i.test(x)))return toast('Add a name, a price, and a full code like *444*5*3*n*2# (with n for the phone number)');
-  const expect=$('#aExp').value.trim();
-  if(id){const o=offers.find(x=>x.id===id);const changed=advCode(o.steps)!==advCode(steps)||(o.expect||'')!==expect;Object.assign(o,{name,amount,steps,expect});if(changed)delete o.cal}else offers.push({id:uid(),name,amount,steps,expect,adv:true,on:true});
+  if(id){const o=offers.find(x=>x.id===id);const changed=advCode(o.steps)!==advCode(steps);Object.assign(o,{name,amount,steps});delete o.expect;if(changed)delete o.cal}else offers.push({id:uid(),name,amount,steps,adv:true,on:true});
   offers.sort((a,b)=>a.amount-b.amount);save();adlg.close();render();
 }
 function offerRow(o){
@@ -576,17 +609,22 @@ function render(){
    $('#gs').textContent=td.length?'Today: KSh '+fmt(td.reduce((a,x)=>a+x.amount,0))+' from '+td.length+(td.length===1?' bundle':' bundles'):'No bundles sold yet today. Let\'s go! \uD83D\uDE80'}
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===tab));
   $('#nb').textContent=nf;$('#nb').hidden=!nf;
-  {const np=offers.filter(o=>o.cal&&(o.cal.paused||o.cal.state==='ask')&&(!o.on||o.cal.state==='ask')).length;$('#ob').textContent=np;$('#ob').hidden=!np}
+  {const np=offers.filter(o=>o.cal&&o.cal.state==='bad'&&o.cal.paused&&!o.on).length;$('#ob').textContent=np;$('#ob').hidden=!np}
   const v=$('#view');
   const seg=(cur,opts,v2)=>`<div class="per">${opts.map(([k,l])=>`<button class="${k===cur?'on':''}" onclick="${v2}='${k}';fresh=true;render()">${l}</button>`).join('')}</div>`;
+  if(tab!=='sell')sellBuilt=false;
   if(tab==='home')v.innerHTML=home();
+  else if(tab==='sell'){
+    const typing=sellBuilt&&v.contains(document.activeElement)&&document.activeElement.tagName==='INPUT';
+    if(!typing){v.innerHTML=sellView();sellBuilt=true}
+  }
   else if(tab==='sales'){
     const LIVE=['queued','dialing','pending'],nl=sales.filter(x=>LIVE.includes(x.status)).length;
     const f=sales.filter(x=>sf==='all'||(sf==='failed'?x.status==='failed':sf==='live'?LIVE.includes(x.status):x.status==='success'));
     v.innerHTML=seg(sf,[['all','All'],['live','Live'+(nl?' ('+nl+')':'')],['success','Success'],['failed','Failed'+(nf?' ('+nf+')':'')]],'sf')+(sf==='failed'&&f.length?'<p class="hint" style="margin:8px 2px 0">\u26A0\uFE0F '+f.length+' failed. Tap \u21BB Retry on a sale to dial it again (check first that it did not go through).</p>':'')+(f.length?'<ul>'+f.slice(0,150).map(saleRow).join('')+'</ul>':'<p class="empty"><big></big>'+(sales.length?(sf==='live'?'Nothing in progress right now.':'Nothing here.'):'No sales yet. Payments sent to your till will appear here.')+'</p>');
   }else if(tab==='offers'){
     const head=seg(ot,[['normal','Normal ('+offers.filter(o=>!o.adv).length+')'],['adv','Advanced ('+offers.filter(o=>o.adv).length+')']],'ot');
-    if(ot==='adv'){const a=offers.filter(o=>o.adv);v.innerHTML=head+'<p class="note">Advanced offers are never dialed in one go. Write the full code once. The app dials the first part, waits for Safaricom\'s menu, then sends each next number one at a time.</p><p class="note">\uD83E\uDDEA <b>Calibrate</b> tests an offer without selling it: Bn goes through the menus but stops before the last option. Do it after Safaricom changes codes, so no client gets a bundle they did not pay for.</p><div class="btns own"><button class="btn p" onclick="openAdv()">+ Add advanced offer</button><button class="btn" onclick="calAll()">\uD83E\uDDEA Calibrate all</button></div>'+(a.length?'<ul>'+a.map(advRow).join('')+'</ul>':'<p class="empty"><big></big>No advanced offers yet.</p>')}
+    if(ot==='adv'){const a=offers.filter(o=>o.adv);v.innerHTML=head+'<p class="note">Advanced offers are never dialed in one go. Write the full code once. The app dials the first part, waits for Safaricom\'s menu, then sends each next number one at a time.</p><p class="note">\uD83E\uDDEA <b>Calibrate</b> tests an offer without selling it: Bn runs every step, shows you what Safaricom answered at each one, and stops before the last option. Do it after Safaricom changes codes, so no client gets a bundle they did not pay for.</p><div class="btns own"><button class="btn p" onclick="openAdv()">+ Add advanced offer</button><button class="btn" onclick="calAll()">\uD83E\uDDEA Calibrate all</button></div>'+(a.length?'<ul>'+a.map(advRow).join('')+'</ul>':'<p class="empty"><big></big>No advanced offers yet.</p>')}
     else v.innerHTML=head+'<div class="btns own"><button class="btn p" onclick="openOffer()">+ Add offer</button></div><ul>'+offers.filter(o=>!o.adv).map(offerRow).join('')+'</ul>';
   }else if(tab==='team'&&window.Team)Team.view();
   if(fresh){fresh=false;v.classList.remove('anim');void v.offsetWidth;v.classList.add('anim');clearTimeout(window._an);window._an=setTimeout(()=>v.classList.remove('anim'),900)}
@@ -607,7 +645,7 @@ function settingsView(){
   <label class="f" for="ds">SIM used to dial codes</label>${sel('ds','dialSim',[['auto','Phone default'],['0','SIM 1'],['1','SIM 2']])}
   <label class="f" for="rs">Read M-Pesa payment messages from</label>${sel('rs','readSim',[['both','Both SIMs'],['0','SIM 1 only'],['1','SIM 2 only']])}
   <div class="own"><h2>Calibrate offers</h2><label class="f" for="cn">Your own number, used when calibrating (nothing is bought)</label><input type="text" id="cn" inputmode="numeric" placeholder="0712345678" value="${esc(set.calNum||'')}" onchange="const v=normPhone(this.value);if(v||!this.value.trim()){set.calNum=v||'';save();this.value=set.calNum}else toast('Enter a valid number')">
-  <label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" ${set.calOff!==false?'checked':''} onchange="set.calOff=this.checked;save()" style="width:auto">Pause an offer automatically if calibration fails or its menu changed</label></div>
+  <label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" ${set.calOff!==false?'checked':''} onchange="set.calOff=this.checked;save()" style="width:auto">Pause an offer automatically if calibration fails</label></div>
 `,
     texts:`  <div class="own"><h2>Customer messages</h2><p class="hint" style="margin-top:0">Bn texts the customer's number automatically. Use {amount}, {phone} and {name} in your message. Each text uses a little airtime from the SIM below.</p>
   <label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" ${set.smsOn?'checked':''} onchange="set.smsOn=this.checked;save()" style="width:auto">Text after a successful sale</label>
@@ -792,7 +830,7 @@ const Team=(()=>{
         if(++n>25)break;
         await fsSet('sales/'+T.ses.uid.slice(0,8)+'_'+String(s.id).replace(/[^A-Za-z0-9_-]/g,''),{
           ownerUid:T.me.ownerUid,uid:T.ses.uid,by:T.me.name||T.me.email||'',day:dayKey(s.t),t:s.t,ts:s.ts,
-          amount:s.amount,phone:s.phone||'',offer:s.name||'',status:s.status,reason:s.reason||'',code:s.code||''});
+          amount:s.amount,phone:s.phone||'',client:s.client||'',offer:s.name||'',status:s.status,reason:s.reason||'',code:s.code||''});
         T.pushed[s.id]=sig(s);
       }
     }finally{W('bn_pushed',T.pushed)}
@@ -843,7 +881,7 @@ const Team=(()=>{
     const stat=p=>{const l=T.tsales.filter(s=>s.uid===p.uid),ok=l.filter(s=>s.status==='success');return{n:ok.length,sum:ok.reduce((a,s)=>a+s.amount,0),f:l.filter(s=>s.status==='failed').length}};
     const members=people.map(p=>{const s=stat(p);return `<li class="row o"><div class="amt">${fmt(s.sum)}<small>KSh</small></div><div class="mid"><b>${esc(p.name)}</b><span>${s.n} sold \u00B7 ${s.f} failed</span></div></li>`}).join('');
     const team=people.filter(p=>!p.owner).map(p=>`<li class="row ${p.active?'success':'failed'}"><div class="mid"><b>${esc(p.name)}</b><span>${esc(p.email||'')}</span><span>Last seen: ${ago(p.lastSeen)}</span><div class="btns"><button class="btn ${p.active?'d':''}" onclick="Team.setActive('${p.uid}',${!p.active})">${p.active?'\u23F8 Switch off':'\u25B6 Switch on'}</button><button class="btn" onclick="Team.reset('${esc(p.email||'')}')">\uD83D\uDD11 Reset password</button></div></div><div class="end"><span class="chip ${p.active?'g':'r'}">${p.active?'Active':'Off'}</span></div></li>`).join('');
-    const recentRows=T.tsales.slice(0,40).map(s=>`<li class="row ${esc(s.status)}"><div class="amt">${s.amount}<small>KSh</small></div><div class="mid"><b>${esc(s.by||'')}</b><span>\uD83D\uDCF1 ${esc(s.phone||'')}</span><span>\uD83D\uDD52 ${tm(s.t)} \u00B7 ${esc(s.offer||'')}</span>${s.reason?`<em>${esc(s.reason)}</em>`:''}</div><div class="end"><span class="chip ${s.status==='success'?'g':s.status==='failed'?'r':s.status==='queued'?'b':'a'}">${esc(s.status)}</span></div></li>`).join('');
+    const recentRows=T.tsales.slice(0,40).map(s=>`<li class="row ${esc(s.status)}"><div class="amt">${s.amount}<small>KSh</small></div><div class="mid"><b>${esc(s.by||'')}</b><span>\uD83D\uDCF1 ${esc(s.phone||'')}</span><span>\uD83D\uDD52 ${tm(s.t)} \u00B7 ${esc([s.client,s.offer].filter(Boolean).join(' \u00B7 '))}</span>${s.reason?`<em>${esc(s.reason)}</em>`:''}</div><div class="end"><span class="chip ${s.status==='success'?'g':s.status==='failed'?'r':s.status==='queued'?'b':'a'}">${esc(s.status)}</span></div></li>`).join('');
     v.innerHTML=`<div class="hd"><h2 style="margin:12px 2px 6px">Team</h2><button class="btn" onclick="Team.load(true)">${T.loading?'Loading...':'\u21BB Refresh'}</button></div>
     <div class="per">${per('today','Today')}${per('yest','Yesterday')}${per('week','7 days')}</div>
     ${T.err?`<p class="note">${esc(T.err)}</p>`:''}
