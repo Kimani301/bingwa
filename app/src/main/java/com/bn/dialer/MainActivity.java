@@ -140,11 +140,7 @@ public class MainActivity extends Activity {
         d.setSystemUiVisibility(f);
     }
 
-    @Override
-    protected void onDestroy() {
-        if (inst == this) inst = null;
-        super.onDestroy();
-    }
+  
 
     /* ---------------- first-run setup: permissions, accessibility, battery ---------------- */
 
@@ -273,11 +269,12 @@ public class MainActivity extends Activity {
         moveTaskToBack(true);   // keep Bn running instead of closing it
     }
 
-    @Override
-    protected void onDestroy() {
-        Bridge.ready = false;
-        Bridge.web = null;
-        if (web != null) web.destroy();
-        super.onDestroy();
-    }
+   @Override
+protected void onDestroy() {
+    if (inst == this) inst = null;
+    Bridge.ready = false;
+    Bridge.web = null;
+    if (web != null) web.destroy();
+    super.onDestroy();
+}
 }
