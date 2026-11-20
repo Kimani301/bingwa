@@ -198,6 +198,35 @@ h2:before{width:4px;height:18px;border-radius:2px;background:var(--gold)}
 .oc-b .btn,.oc-b .btn.p{box-shadow:none}
 .pk{box-shadow:none}.pk.on{box-shadow:none}
 .ic.retry{border-radius:12px;box-shadow:none}
+
+/* sale rows: compact, tap to open */
+.row.sr{display:block;padding:0;overflow:hidden}
+.sr-h{display:flex;gap:10px;align-items:center;padding:12px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.sr-h .mid{justify-content:center}
+.sr-h .end{flex-direction:row;align-items:center}
+.sr-ar{color:var(--mute);font-size:16px;transition:transform .2s;flex:none}
+.sr.open .sr-ar{transform:rotate(180deg)}
+.sr-d{border-top:1px solid var(--line);padding:12px;display:flex;flex-direction:column;gap:10px}
+.sr-g{display:grid;grid-template-columns:1fr 1fr;gap:10px}.sr-g.one{grid-template-columns:1fr}
+.sr-g>div{background:var(--bg,rgba(0,0,0,.04));border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-width:0}
+.sr-d small{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--mute);margin-bottom:2px}
+.sr-g b{font-size:14px;font-weight:700;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.sr-why{background:var(--rs);border-radius:10px;padding:8px 10px}.sr-why small{color:var(--r)}
+.sr-why em{font-style:normal;font-size:13px;font-weight:600;color:var(--r);overflow-wrap:anywhere}
+.sr-a{display:flex;gap:8px}.sr-a .btn{flex:1;min-height:42px;padding:6px 10px;font-size:14px;box-shadow:none}
+.sr-a .btn.sr-retry{background:var(--pr);border-color:var(--pr);color:#fff}
+
+/* organised tabs & sub-tabs */
+#view>.per.sub{position:sticky;top:0;z-index:4;margin:0 -14px 12px;padding:8px 14px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:var(--bg);box-shadow:0 6px 10px -8px rgba(16,24,40,.25);gap:4px}
+#view>.per.sub button{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:6px 4px;font-size:13px;white-space:nowrap;background:var(--card);border:1px solid var(--line);color:var(--mute)}
+#view>.per.sub button.on{background:var(--pr);border-color:var(--pr);color:#fff}
+.per.sub .cnt{font-style:normal;font-size:11px;font-weight:800;min-width:18px;line-height:18px;padding:0 5px;border-radius:9px;background:var(--line);color:var(--ink);text-align:center}
+.per.sub button.on .cnt{background:rgba(255,255,255,.28);color:#fff}
+[data-theme=dark] .per.sub button.on{color:#04200c}[data-theme=dark] .per.sub button.on .cnt{background:rgba(0,0,0,.2);color:#04200c}
+#view>.per.sub~*:first-of-type{margin-top:0}
+#view>.per.sub+.tools,#view>.per.sub+.grp{margin-top:4px}
+#view>.per.sub+.hint{margin-top:0}
+.grp{display:flex;align-items:center;gap:8px;margin:18px 4px 4px}.grp:after{content:"";flex:1;height:1px;background:var(--line)}
 nav{border-radius:0;box-shadow:none;border-top:1px solid var(--line);padding:6px 6px 8px}
 nav button,nav button:nth-child(n){--tc:var(--pr)}
 nav svg{border-radius:14px}
@@ -685,11 +714,29 @@ function sellNow(){
 
 /* ---------- rendering ---------- */
 const ST={queued:['Queued','b'],dialing:['Dialing','a'],pending:['Waiting','a'],success:['Success','g'],failed:['Failed','r']};
+const openSales={};
+function togSale(id){if(openSales[id])delete openSales[id];else openSales[id]=1;fresh=false;render()}
+function delSale(id){
+  const s=sales.find(x=>x.id===id);if(!s)return;
+  if(s.status==='dialing')return toast('This sale is dialing now. Wait for it to finish.');
+  if(!confirm('Delete this sale'+(s.client||s.phone?' for '+(s.client||s.phone):'')+' (KSh '+s.amount+')? This cannot be undone.'))return;
+  sales=sales.filter(x=>x.id!==id);delete openSales[id];
+  save();toast('Sale deleted');render();
+}
 function saleRow(s){
-  const [lab,c]=ST[s.status];let act='';
-  if(s.status==='failed')act=`<button class="ic retry" title="Retry" aria-label="Retry ${esc(s.phone||'')}" onclick="dialNow('${s.id}')">&#8635;<small>Retry</small></button>`;
-  if(s.status==='queued'&&!set.auto)act=`<button class="ic" title="Dial now" aria-label="Dial now" onclick="dialNow('${s.id}')">&#9654;</button>`;
-  return `<li class="row ${s.status}"><div class="amt">${s.amount}<small>KSh</small></div><div class="mid"><b>${esc(s.client||s.phone||'Unknown client')}</b>${s.client&&s.phone?`<span>\uD83D\uDCF1 ${esc(s.phone)}</span>`:''}<span>\uD83D\uDD52 ${tm(s.t)}</span>${s.reason?`<em>${esc(s.reason)}</em>`:''}</div><div class="end"><span class="chip ${c}">${lab}</span>${act}</div></li>`;
+  const [lab,c]=ST[s.status];
+  const open=!!openSales[s.id];
+  const name=esc(s.client||s.phone||'Unknown client');
+  let acts='';
+  if(s.status==='failed')acts+=`<button class="btn sr-retry" aria-label="Retry ${esc(s.phone||'')}" onclick="event.stopPropagation();dialNow('${s.id}')">&#8635; Retry</button>`;
+  if(s.status==='queued'&&!set.auto)acts+=`<button class="btn sr-retry" aria-label="Dial now" onclick="event.stopPropagation();dialNow('${s.id}')">&#9654; Dial now</button>`;
+  acts+=`<button class="btn d sr-del" aria-label="Delete sale" onclick="event.stopPropagation();delSale('${s.id}')">&#128465; Delete</button>`;
+  const det=`<div class="sr-d">
+    <div class="sr-g"><div><small>Phone</small><b>${esc(s.phone||'None')}</b></div><div><small>Time</small><b>${tm(s.t)}</b></div></div>
+    ${s.offer||s.name?`<div class="sr-g one"><div><small>Offer</small><b>${esc(s.offer||s.name)}</b></div></div>`:''}
+    ${s.reason?`<div class="sr-why"><small>Reason for fail</small><em>${esc(s.reason)}</em></div>`:''}
+    <div class="sr-a">${acts}</div></div>`;
+  return `<li class="row sr ${s.status}${open?' open':''}"><div class="sr-h" role="button" tabindex="0" aria-expanded="${open}" onclick="togSale('${s.id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();togSale('${s.id}')}"><div class="amt">${s.amount}<small>KSh</small></div><div class="mid"><b>${name}</b></div><div class="end"><span class="chip ${c}">${lab}</span></div><span class="sr-ar" aria-hidden="true">&#9662;</span></div>${open?det:''}</li>`;
 }
 const chipH=(c,t)=>'<span class="chip '+c+'">'+t+'</span>';
 function stepChips(o){
@@ -765,7 +812,8 @@ function render(){
   $('#nb').textContent=nf;$('#nb').hidden=!nf;
   {const np=offers.filter(o=>o.cal&&o.cal.state==='bad'&&o.cal.paused&&!o.on).length;$('#ob').textContent=np;$('#ob').hidden=!np}
   const v=$('#view');
-  const seg=(cur,opts,v2)=>`<div class="per">${opts.map(([k,l])=>`<button class="${k===cur?'on':''}" onclick="${v2}='${k}';fresh=true;render()">${l}</button>`).join('')}</div>`;
+  const bdg=l=>String(l).replace(/\s*\((\d+)\)$/,(m,n)=>' <i class="cnt">'+n+'</i>');
+  const seg=(cur,opts,v2)=>`<div class="per sub" role="tablist">${opts.map(([k,l])=>`<button role="tab" aria-selected="${k===cur}" class="${k===cur?'on':''}" onclick="${v2}='${k}';fresh=true;render()">${bdg(l)}</button>`).join('')}</div>`;
   if(tab!=='sell')sellBuilt=false;
   if(tab==='home')v.innerHTML=home();
   else if(tab==='sell'){
@@ -775,7 +823,7 @@ function render(){
   else if(tab==='sales'){
     const LIVE=['queued','dialing','pending'],nl=sales.filter(x=>LIVE.includes(x.status)).length;
     const f=sales.filter(x=>sf==='all'||(sf==='failed'?x.status==='failed':sf==='live'?LIVE.includes(x.status):x.status==='success'));
-    v.innerHTML=seg(sf,[['all','All'],['live','Live'+(nl?' ('+nl+')':'')],['success','Success'],['failed','Failed'+(nf?' ('+nf+')':'')]],'sf')+(sf==='failed'&&f.length?'<p class="hint" style="margin:8px 2px 0">\u26A0\uFE0F '+f.length+' failed. Tap \u21BB Retry on a sale to dial it again (check first that it did not go through).</p>':'')+(f.length?'<ul>'+f.slice(0,150).map(saleRow).join('')+'</ul>':'<p class="empty"><big></big>'+(sales.length?(sf==='live'?'Nothing in progress right now.':'Nothing here.'):'No sales yet. Payments sent to your till will appear here.')+'</p>');
+    v.innerHTML=seg(sf,[['all','All ('+sales.length+')'],['live','Live'+(nl?' ('+nl+')':'')],['success','Success ('+sales.filter(x=>x.status==='success').length+')'],['failed','Failed'+(nf?' ('+nf+')':'')]],'sf')+(sf==='failed'&&f.length?'<p class="hint" style="margin:8px 2px 0">\u26A0\uFE0F '+f.length+' failed. Tap a sale, then Retry to dial it again (check first that it did not go through).</p>':'')+(f.length?'<ul>'+f.slice(0,150).map(saleRow).join('')+'</ul>':'<p class="empty"><big></big>'+(sales.length?(sf==='live'?'Nothing in progress right now.':'Nothing here.'):'No sales yet. Payments sent to your till will appear here.')+'</p>');
   }else if(tab==='offers'){
     const adv=ot==='adv',list=offers.filter(o=>!!o.adv===adv),act=list.filter(o=>o.on),off=list.filter(o=>!o.on),rowFn=adv?advRow:offerRow;
     const head=seg(ot,[['normal','Normal ('+offers.filter(o=>!o.adv).length+')'],['adv','Advanced ('+offers.filter(o=>o.adv).length+')']],'ot');
@@ -824,7 +872,7 @@ function settingsView(){
   </div><h2>Activity log</h2><div id="loglist"></div>
 `
   };
-  const tabs='<div class="per">'+SS.map(([k,l])=>'<button class="'+(k===ss?'on':'')+'" onclick="ss=\''+k+'\';settingsView()">'+l+'</button>').join('')+'</div>';
+  const tabs='<div class="per sub" role="tablist">'+SS.map(([k,l])=>'<button role="tab" aria-selected="'+(k===ss)+'" class="'+(k===ss?'on':'')+'" onclick="ss=\''+k+'\';settingsView()">'+l+'</button>').join('')+'</div>';
   $('#view').innerHTML=tabs+P[ss];
   if(ss==='phone'){addLog('Log opened');a11yInfo();pinInfo()}
 }
