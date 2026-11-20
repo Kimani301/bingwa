@@ -36,7 +36,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
-        getWindow().setStatusBarColor(0xFF16A34A);
+        getWindow().setStatusBarColor(0xFF1F2937);
 
         web = new WebView(this);
         setContentView(web);

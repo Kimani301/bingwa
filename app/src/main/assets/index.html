@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Bn</title>
-<meta name="theme-color" content="#16a34a">
+<meta name="theme-color" content="#1f2937">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%2316a34a'/><g fill='none' stroke='white' stroke-width='6' stroke-linecap='round'><path d='M10 26a31 31 0 0 1 44 0'/><path d='M18 35a20 20 0 0 1 28 0'/><path d='M26 43a9 9 0 0 1 12 0'/></g><circle cx='32' cy='52' r='4' fill='%23ffb703'/></svg>">
 <script>try{var t=JSON.parse(localStorage.getItem("bs_set")||"{}").theme||"light";document.documentElement.dataset.theme=(t==="dark"||(t==="auto"&&matchMedia("(prefers-color-scheme:dark)").matches))?"dark":"light"}catch(e){}</script>
 <style>
-:root{--bg:#effaf1;--ink:#0f2a1a;--mute:#5b7a68;--line:#d3ecd9;--card:#fff;--hd:#00b84d;--hd2:#008a3a;--g:#00a94f;--gs:#d9f7e4;--gold:#ffc700;--r:#ff4757;--rs:#ffe3e6;--a:#a85f00;--as:#fff1c2;--b:#1e88ff;--bs:#dcecff;--onp:#fff;--sh:0 6px 0 rgba(0,90,40,.08);--font:ui-rounded,"SF Pro Rounded",Nunito,Poppins,"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;--serif:var(--font);color-scheme:light}
-[data-theme=dark]{color-scheme:dark;--bg:#07130c;--ink:#eaf7ee;--mute:#92b09f;--line:#1b3326;--card:#10211a;--hd:#0aa347;--hd2:#056b2b;--g:#3deb7c;--gs:#10392a;--gold:#ffd33d;--r:#ff6b78;--rs:#3d1c22;--a:#ffd36b;--as:#3a2e0c;--b:#6cb2ff;--bs:#15305a;--onp:#04200c;--sh:0 6px 0 rgba(0,0,0,.35)}
+:root{--bg:#f4f5f8;--ink:#111827;--mute:#667085;--line:#e4e7ec;--card:#fff;--hd:#1f2937;--hd2:#111827;--pr:#4f46e5;--pr2:#3730a3;--prs:#e8e9fd;--g:#00a94f;--gs:#d9f7e4;--gold:#ffc700;--r:#ff4757;--rs:#ffe3e6;--a:#a85f00;--as:#fff1c2;--b:#1e88ff;--bs:#dcecff;--onp:#fff;--sh:0 3px 0 rgba(16,24,40,.06);--font:ui-rounded,"SF Pro Rounded",Nunito,Poppins,"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;--serif:var(--font);color-scheme:light}
+[data-theme=dark]{color-scheme:dark;--bg:#0e1116;--ink:#eef1f6;--mute:#98a2b3;--line:#262c36;--card:#171b22;--hd:#171b22;--hd2:#0b0e13;--pr:#6d6af0;--pr2:#4338ca;--prs:#26284f;--g:#3deb7c;--gs:#10392a;--gold:#ffd33d;--r:#ff6b78;--rs:#3d1c22;--a:#ffd36b;--as:#3a2e0c;--b:#6cb2ff;--bs:#15305a;--onp:#04200c;--sh:0 6px 0 rgba(0,0,0,.35)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.4 var(--font);padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
-header{position:relative;overflow:hidden;padding:18px 18px 26px;background:var(--hd);color:#fff;border-radius:0 0 34px 34px;box-shadow:0 8px 0 rgba(0,90,40,.15)}
+header{position:relative;overflow:hidden;padding:18px 18px 26px;background:var(--hd);color:#fff;border-radius:0 0 34px 34px;box-shadow:0 4px 12px rgba(0,0,0,.14)}
 header>*{position:relative;z-index:1}
 .top,.brand,.tr{display:flex;align-items:center;gap:12px}.top{justify-content:space-between}
 .logo{width:46px;height:46px;border-radius:15px;background:#fff;display:grid;place-items:center;color:var(--hd2);box-shadow:0 4px 0 rgba(0,0,0,.18);flex:none}
@@ -27,9 +27,9 @@ h1{font:900 26px var(--font);margin:0;letter-spacing:.5px}header p{margin:1px 0 
 .bal b{display:block;font:900 34px/1.15 var(--font);color:var(--g);font-variant-numeric:tabular-nums}
 .rf{font-size:28px;display:inline-block;color:var(--g)}.rf.spin{animation:sp 1s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){.rf.spin{animation:none}}
-nav{display:flex;position:fixed;left:0;right:0;bottom:0;background:var(--card);border-radius:30px 30px 0 0;box-shadow:0 -6px 24px rgba(0,60,25,.16);z-index:5;padding:8px 8px calc(10px + env(safe-area-inset-bottom));gap:2px}
-nav button{--tc:#00a94f;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 2px;border:0;background:none;color:var(--mute);font:inherit;font-size:12px;font-weight:800;position:relative}
-nav button:nth-child(2){--tc:#ff8a1f}nav button:nth-child(3){--tc:#1e88ff}nav button:nth-child(4){--tc:#e91e8c}nav button:nth-child(5){--tc:#8e5cf7}nav button:nth-child(6){--tc:#14b8a6}nav button[hidden]{display:none}
+nav{display:flex;position:fixed;left:0;right:0;bottom:0;background:var(--card);border-radius:30px 30px 0 0;box-shadow:0 -4px 18px rgba(16,24,40,.12);z-index:5;padding:8px 8px calc(10px + env(safe-area-inset-bottom));gap:2px}
+nav button{--tc:#4f46e5;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 2px;border:0;background:none;color:var(--mute);font:inherit;font-size:12px;font-weight:800;position:relative}
+nav button:nth-child(2){--tc:#ff8a1f}nav button:nth-child(3){--tc:#1e88ff}nav button:nth-child(4){--tc:#e91e8c}nav button:nth-child(5){--tc:#e5484d}nav button:nth-child(6){--tc:#14b8a6}nav button[hidden]{display:none}
 nav svg{width:50px;height:32px;padding:5px 14px;border-radius:17px;stroke-width:2.2;transition:.15s}
 nav button.on{color:var(--tc)}nav button.on svg{background:var(--tc);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.18)}
 .per+h2,.per+.own>h2:first-child,.per+.note{margin-top:14px}
@@ -55,8 +55,7 @@ nav button:active svg{transform:scale(.9)}
 .per{display:flex;gap:6px;margin:4px 0 8px;background:var(--card);border:2px solid var(--line);border-radius:20px;padding:5px}.per button{flex:1;min-height:42px;padding:8px 4px;border:0;background:none;color:var(--mute);border-radius:15px;font:inherit;font-size:14px;font-weight:800}.per button.on{background:var(--g);color:var(--onp);box-shadow:0 4px 0 var(--hd2)}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
 .stat{border-radius:26px;padding:16px;color:#fff;box-shadow:0 6px 0 rgba(0,0,0,.14)}.stat small{font-size:14px;font-weight:800;opacity:.95}.stat b{display:block;font:900 25px/1.15 var(--font);font-variant-numeric:tabular-nums;margin:6px 0 4px}.stat span{font-size:13px;font-weight:600;opacity:.92}
-.stat.s1{background:linear-gradient(135deg,#00c853,#00963f)}.stat.s2{background:linear-gradient(135deg,#ffd426,#ff9f0a);color:#3b2a00}.stat.s3{background:linear-gradient(135deg,#3d9bff,#1769e0)}.stat.s4{background:linear-gradient(135deg,#ff6b78,#e0293b)}
-.stat.s1 b{font-size:28px}.stat.s2 b{font-size:28px}
+.stat.s1{background:linear-gradient(135deg,#7c6cf6,#5a43d6)}.stat.s2{background:linear-gradient(135deg,#ffd426,#ff9f0a);color:#3b2a00}.stat.s3{background:linear-gradient(135deg,#3d9bff,#1769e0)}.stat.s4{background:linear-gradient(135deg,#ff6b78,#e0293b)}
 .chartbox{background:var(--card);border:2px solid var(--line);border-radius:26px;padding:16px 10px 8px;box-shadow:var(--sh)}.chartbox svg{display:block;width:100%;height:auto}
 .hd2,.hd{display:flex;justify-content:space-between;align-items:center}.hd .btn{min-height:38px;padding:6px 14px;font-size:13px}
 h2{font:900 20px var(--font);margin:28px 2px 8px}
@@ -78,7 +77,7 @@ button.stat{border:0;font:inherit;text-align:left;width:100%;cursor:pointer;colo
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.55);margin-right:7px}.dot.on{background:var(--gold);animation:pulse 1.6s infinite}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,199,0,.7)}70%{box-shadow:0 0 0 8px rgba(255,199,0,0)}100%{box-shadow:0 0 0 0 rgba(255,199,0,0)}}
 h2{display:flex;align-items:center;gap:9px}h2:before{content:"";width:7px;height:22px;border-radius:4px;background:var(--gold);flex:none}#dT:before,#aT:before,dialog h2:before{display:none}
-.row.o:nth-child(4n+1) .amt{background:#00a94f;color:#fff}.row.o:nth-child(4n+2) .amt{background:#1e88ff;color:#fff}.row.o:nth-child(4n+3) .amt{background:#ff8a1f;color:#fff}.row.o:nth-child(4n) .amt{background:#8e5cf7;color:#fff}
+.row.o:nth-child(4n+1) .amt{background:#4f46e5;color:#fff}.row.o:nth-child(4n+2) .amt{background:#1e88ff;color:#fff}.row.o:nth-child(4n+3) .amt{background:#ff8a1f;color:#fff}.row.o:nth-child(4n) .amt{background:#8e5cf7;color:#fff}
 .empty big{width:132px;height:132px;margin:0 auto 10px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='62' r='50' fill='%2300c853' fill-opacity='.16'/%3E%3Ccircle cx='60' cy='62' r='36' fill='%2300c853' fill-opacity='.18'/%3E%3Cg fill='none' stroke='%2300a94f' stroke-width='7' stroke-linecap='round'%3E%3Cpath d='M30 52a42 42 0 0 1 60 0'/%3E%3Cpath d='M41 63a27 27 0 0 1 38 0'/%3E%3Cpath d='M51 74a12 12 0 0 1 18 0'/%3E%3C/g%3E%3Ccircle cx='60' cy='86' r='6' fill='%23ffc700'/%3E%3Cpath d='M98 20l3 8 8 3-8 3-3 8-3-8-8-3 8-3z' fill='%23ffc700'/%3E%3Cpath d='M20 34l2 5 5 2-5 2-2 5-2-5-5-2 5-2z' fill='%231e88ff'/%3E%3Ccircle cx='100' cy='90' r='4' fill='%23ff4757'/%3E%3C/svg%3E") center/contain no-repeat;animation:float 3.2s ease-in-out infinite}
 @keyframes float{50%{transform:translateY(-9px)}}
 @keyframes rise{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:none}}
@@ -118,39 +117,39 @@ body.att .own{display:none!important}
 .stp b{display:block;font-weight:800}.stp pre{white-space:pre-wrap;margin:3px 0 0;font:inherit;font-size:13px;color:var(--mute);word-break:break-word}
 .stp li.bad b{color:var(--r)}.stp li.skip b{color:var(--a)}
 details.cd{margin:6px 0 10px;padding:8px 12px;border:2px solid var(--line);border-radius:16px}details.cd summary{font-weight:800;font-size:14px}
-
-/* --- A softer, more expressive dashboard header --- */
-:root{--font:ui-rounded,"Nunito","SF Pro Rounded","Segoe UI",system-ui,sans-serif;--sh:0 10px 28px rgba(13,92,48,.09)}
-body{background:radial-gradient(ellipse at 8% 0%,rgba(255,214,102,.18),transparent 34%),radial-gradient(ellipse at 100% 18%,rgba(56,189,128,.12),transparent 32%),var(--bg)}
-header{padding:20px 18px 28px;border-radius:0 0 36px 36px;background:linear-gradient(135deg,#087d43 0%,#00a95a 48%,#42c978 100%);box-shadow:0 12px 30px rgba(0,112,58,.20)}
-header:before,header:after{content:"";position:absolute;border-radius:50%;pointer-events:none;z-index:0}
-header:before{width:220px;height:220px;right:-70px;top:-100px;background:rgba(255,255,255,.10)}
-header:after{width:150px;height:150px;left:-70px;bottom:18px;background:rgba(255,211,61,.10)}
-.top{gap:10px}
-.logo{width:54px;height:54px;border-radius:19px;background:rgba(255,255,255,.96);box-shadow:0 7px 18px rgba(0,0,0,.13);color:#078442}
-h1{font-size:29px;letter-spacing:-.8px}
-header p{font-size:12px;letter-spacing:.2px;opacity:.88}
-.tb{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.24);backdrop-filter:blur(8px)}
-.sw{padding:9px 12px;border-radius:999px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(8px)}
-.greet{margin:22px 2px 12px}
-.greet b{font-size:25px;letter-spacing:-.6px;text-shadow:0 2px 12px rgba(0,0,0,.10)}
-.greet span{display:inline-block;margin-top:5px;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.15);font-size:12px;letter-spacing:.15px}
-.bal{margin-top:12px;padding:17px 19px;border:1px solid rgba(255,255,255,.68);border-radius:25px;background:rgba(255,255,255,.96);box-shadow:0 10px 24px rgba(0,64,32,.16);transition:transform .18s ease,box-shadow .18s ease}
-.bal:active{transform:scale(.985)}
-.bal small{font-size:12px;letter-spacing:.45px;text-transform:uppercase;color:#64816f}
-.bal b{font-size:34px;letter-spacing:-1px;color:#078b48}
-.bal .rf{width:42px;height:42px;display:grid;place-items:center;border-radius:15px;background:#e6f8ed;font-size:25px}
-main{padding-top:18px}
-h2{letter-spacing:-.35px}
-.row,.stat,.chartbox{box-shadow:0 8px 22px rgba(13,92,48,.07)}
-.row{border-width:1px;border-radius:22px}
-.stat{border-radius:23px}
-nav{border:1px solid rgba(0,120,60,.08);box-shadow:0 -8px 28px rgba(0,60,25,.10);backdrop-filter:blur(16px)}
-nav button{font-size:11px}
-nav svg{width:48px;height:31px}
-@media(min-width:520px){header{padding-left:max(22px,calc((100% - 600px)/2));padding-right:max(22px,calc((100% - 600px)/2))}}
-@media(prefers-reduced-motion:no-preference){.logo{animation:logoFloat 4s ease-in-out infinite}@keyframes logoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}}
-
+/* ---- v2 display polish: roomier header, neutral palette, fits small phones ---- */
+body{font-size:16px}
+header{padding:14px 16px 18px;border-radius:0 0 24px 24px}
+.top{gap:10px}.brand{gap:10px;min-width:0}.tr{gap:12px;flex:none}
+.logo{width:40px;height:40px;border-radius:13px;box-shadow:0 2px 0 rgba(0,0,0,.2)}.logo svg{width:22px;height:22px}
+h1{font-size:22px;line-height:1.1;letter-spacing:0}
+header p{margin:3px 0 0;font-size:12px;font-weight:600;opacity:.8;line-height:1.2;white-space:nowrap}
+.tb{width:38px;height:38px;font-size:17px}
+.sw{flex-direction:column;gap:4px;font-size:11px;font-weight:700;opacity:.95}
+.sw span{width:44px;height:26px;border-radius:13px}.sw span:after{width:20px;height:20px}.sw input:checked+span:after{left:21px}
+.greet{margin-top:14px}.greet b{font-size:18px;line-height:1.25}.greet span{display:block;margin-top:2px;font-size:13px;font-weight:600;opacity:.8;line-height:1.35}
+.bal{margin-top:14px;padding:12px 14px;border-radius:18px;box-shadow:0 3px 0 rgba(0,0,0,.18)}
+.bal b{font-size:28px;color:var(--ink)}.bal small{font-size:12px}.rf{font-size:24px;color:var(--pr)}
+main{padding:12px 14px 120px}
+h2{font-size:18px;margin:22px 2px 8px}h2:before{background:var(--pr);height:18px}
+.per button{font-size:13px;min-height:40px}.per button.on{background:var(--pr);color:#fff;box-shadow:0 3px 0 var(--pr2)}
+.stats{gap:10px;margin:10px 0}.stat{padding:14px;border-radius:20px;min-width:0;box-shadow:0 3px 0 rgba(0,0,0,.12)}
+.stat small{font-size:13px}.stat b,.stat.s1 b,.stat.s2 b{font-size:clamp(18px,5.6vw,26px);overflow-wrap:anywhere;margin:5px 0 3px}.stat span{font-size:12px}
+.row{gap:10px;padding:12px;margin:10px 0;border-radius:20px}
+.amt{min-width:58px;padding:9px 4px;border-radius:15px;font-size:20px;background:var(--prs);color:var(--pr)}
+.row.success .amt{background:var(--gs);color:var(--g)}
+.mid b{font-size:16px;overflow-wrap:anywhere}.mid span{font-size:13px}
+.chip{font-size:11px;padding:4px 9px}
+.end{gap:6px}.ic.retry{width:52px;height:52px}
+.btn.p{background:var(--pr);border-color:var(--pr);color:#fff;box-shadow:0 4px 0 var(--pr2)}
+.pk.on{border-color:var(--pr);background:var(--prs);box-shadow:0 4px 0 var(--pr2)}.pk b{color:var(--pr)}
+input:focus,textarea:focus,select:focus{border-color:var(--pr)}
+.gl{color:var(--pr)}.gcard .logo{background:var(--pr)}.gcard h1{color:var(--pr)}
+.chartbox{border-radius:20px;padding:12px 8px 6px}
+nav{padding:6px 6px calc(8px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0}
+nav button{font-size:11px}nav svg{width:44px;height:30px;padding:5px 11px}
+.hd .btn{min-height:36px;padding:4px 12px}
+@media(max-width:360px){header{padding:12px 12px 16px}main{padding:10px 12px 116px}.greet b{font-size:17px}.bal b{font-size:26px}}
 </style>
 </head>
 <body>
@@ -242,7 +241,7 @@ function applyTheme(){
   const d=set.theme==='dark'||(set.theme==='auto'&&matchMedia('(prefers-color-scheme:dark)').matches);
   document.documentElement.dataset.theme=d?'dark':'light';
   const tb=$('#tbtn');if(tb)tb.textContent=d?'\u2600\uFE0F':'\uD83C\uDF19';
-  const mt=document.querySelector('meta[name=theme-color]');if(mt)mt.content=d?'#094d20':'#16a34a';
+  const mt=document.querySelector('meta[name=theme-color]');if(mt)mt.content=d?'#171b22':'#1f2937';
 }
 function toggleTheme(){set.theme=document.documentElement.dataset.theme==='dark'?'light':'dark';save();applyTheme();const t=$('#th');if(t)t.value=set.theme}
 applyTheme();
@@ -276,16 +275,12 @@ window.onSmsReceived=function(sender,body,slot){
   if(/recommendation for/i.test(body)&&(m=body.match(/for\s+(\S+)\s+submitted successfully/i)))return gotSubmitted(normPhone(m[1]),body);
   if(/purchased a gift bundle/i.test(body)&&(m=body.match(new RegExp('for\\s+'+PH,'i'))))return gotSuccess(normPhone(m[1]));
   if(/recommendation failed/i.test(body)){m=body.match(new RegExp(PH));return gotFail(m?normPhone(m[1]):null,/already been recommended/i.test(body)?'Customer already recommended':body.trim().slice(0,160))}
-  // Only the complete Safaricom Lipa na M-PESA confirmation template is a payment.
-  // Keep USSD/recommendation replies above working, but ignore every other ordinary SMS.
-  const paymentFormat=/^[A-Z0-9]{10}\s+Confirmed\.\s*on\s+\d{1,2}\/\d{1,2}\/\d{2}\s+at\s+\d{1,2}:\d{2}\s*(?:AM|PM)\s*KSH\s*[\d,]+\.\d{2}\s+received from\s+254[17]\d{8}\s+[A-Za-z][A-Za-z .'-]*?\s*\.\s*New Account balance is KSH\s*[\d,]+\.\d{2}\.\s*Transaction cost, KSH\s*[\d,]+\.\d{2}\.\s*Receiving payments of Ksh 500 & below in your Lipa na M-PESA till is now FREE!$/i;
-  const cleanBody=body.replace(/\s+/g,' ').trim();
-  if(paymentFormat.test(cleanBody)){
+  if(/received/i.test(body)&&/confirmed/i.test(body)){
     if(!/mpesa/i.test(String(sender||'')))return addLog('Ignored payment text from '+sender);
     if(set.readSim!=='both'&&slot!=null&&String(slot)!==set.readSim)return addLog('Ignored payment text from SIM '+(+slot+1));
-    return gotPayment(cleanBody);
+    return gotPayment(body);
   }
-  addLog('Ignored SMS (not the approved M-PESA format) from '+sender);
+  addLog('Unrecognised SMS from '+sender+': '+body.slice(0,100));
 };
 
 function smsName(body){
@@ -543,12 +538,12 @@ function home(){
   const mx=Math.max(...days.map(d=>d.v),1),wk=days.reduce((a,d)=>a+d.v,0);
   const bars=days.map((d,i)=>{const h=Math.round(d.v/mx*74),x=i*45.7+8.9,y=104-h;
     return `<rect x="${x}" y="${y}" width="28" height="${d.v?Math.max(h,2):0}" rx="9" fill="url(#${i===6?'gb':'gg'})"/>${d.v?`<text x="${x+14}" y="${y-4}" text-anchor="middle" font-size="10" fill="var(--ink)">${d.v}</text>`:''}<text x="${x+14}" y="120" text-anchor="middle" font-size="11" fill="var(--mute)">${d.l}</text>`}).join('');
-  const rec=sales.slice(0,10);
+  const rec=sales.slice(0,2);
   return `<div class="per">${Object.keys(PER).map(k=>`<button class="${k===per?'on':''}" onclick="per='${k}';fresh=true;render()">${PER[k][0]}</button>`).join('')}</div>
   <div class="stats"><div class="stat s1"><small>\uD83D\uDCB0 Total sales</small><b>KSh ${fmt(tot)}</b><span>${PER[per][0]}</span></div><div class="stat s2 own"><small>\uD83D\uDCC8 Profit</small><b>KSh ${fmt(tot*set.rate/100)}</b><span>${set.rate}% commission</span></div><div class="stat s3"><small>\u2705 Sold</small><b>${ok.length}</b><span>bundles delivered</span></div><button class="stat s4" onclick="tab='sales';sf='failed';fresh=true;render()" aria-label="Open failed sales"><small>\u26A0\uFE0F Failed</small><b>${sales.filter(x=>x.status==='failed').length}</b><span>tap to view and retry</span></button></div>
   <div class="hd"><h2>Sales per day</h2><span style="font-size:13px;color:var(--mute)">7 days: KSh ${fmt(wk)}</span></div>
-  <div class="chartbox"><svg viewBox="0 0 320 126" role="img" aria-label="Sales per day for the last 7 days"><defs><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#00d35f"/><stop offset="1" stop-color="#00a94f"/></linearGradient><linearGradient id="gb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd426"/><stop offset="1" stop-color="#ff9f0a"/></linearGradient></defs><g stroke="var(--line)" stroke-dasharray="3 5"><line x1="0" y1="30.5" x2="320" y2="30.5"/><line x1="0" y1="55.5" x2="320" y2="55.5"/><line x1="0" y1="80.5" x2="320" y2="80.5"/></g><line x1="0" y1="104.5" x2="320" y2="104.5" stroke="var(--line)" stroke-width="2"/>${bars}</svg></div>
-  <div class="hd"><h2>Recent activity</h2><button class="btn" onclick="tab='sales';fresh=true;render()">View all</button></div>
+  <div class="chartbox"><svg viewBox="0 0 320 126" role="img" aria-label="Sales per day for the last 7 days"><defs><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8b86f5"/><stop offset="1" stop-color="#4f46e5"/></linearGradient><linearGradient id="gb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd426"/><stop offset="1" stop-color="#ff9f0a"/></linearGradient></defs><g stroke="var(--line)" stroke-dasharray="3 5"><line x1="0" y1="30.5" x2="320" y2="30.5"/><line x1="0" y1="55.5" x2="320" y2="55.5"/><line x1="0" y1="80.5" x2="320" y2="80.5"/></g><line x1="0" y1="104.5" x2="320" y2="104.5" stroke="var(--line)" stroke-width="2"/>${bars}</svg></div>
+  <div class="hd"><h2>Recent sales</h2><button class="btn" onclick="tab='sales';fresh=true;render()">View all</button></div>
   ${rec.length?'<ul>'+rec.map(saleRow).join('')+'</ul>':'<p class="empty"><big></big>No activity yet. Payments sent to your till will appear here.</p>'}`;
 }
 
@@ -660,7 +655,7 @@ function offerRow(o){
     +'<button class="btn ico d" aria-label="Delete" title="Delete" onclick="delOffer(\''+o.id+'\')">\uD83D\uDDD1</button></div></li>';
 }
 const SAMPLES=[
-  ()=>['MPESA','UKKKI3IJ97 Confirmed.on 20/11/26 at 5:17 PMKSH20.00 received from 254791390779 David  Ndungu Muthoni . New Account balance is KSH20.21. Transaction cost, KSH0.00. Receiving payments of Ksh 500 & below in your Lipa na M-PESA till is now FREE!'],
+  ()=>['MPESA','QK'+Math.random().toString(36).slice(2,10).toUpperCase()+' Confirmed. Ksh20.00 received from 254712345678 JOHN DOE on 18/11/26 at 8:54 AM. New business balance is Ksh1,250.00.'],
   ()=>['Safaricom','Recommendation for 0712345678 submitted successfully. Keep selling!! Be a Bingwa Sokoni Champion.'],
   ()=>['Safaricom','Thank you for choosing Safaricom. You have purchased a gift bundle of 250 MBs for 0712345678. Continue connecting with Family & Friends!'],
   ()=>['Safaricom','Recommendation failed. The customer 0712345678 has already been recommended. Kindly recommend to another customer. Thank you'],
@@ -676,7 +671,7 @@ function render(){
   $('#balv').textContent=bal?'KSh '+bal.v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'KSh --';
   $('#balt').textContent=balWait?'Checking balance...':bal?'Updated '+new Date(bal.t).toLocaleString([],{weekday:'short',hour:'2-digit',minute:'2-digit'}):'Tap to check';
   $('#rf').classList.toggle('spin',!!balWait);
-  $('#mode').innerHTML='<i class="dot'+(set.auto?' on':'')+'"></i>'+(hasBridge()?'Connected':'Test mode')+(set.auto?' \u00B7 Auto-dial on':' \u00B7 Auto-dial paused');
+  $('#mode').innerHTML='<i class="dot'+(set.auto?' on':'')+'"></i>'+(hasBridge()?'Connected':'Test mode');
   $('#auto').checked=set.auto;
   {const hr=new Date().getHours(),t0=startOf(0),td=sales.filter(x=>x.status==='success'&&x.t>=t0);
    $('#gh').textContent=(hr<12?'Good morning \u2600\uFE0F':hr<17?'Good afternoon \uD83C\uDF24\uFE0F':'Good evening \uD83C\uDF19');
