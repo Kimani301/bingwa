@@ -4,7 +4,8 @@ Bn wraps the Bn web app (app/src/main/assets/index.html) in an Android app that 
 dial USSD codes, send step-by-step replies, and read payment SMS.
 
 ## How the screens are arranged
-- **Home**: totals, profit, sales per day, recent activity (shows the client's name, taken from the M-Pesa message or typed on the Sell tab). The Failed card jumps to failed sales.
+- **Top bar** (green): airtime balance (tap to refresh) and the Auto-dial icon (gold = on).
+- **Home**: Total sales with Today / 7 days / 30 days / All under it, then Profit, Sold and Failed, sales per day, recent activity (shows the client's name, taken from the M-Pesa message or typed on the Sell tab). The Failed card jumps to failed sales.
 - **Sell**: tap an offer, type the client's phone number (and optionally their name), tap Sell. The sale is dialed straight away,
   even if Auto-dial is off, and shows under Latest. Attendants can use it too.
 - **Sales**: All, **Live** (queued, dialing or waiting for Safaricom), Success, Failed. Retry failed sales here.
@@ -52,7 +53,7 @@ Bn asks for everything it needs, one step at a time:
    Settings > Apps > Bn > top-right menu > **Allow restricted settings**, then reopen Bn.
 2. Turn on **Bn** in Settings > Accessibility (needed to read USSD menus and type replies).
 3. Battery: choose "Don't optimise".
-4. The top of the app should say **Connected**.
+4. Open Bn: the green top bar should show your airtime balance and the Auto-dial icon.
 
 ## Accessibility helper (restart every 20 minutes)
 Android only lets an app switch its own accessibility service off and on if it has the

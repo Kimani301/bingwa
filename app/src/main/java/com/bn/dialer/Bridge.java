@@ -96,6 +96,11 @@ public class Bridge {
     /* ---------------- methods the web page calls ---------------- */
 
     @JavascriptInterface
+    public void setBars(String top, String bottom, boolean dark) {
+        MainActivity.applyBars(top, bottom, dark);
+    }
+
+    @JavascriptInterface
     public void dialUssd(final String code, final int simSlot) {
         MAIN.post(() -> {
             try {

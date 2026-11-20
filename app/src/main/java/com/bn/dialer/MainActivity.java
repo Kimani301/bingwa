@@ -16,13 +16,19 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.graphics.Color;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends Activity {
     private WebView web;
+    private View topBar, bottomBar;
+    private static MainActivity inst;
 
     // setup flow state
     private boolean explained = false;
@@ -36,10 +42,27 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
-        getWindow().setStatusBarColor(0xFF1F2937);
-
+        inst = this;
         web = new WebView(this);
-        setContentView(web);
+
+        // Keep the app inside the safe area: a green strip behind the status bar and a
+        // matching strip behind the navigation bar, with the page in between.
+        topBar = new View(this);
+        bottomBar = new View(this);
+        LinearLayout root = new LinearLayout(this);
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.addView(topBar, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
+        root.addView(web, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
+        root.addView(bottomBar, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
+        root.setOnApplyWindowInsetsListener((v, ins) -> {
+            topBar.getLayoutParams().height = ins.getSystemWindowInsetTop();
+            bottomBar.getLayoutParams().height = ins.getSystemWindowInsetBottom();
+            topBar.requestLayout();
+            bottomBar.requestLayout();
+            return ins;
+        });
+        setContentView(root);
+        applyBars(0xFF166534, 0xFFFFFEF9, false);
         Bridge.web = web;
 
         WebSettings s = web.getSettings();
@@ -92,6 +115,35 @@ public class MainActivity extends Activity {
             startForegroundService(new Intent(this, BnService.class));
         } catch (Exception ignored) {
         }
+    }
+
+    /** Colours the status bar (green) and navigation bar to match the page theme. */
+    static void applyBars(final String top, final String bottom, final boolean dark) {
+        final MainActivity a = inst;
+        if (a == null) return;
+        try {
+            a.runOnUiThread(() -> a.applyBars(Color.parseColor(top), Color.parseColor(bottom), dark));
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void applyBars(int top, int bottom, boolean dark) {
+        topBar.setBackgroundColor(top);
+        bottomBar.setBackgroundColor(bottom);
+        getWindow().setStatusBarColor(top);
+        getWindow().setNavigationBarColor(bottom);
+        View d = getWindow().getDecorView();
+        int f = d.getSystemUiVisibility();
+        f &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;            // white icons on green
+        if (dark) f &= ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+        else f |= View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;    // dark icons on the light bar
+        d.setSystemUiVisibility(f);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (inst == this) inst = null;
+        super.onDestroy();
     }
 
     /* ---------------- first-run setup: permissions, accessibility, battery ---------------- */

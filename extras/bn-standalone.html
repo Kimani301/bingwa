@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Bn</title>
-<meta name="theme-color" content="#1f2937">
+<meta name="theme-color" content="#166534">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%2316a34a'/><g fill='none' stroke='white' stroke-width='6' stroke-linecap='round'><path d='M10 26a31 31 0 0 1 44 0'/><path d='M18 35a20 20 0 0 1 28 0'/><path d='M26 43a9 9 0 0 1 12 0'/></g><circle cx='32' cy='52' r='4' fill='%23ffb703'/></svg>">
 <script>try{var t=JSON.parse(localStorage.getItem("bs_set")||"{}").theme||"light";document.documentElement.dataset.theme=(t==="dark"||(t==="auto"&&matchMedia("(prefers-color-scheme:dark)").matches))?"dark":"light"}catch(e){}</script>
 <style>
@@ -150,14 +150,72 @@ nav{padding:6px 6px calc(8px + env(safe-area-inset-bottom));border-radius:22px 2
 nav button{font-size:11px}nav svg{width:44px;height:30px;padding:5px 11px}
 .hd .btn{min-height:36px;padding:4px 12px}
 @media(max-width:360px){header{padding:12px 12px 16px}main{padding:10px 12px 116px}.greet b{font-size:17px}.bal b{font-size:26px}}
+
+/* ---- v3 classic green ---- */
+:root{--bg:#f4f2ea;--ink:#1d2a22;--mute:#6b7468;--line:#ddd9c9;--card:#fffef9;--hd:#166534;--hd2:#0f4a26;--pr:#166534;--pr2:#0f4a26;--prs:#e2efe5;--g:#166534;--gs:#e1efe4;--gold:#d4af37;--r:#9b1c2e;--rs:#f7e2e5;--a:#8a5a00;--as:#f6ecc9;--b:#1f3a5f;--bs:#e1e8f1;--onp:#fff;--sh:0 1px 2px rgba(20,40,25,.08);--font:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--serif:Georgia,"Times New Roman",serif}
+[data-theme=dark]{--bg:#0e1511;--ink:#ecf1ec;--mute:#9aa89d;--line:#25332a;--card:#151f19;--hd:#0f3d20;--hd2:#0a2915;--pr:#4fb27a;--pr2:#2f8a58;--prs:#183326;--g:#5fd08f;--gs:#143524;--gold:#e0bd4a;--r:#ef6b7c;--rs:#3a1a21;--a:#e5bf6a;--as:#352b0f;--b:#7fa6d6;--bs:#18293f;--onp:#04200c;--sh:none}
+body{padding:0}
+header{padding:14px 16px 14px;border-radius:0;background:var(--hd);border-bottom:3px solid var(--gold);box-shadow:none}
+.top{align-items:center;gap:14px}
+.bal{flex:1;min-width:0;margin:0;padding:0;background:none;border:0;border-radius:0;box-shadow:none;color:#fff;gap:8px}
+.bal .bl{min-width:0}
+.bal small{color:rgba(255,255,255,.78);font-size:12px;font-weight:600;letter-spacing:.4px;text-transform:uppercase}
+.bal small#balt{text-transform:none;letter-spacing:0;font-size:12px;font-weight:500}
+.bal b{color:#fff;font:700 30px/1.2 var(--serif);margin:2px 0 1px}
+.rf{color:var(--gold);font-size:22px}
+.sw{flex:none;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:600;opacity:1;color:rgba(255,255,255,.85)}
+.sw em{font-style:normal;letter-spacing:.3px}
+.sw .ad{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.4);color:rgba(255,255,255,.7);transition:.15s;position:relative}
+.sw .ad:after{content:none}
+.sw input:checked+.ad{background:var(--gold);border-color:var(--gold);color:#1d2a10;left:0}
+.sw input:checked+.ad:after{content:none}
+main{padding:14px 14px 118px}
+h2{font:700 18px var(--serif);margin:22px 2px 8px}
+h2:before{width:4px;height:18px;border-radius:2px;background:var(--gold)}
+.row,.oc,.chartbox,.pk,details.cd{border-width:1px;border-radius:12px;box-shadow:var(--sh)}
+.per{border-width:1px;border-radius:12px;padding:4px;margin:4px 0 8px}.per button{border-radius:9px}
+.per button.on{background:var(--pr);color:#fff;box-shadow:none}
+[data-theme=dark] .per button.on,[data-theme=dark] .btn.p{color:#04200c}
+.stat{border-radius:12px;box-shadow:none}
+.stat.s1{background:linear-gradient(160deg,#1d7a45,#124d29)}
+.stat.s2{background:#c9a227;color:#2b2000}
+.stat.s3{background:#1f3a5f}
+.stat.s4{background:#8b1e2d}
+.stat.tot{margin:12px 0 0;padding:16px 16px 12px}
+.stat.s1.tot b{font:700 clamp(28px,8.5vw,36px)/1.15 var(--serif);margin:6px 0 12px}
+.stat.tot small{text-transform:uppercase;letter-spacing:.5px;font-size:12px}
+.stat.tot .per{background:rgba(0,0,0,.22);border:0;margin:0}
+.stat.tot .per button{color:rgba(255,255,255,.82)}
+.stat.tot .per button.on{background:#fffef9;color:#166534;box-shadow:none}
+.stats{grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:10px;margin:10px 0}
+.stats .stat{padding:12px}
+.stats .stat small{font-size:12px;text-transform:uppercase;letter-spacing:.4px}
+.stats .stat b{font:700 clamp(15px,4.8vw,21px)/1.15 var(--serif);margin:5px 0 2px}
+.stats .stat span{font-size:11px;opacity:.9}
+.amt{border-radius:10px;font-family:var(--serif)}
+.row.o:nth-child(4n+1) .amt{background:#166534}.row.o:nth-child(4n+2) .amt{background:#1f3a5f}.row.o:nth-child(4n+3) .amt{background:#8a5a00}.row.o:nth-child(4n) .amt{background:#7a1f2e}
+.btn{border-width:1px;border-radius:10px;box-shadow:none}.btn.p{box-shadow:none}.btn:active{transform:scale(.97)}
+.oc-b .btn,.oc-b .btn.p{box-shadow:none}
+.pk{box-shadow:none}.pk.on{box-shadow:none}
+.ic.retry{border-radius:12px;box-shadow:none}
+nav{border-radius:0;box-shadow:none;border-top:1px solid var(--line);padding:6px 6px 8px}
+nav button,nav button:nth-child(n){--tc:var(--pr)}
+nav svg{border-radius:14px}
+nav button.on svg{box-shadow:none;color:#fff}
+[data-theme=dark] nav button.on svg{color:#04200c}
+dialog{border-width:1px;border-radius:16px}
+.gcard{border-radius:16px;box-shadow:none}
+input[type=text],input[type=number],input[type=password],textarea,select{border-width:1px;border-radius:10px}
+#toast{bottom:84px}
+@media(max-width:360px){header{padding:12px}.bal b{font-size:26px}main{padding:12px 12px 114px}}
 </style>
 </head>
 <body>
 <header>
-  <div class="top"><div class="brand"><div class="logo" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M2.5 9.2a14 14 0 0 1 19 0"/><path d="M5.8 12.7a9.3 9.3 0 0 1 12.4 0"/><path d="M9.2 16.1a4.6 4.6 0 0 1 5.6 0"/><circle cx="12" cy="19.6" r="1.6" fill="#f59e0b" stroke="none"/></svg></div><div><h1>Bn</h1><p id="mode"></p></div></div>
-  <div class="tr"><button type="button" class="tb" id="tbtn" onclick="toggleTheme()" aria-label="Switch between light and dark mode">&#127769;</button><label class="sw"><input type="checkbox" id="auto"><span></span>Auto-dial</label></div></div>
-  <div class="greet"><b id="gh"></b><span id="gs"></span></div>
-  <button class="bal" onclick="refreshBal()" aria-label="Check airtime balance"><span><small>Airtime balance</small><b id="balv"></b><small id="balt"></small></span><span class="rf" id="rf">&#8635;</span></button>
+  <div class="top">
+    <button class="bal" onclick="refreshBal()" aria-label="Check airtime balance"><span class="bl"><small>Airtime balance</small><b id="balv"></b><small id="balt"></small></span><span class="rf" id="rf">&#8635;</span></button>
+    <label class="sw" aria-label="Auto-dial"><input type="checkbox" id="auto"><span class="ad"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/><path d="M14.05 2a9 9 0 0 1 8 7.94"/><path d="M14.05 6A5 5 0 0 1 18 10"/></svg></span><em>Auto-dial</em></label>
+  </div>
 </header>
 <main id="view"></main>
 <nav id="nav">
@@ -241,7 +299,7 @@ function applyTheme(){
   const d=set.theme==='dark'||(set.theme==='auto'&&matchMedia('(prefers-color-scheme:dark)').matches);
   document.documentElement.dataset.theme=d?'dark':'light';
   const tb=$('#tbtn');if(tb)tb.textContent=d?'\u2600\uFE0F':'\uD83C\uDF19';
-  const mt=document.querySelector('meta[name=theme-color]');if(mt)mt.content=d?'#171b22':'#1f2937';
+  const mt=document.querySelector('meta[name=theme-color]');if(mt)mt.content=d?'#0f3d20':'#166534';try{NativeBridge.setBars(d?'#0f3d20':'#166534',d?'#151f19':'#fffef9',d)}catch(e){}
 }
 function toggleTheme(){set.theme=document.documentElement.dataset.theme==='dark'?'light':'dark';save();applyTheme();const t=$('#th');if(t)t.value=set.theme}
 applyTheme();
@@ -267,7 +325,9 @@ window.onSmsReceived=function(sender,body,slot){
   if(cal&&/^ussd$/i.test(String(sender)))return calReply(body);
   if(balWait&&/^ussd$/i.test(String(sender))){
     const x=body.match(/(?:ksh|kes)\.?\s?([\d,]+(?:\.\d+)?)/i)||body.match(/bal(?:ance)?[^\d]{0,40}([\d,]+(?:\.\d+)?)/i)||body.match(/airtime[^\d]{0,40}([\d,]+(?:\.\d+)?)/i);
-    if(x){clearTimeout(balWait);balWait=null;return setBal(parseFloat(x[1].replace(/,/g,'')))}
+    clearTimeout(balWait);balWait=null;
+    if(balSale)return advBalResult(x?parseFloat(x[1].replace(/,/g,'')):null);
+    if(x)return setBal(parseFloat(x[1].replace(/,/g,'')));
     addLog('Balance reply not understood: '+body.replace(/\s+/g,' ').slice(0,120));return balFail('reply had no amount');
   }
   if(/airtime/i.test(body)&&/balance/i.test(body)&&(m=body.match(/airtime[^\d]{0,40}([\d,]+(?:\.\d+)?)/i)))return setBal(parseFloat(m[1].replace(/,/g,'')));
@@ -343,7 +403,7 @@ function done(){nextAt=Date.now()+spd()[1];save();pump();render()}
 /* ---------- dialing (one USSD at a time, no automatic retries) ---------- */
 let balWait=null,needBal=false,balAt=0,balTry=0;
 let cal=null,calQ=[],calSum=[];
-const SPD={fast:[150,250],balanced:[400,600],safe:[1000,1600]};/* [ms before each reply step, ms gap between customers] */
+const SPD={fast:[100,150],balanced:[250,350],safe:[600,900]};/* [ms before each reply step, ms gap between customers] */
 const spd=()=>SPD[set.speed]||SPD.balanced;
 let nextAt=0,pt=null;
 const simSlot=()=>set.dialSim==='auto'?-1:+set.dialSim;
@@ -367,7 +427,36 @@ function ussdStep(s,txt){
       if(hasBridge()){try{NativeBridge.replyUssd(s.steps[i])}catch(e){fail(s,'Could not send step '+(i+1));return done()}}
       else addLog('TEST MODE - would reply: '+s.steps[i]);
     },spd()[0]);
-  }else{s.status='pending';endSession();done()}
+  }else{s.status='pending';endSession();advCheckBalance(s);done()}
+}
+/* ---------- advanced offers: confirm success by airtime deduction, not the gift-bundle SMS (that text is only sent for normal offers) ---------- */
+let balSale=null,balSaleTry=0;
+function advCheckBalance(s){
+  if(!hasBridge()||!set.balCode)return;/* test mode / no balance code: falls back to the old pending+timeout behaviour below */
+  balSale=s;balSaleTry=0;
+  dialAdvBal(s);
+}
+function dialAdvBal(s){
+  if(balSale!==s)return;/* resolved or superseded while waiting for the USSD channel to free up */
+  if(balWait||cal)return setTimeout(()=>dialAdvBal(s),500);
+  balWait=setTimeout(()=>{balWait=null;advBalResult(null)},20000);
+  try{if(NativeBridge.dialUssdWake)NativeBridge.dialUssdWake(set.balCode,simSlot(),true);else NativeBridge.dialUssd(set.balCode,simSlot())}
+  catch(e){clearTimeout(balWait);balWait=null;advBalResult(null)}
+}
+function advBalResult(v){
+  const s=balSale;balSale=null;
+  if(!s||s.status!=='pending')return;
+  if(v==null){
+    if(balSaleTry<2){balSaleTry++;addLog('Balance check for '+s.phone+' had no reply, retrying');balSale=s;return setTimeout(()=>dialAdvBal(s),5000)}
+    addLog('Could not confirm airtime deduction for '+s.phone+' - leaving it to time out or a Safaricom confirmation text');
+    return;
+  }
+  setBal(v);
+  if(s.balBefore==null||v<s.balBefore){
+    s.status='success';s.reason='';s.ts=Date.now();try{celebrate(s)}catch(e){}textClient(s,'ok');done();
+  }else{
+    fail(s,'Airtime balance unchanged - steps completed but nothing was deducted');done();
+  }
 }
 function ussdOne(s,txt){
   const t=txt.replace(/\s+/g,' ').trim();
@@ -376,7 +465,7 @@ function ussdOne(s,txt){
   s.status='pending';s.ts=Date.now();done();
 }
 function dial(s){
-  s.status='dialing';s.reason='';s.ts=Date.now();s.step=0;save();render();
+  s.status='dialing';s.reason='';s.ts=Date.now();s.step=0;if(s.steps)s.balBefore=bal?bal.v:null;save();render();
   if(hasBridge()){try{if(NativeBridge.dialUssdWake)NativeBridge.dialUssdWake(s.ussd,simSlot(),true);else NativeBridge.dialUssd(s.ussd,simSlot())}catch(e){fail(s,'Could not dial: '+e);save();render()}}
   else addLog('TEST MODE - would dial '+(s.steps?s.steps.join(' > '):s.ussd));
 }
@@ -539,10 +628,10 @@ function home(){
   const bars=days.map((d,i)=>{const h=Math.round(d.v/mx*74),x=i*45.7+8.9,y=104-h;
     return `<rect x="${x}" y="${y}" width="28" height="${d.v?Math.max(h,2):0}" rx="9" fill="url(#${i===6?'gb':'gg'})"/>${d.v?`<text x="${x+14}" y="${y-4}" text-anchor="middle" font-size="10" fill="var(--ink)">${d.v}</text>`:''}<text x="${x+14}" y="120" text-anchor="middle" font-size="11" fill="var(--mute)">${d.l}</text>`}).join('');
   const rec=sales.slice(0,2);
-  return `<div class="per">${Object.keys(PER).map(k=>`<button class="${k===per?'on':''}" onclick="per='${k}';fresh=true;render()">${PER[k][0]}</button>`).join('')}</div>
-  <div class="stats"><div class="stat s1"><small>\uD83D\uDCB0 Total sales</small><b>KSh ${fmt(tot)}</b><span>${PER[per][0]}</span></div><div class="stat s2 own"><small>\uD83D\uDCC8 Profit</small><b>KSh ${fmt(tot*set.rate/100)}</b><span>${set.rate}% commission</span></div><div class="stat s3"><small>\u2705 Sold</small><b>${ok.length}</b><span>bundles delivered</span></div><button class="stat s4" onclick="tab='sales';sf='failed';fresh=true;render()" aria-label="Open failed sales"><small>\u26A0\uFE0F Failed</small><b>${sales.filter(x=>x.status==='failed').length}</b><span>tap to view and retry</span></button></div>
+  return `<div class="stat s1 tot"><small>Total sales</small><b>KSh ${fmt(tot)}</b><div class="per">${Object.keys(PER).map(k=>`<button class="${k===per?'on':''}" onclick="per='${k}';fresh=true;render()">${PER[k][0]}</button>`).join('')}</div></div>
+  <div class="stats"><div class="stat s2 own"><small>Profit</small><b>KSh ${fmt(tot*set.rate/100)}</b></div><div class="stat s3"><small>Sold</small><b>${ok.length}</b><span>delivered</span></div><button class="stat s4" onclick="tab='sales';sf='failed';fresh=true;render()" aria-label="Open failed sales"><small>Failed</small><b>${sales.filter(x=>x.status==='failed').length}</b><span>tap to retry</span></button></div>
   <div class="hd"><h2>Sales per day</h2><span style="font-size:13px;color:var(--mute)">7 days: KSh ${fmt(wk)}</span></div>
-  <div class="chartbox"><svg viewBox="0 0 320 126" role="img" aria-label="Sales per day for the last 7 days"><defs><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8b86f5"/><stop offset="1" stop-color="#4f46e5"/></linearGradient><linearGradient id="gb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd426"/><stop offset="1" stop-color="#ff9f0a"/></linearGradient></defs><g stroke="var(--line)" stroke-dasharray="3 5"><line x1="0" y1="30.5" x2="320" y2="30.5"/><line x1="0" y1="55.5" x2="320" y2="55.5"/><line x1="0" y1="80.5" x2="320" y2="80.5"/></g><line x1="0" y1="104.5" x2="320" y2="104.5" stroke="var(--line)" stroke-width="2"/>${bars}</svg></div>
+  <div class="chartbox"><svg viewBox="0 0 320 126" role="img" aria-label="Sales per day for the last 7 days"><defs><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4f9a6b"/><stop offset="1" stop-color="#166534"/></linearGradient><linearGradient id="gb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3c35a"/><stop offset="1" stop-color="#b8901f"/></linearGradient></defs><g stroke="var(--line)" stroke-dasharray="3 5"><line x1="0" y1="30.5" x2="320" y2="30.5"/><line x1="0" y1="55.5" x2="320" y2="55.5"/><line x1="0" y1="80.5" x2="320" y2="80.5"/></g><line x1="0" y1="104.5" x2="320" y2="104.5" stroke="var(--line)" stroke-width="2"/>${bars}</svg></div>
   <div class="hd"><h2>Recent sales</h2><button class="btn" onclick="tab='sales';fresh=true;render()">View all</button></div>
   ${rec.length?'<ul>'+rec.map(saleRow).join('')+'</ul>':'<p class="empty"><big></big>No activity yet. Payments sent to your till will appear here.</p>'}`;
 }
@@ -671,11 +760,7 @@ function render(){
   $('#balv').textContent=bal?'KSh '+bal.v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'KSh --';
   $('#balt').textContent=balWait?'Checking balance...':bal?'Updated '+new Date(bal.t).toLocaleString([],{weekday:'short',hour:'2-digit',minute:'2-digit'}):'Tap to check';
   $('#rf').classList.toggle('spin',!!balWait);
-  $('#mode').innerHTML='<i class="dot'+(set.auto?' on':'')+'"></i>'+(hasBridge()?'Connected':'Test mode');
   $('#auto').checked=set.auto;
-  {const hr=new Date().getHours(),t0=startOf(0),td=sales.filter(x=>x.status==='success'&&x.t>=t0);
-   $('#gh').textContent=(hr<12?'Good morning \u2600\uFE0F':hr<17?'Good afternoon \uD83C\uDF24\uFE0F':'Good evening \uD83C\uDF19');
-   $('#gs').textContent=td.length?'Today: KSh '+fmt(td.reduce((a,x)=>a+x.amount,0))+' from '+td.length+(td.length===1?' bundle':' bundles'):'No bundles sold yet today. Let\'s go! \uD83D\uDE80'}
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===tab));
   $('#nb').textContent=nf;$('#nb').hidden=!nf;
   {const np=offers.filter(o=>o.cal&&o.cal.state==='bad'&&o.cal.paused&&!o.on).length;$('#ob').textContent=np;$('#ob').hidden=!np}
@@ -712,7 +797,7 @@ function settingsView(){
     general:`${window.Team?Team.account():''}<h2>Appearance</h2><label class="f" for="th">Theme</label>${sel('th','theme',[['light','Light'],['dark','Dark'],['auto','Match phone']])}
   <div class="own"><h2>Profit</h2><label class="f" for="rate">Your commission on each sale (%)</label><input type="number" id="rate" min="0" step="0.5" value="${set.rate}" onchange="set.rate=Math.max(0,+this.value||0);save();render()"></div>
   <div class="own"><h2>Data</h2><div class="btns"><button class="btn d" onclick="if(confirm('Delete all sales history?')){sales=[];save();render();settingsView()}">Clear sales history</button></div></div>`,
-    dialing:`  <h2>Dialing speed</h2><label class="f" for="sp">How fast Bn sends each step and moves to the next customer</label>${sel('sp','speed',[['fast','Fast'],['balanced','Balanced (recommended)'],['safe','Careful (slow phones)']])}<p class="hint">Fast waits 0.15s between steps, Balanced 0.4s, Careful 1s. If your phone skips steps, pick a slower option.</p>
+    dialing:`  <h2>Dialing speed</h2><label class="f" for="sp">How fast Bn sends each step and moves to the next customer</label>${sel('sp','speed',[['fast','Fast'],['balanced','Balanced (recommended)'],['safe','Careful (slow phones)']])}<p class="hint">Fast waits 0.1s between steps, Balanced 0.25s, Careful 0.6s. If your phone skips steps, pick a slower option.</p>
   <h2>Confirmation wait</h2><label class="f" for="wait">Minutes to wait for Safaricom's success message before marking a sale Failed</label><input type="number" id="wait" min="1" value="${set.wait}" onchange="set.wait=Math.max(1,+this.value||3);save()">
   <h2>Airtime balance</h2><label class="f" for="bc">USSD code that shows your airtime balance</label><input type="text" id="bc" value="${esc(set.balCode)}" onchange="set.balCode=this.value.trim();save()">
   <label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="ab" ${set.autoBal?'checked':''} onchange="set.autoBal=this.checked;save()" style="width:auto">Check balance after every sale</label>

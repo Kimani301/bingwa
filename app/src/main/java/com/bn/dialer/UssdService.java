@@ -92,7 +92,7 @@ public class UssdService extends AccessibilityService {
             Bridge.js("window.onUssdResponse(" + Bridge.q(text) + ")");
             if (!sc.input) {
                 // Final message (no reply box): the page has been told, now close it.
-                h.postDelayed(this::dismiss, 400);
+                h.postDelayed(this::dismiss, 250);
             }
         } catch (Exception ignored) {
         }
@@ -131,7 +131,7 @@ public class UssdService extends AccessibilityService {
         h.postDelayed(() -> {
             AccessibilityNodeInfo r = getRootInActiveWindow();
             if (r != null) press(r, SEND_BTN, true);
-        }, 120);
+        }, 70);
     }
 
     /** Close the USSD pop-up (Cancel / OK). */
@@ -274,11 +274,11 @@ public class UssdService extends AccessibilityService {
 
     private void clickSeq(final List<AccessibilityNodeInfo> l, final int i, final AccessibilityNodeInfo enter) {
         if (i >= l.size()) {
-            if (enter != null) h.postDelayed(() -> click(enter), 250);
+            if (enter != null) h.postDelayed(() -> click(enter), 150);
             return;
         }
         click(l.get(i));
-        h.postDelayed(() -> clickSeq(l, i + 1, enter), 160);
+        h.postDelayed(() -> clickSeq(l, i + 1, enter), 100);
     }
 
     /** Finds the number keys of the lock-screen PIN pad (by id first, then by the digit shown on the key). */
