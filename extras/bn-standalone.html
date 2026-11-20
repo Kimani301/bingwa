@@ -118,6 +118,39 @@ body.att .own{display:none!important}
 .stp b{display:block;font-weight:800}.stp pre{white-space:pre-wrap;margin:3px 0 0;font:inherit;font-size:13px;color:var(--mute);word-break:break-word}
 .stp li.bad b{color:var(--r)}.stp li.skip b{color:var(--a)}
 details.cd{margin:6px 0 10px;padding:8px 12px;border:2px solid var(--line);border-radius:16px}details.cd summary{font-weight:800;font-size:14px}
+
+/* --- A softer, more expressive dashboard header --- */
+:root{--font:ui-rounded,"Nunito","SF Pro Rounded","Segoe UI",system-ui,sans-serif;--sh:0 10px 28px rgba(13,92,48,.09)}
+body{background:radial-gradient(ellipse at 8% 0%,rgba(255,214,102,.18),transparent 34%),radial-gradient(ellipse at 100% 18%,rgba(56,189,128,.12),transparent 32%),var(--bg)}
+header{padding:20px 18px 28px;border-radius:0 0 36px 36px;background:linear-gradient(135deg,#087d43 0%,#00a95a 48%,#42c978 100%);box-shadow:0 12px 30px rgba(0,112,58,.20)}
+header:before,header:after{content:"";position:absolute;border-radius:50%;pointer-events:none;z-index:0}
+header:before{width:220px;height:220px;right:-70px;top:-100px;background:rgba(255,255,255,.10)}
+header:after{width:150px;height:150px;left:-70px;bottom:18px;background:rgba(255,211,61,.10)}
+.top{gap:10px}
+.logo{width:54px;height:54px;border-radius:19px;background:rgba(255,255,255,.96);box-shadow:0 7px 18px rgba(0,0,0,.13);color:#078442}
+h1{font-size:29px;letter-spacing:-.8px}
+header p{font-size:12px;letter-spacing:.2px;opacity:.88}
+.tb{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.24);backdrop-filter:blur(8px)}
+.sw{padding:9px 12px;border-radius:999px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(8px)}
+.greet{margin:22px 2px 12px}
+.greet b{font-size:25px;letter-spacing:-.6px;text-shadow:0 2px 12px rgba(0,0,0,.10)}
+.greet span{display:inline-block;margin-top:5px;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.15);font-size:12px;letter-spacing:.15px}
+.bal{margin-top:12px;padding:17px 19px;border:1px solid rgba(255,255,255,.68);border-radius:25px;background:rgba(255,255,255,.96);box-shadow:0 10px 24px rgba(0,64,32,.16);transition:transform .18s ease,box-shadow .18s ease}
+.bal:active{transform:scale(.985)}
+.bal small{font-size:12px;letter-spacing:.45px;text-transform:uppercase;color:#64816f}
+.bal b{font-size:34px;letter-spacing:-1px;color:#078b48}
+.bal .rf{width:42px;height:42px;display:grid;place-items:center;border-radius:15px;background:#e6f8ed;font-size:25px}
+main{padding-top:18px}
+h2{letter-spacing:-.35px}
+.row,.stat,.chartbox{box-shadow:0 8px 22px rgba(13,92,48,.07)}
+.row{border-width:1px;border-radius:22px}
+.stat{border-radius:23px}
+nav{border:1px solid rgba(0,120,60,.08);box-shadow:0 -8px 28px rgba(0,60,25,.10);backdrop-filter:blur(16px)}
+nav button{font-size:11px}
+nav svg{width:48px;height:31px}
+@media(min-width:520px){header{padding-left:max(22px,calc((100% - 600px)/2));padding-right:max(22px,calc((100% - 600px)/2))}}
+@media(prefers-reduced-motion:no-preference){.logo{animation:logoFloat 4s ease-in-out infinite}@keyframes logoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}}
+
 </style>
 </head>
 <body>
@@ -243,12 +276,16 @@ window.onSmsReceived=function(sender,body,slot){
   if(/recommendation for/i.test(body)&&(m=body.match(/for\s+(\S+)\s+submitted successfully/i)))return gotSubmitted(normPhone(m[1]),body);
   if(/purchased a gift bundle/i.test(body)&&(m=body.match(new RegExp('for\\s+'+PH,'i'))))return gotSuccess(normPhone(m[1]));
   if(/recommendation failed/i.test(body)){m=body.match(new RegExp(PH));return gotFail(m?normPhone(m[1]):null,/already been recommended/i.test(body)?'Customer already recommended':body.trim().slice(0,160))}
-  if(/received/i.test(body)&&/confirmed/i.test(body)){
+  // Only the complete Safaricom Lipa na M-PESA confirmation template is a payment.
+  // Keep USSD/recommendation replies above working, but ignore every other ordinary SMS.
+  const paymentFormat=/^[A-Z0-9]{10}\s+Confirmed\.\s*on\s+\d{1,2}\/\d{1,2}\/\d{2}\s+at\s+\d{1,2}:\d{2}\s*(?:AM|PM)\s*KSH\s*[\d,]+\.\d{2}\s+received from\s+254[17]\d{8}\s+[A-Za-z][A-Za-z .'-]*?\s*\.\s*New Account balance is KSH\s*[\d,]+\.\d{2}\.\s*Transaction cost, KSH\s*[\d,]+\.\d{2}\.\s*Receiving payments of Ksh 500 & below in your Lipa na M-PESA till is now FREE!$/i;
+  const cleanBody=body.replace(/\s+/g,' ').trim();
+  if(paymentFormat.test(cleanBody)){
     if(!/mpesa/i.test(String(sender||'')))return addLog('Ignored payment text from '+sender);
     if(set.readSim!=='both'&&slot!=null&&String(slot)!==set.readSim)return addLog('Ignored payment text from SIM '+(+slot+1));
-    return gotPayment(body);
+    return gotPayment(cleanBody);
   }
-  addLog('Unrecognised SMS from '+sender+': '+body.slice(0,100));
+  addLog('Ignored SMS (not the approved M-PESA format) from '+sender);
 };
 
 function smsName(body){
@@ -623,7 +660,7 @@ function offerRow(o){
     +'<button class="btn ico d" aria-label="Delete" title="Delete" onclick="delOffer(\''+o.id+'\')">\uD83D\uDDD1</button></div></li>';
 }
 const SAMPLES=[
-  ()=>['MPESA','QK'+Math.random().toString(36).slice(2,10).toUpperCase()+' Confirmed. Ksh20.00 received from 254712345678 JOHN DOE on 18/11/26 at 8:54 AM. New business balance is Ksh1,250.00.'],
+  ()=>['MPESA','UKKKI3IJ97 Confirmed.on 20/11/26 at 5:17 PMKSH20.00 received from 254791390779 David  Ndungu Muthoni . New Account balance is KSH20.21. Transaction cost, KSH0.00. Receiving payments of Ksh 500 & below in your Lipa na M-PESA till is now FREE!'],
   ()=>['Safaricom','Recommendation for 0712345678 submitted successfully. Keep selling!! Be a Bingwa Sokoni Champion.'],
   ()=>['Safaricom','Thank you for choosing Safaricom. You have purchased a gift bundle of 250 MBs for 0712345678. Continue connecting with Family & Friends!'],
   ()=>['Safaricom','Recommendation failed. The customer 0712345678 has already been recommended. Kindly recommend to another customer. Thank you'],
