@@ -99,6 +99,14 @@ body.att .own{display:none!important}
 .gcard .gerr{color:var(--r);font-size:14px;font-weight:700;min-height:0}
 .gcard .btn.p{width:100%;min-height:52px;font-size:17px}
 .gl{border:0;background:none;color:var(--g);font:inherit;font-weight:800;font-size:14px;padding:8px}
+.oc{background:var(--card);border:2px solid var(--line);border-radius:24px;padding:14px;margin:12px 0;box-shadow:var(--sh)}.oc.off{border-style:dashed;opacity:.82}
+.oc-h{display:flex;gap:12px;align-items:center}.oc-h .mid{flex:1;min-width:0}
+.oc .chips{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-top:12px}
+.oc .sc{font:700 12px ui-monospace,Menlo,monospace;background:var(--gs);color:var(--g);border-radius:8px;padding:3px 8px;word-break:break-all}.oc .sc.n{background:var(--bs);color:var(--b)}.oc .sc.d{background:var(--as);color:var(--a)}
+.oc .ar{color:var(--mute);font-weight:900;font-size:14px}
+.oc-b{display:flex;gap:6px;margin-top:12px}.oc-b .btn{flex:1;min-height:42px;padding:6px 4px;font-size:13px;box-shadow:0 3px 0 var(--line)}.oc-b .btn.p{flex:2;box-shadow:0 4px 0 var(--hd2)}.oc-b .btn.ico{flex:0 0 46px;font-size:16px}
+.grp{font:800 13px var(--font);color:var(--mute);margin:20px 4px 0;text-transform:uppercase;letter-spacing:.6px}
+.tools{display:flex;gap:8px;margin:6px 0 0}.tools .btn{flex:1}
 .pick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0 4px}
 .pk{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;padding:12px;border:2px solid var(--line);border-radius:20px;background:var(--card);color:var(--ink);font:inherit;box-shadow:0 4px 0 var(--line);min-height:76px}
 .pk b{font:900 22px/1 var(--font);color:var(--g);font-variant-numeric:tabular-nums}.pk b small{font-size:11px;font-weight:800;margin-left:3px}
@@ -226,11 +234,12 @@ window.onSmsReceived=function(sender,body,slot){
   body=String(body||'');let m;
   if(cal&&/^ussd$/i.test(String(sender)))return calReply(body);
   if(balWait&&/^ussd$/i.test(String(sender))){
-    const x=body.match(/(?:ksh|kes)\.?\s?([\d,]+(?:\.\d+)?)/i)||body.match(/balance[^\d]{0,40}([\d,]+(?:\.\d+)?)/i);
+    const x=body.match(/(?:ksh|kes)\.?\s?([\d,]+(?:\.\d+)?)/i)||body.match(/bal(?:ance)?[^\d]{0,40}([\d,]+(?:\.\d+)?)/i)||body.match(/airtime[^\d]{0,40}([\d,]+(?:\.\d+)?)/i);
     if(x){clearTimeout(balWait);balWait=null;return setBal(parseFloat(x[1].replace(/,/g,'')))}
+    addLog('Balance reply not understood: '+body.replace(/\s+/g,' ').slice(0,120));return balFail('reply had no amount');
   }
   if(/airtime/i.test(body)&&/balance/i.test(body)&&(m=body.match(/airtime[^\d]{0,40}([\d,]+(?:\.\d+)?)/i)))return setBal(parseFloat(m[1].replace(/,/g,'')));
-  if(/^ussd$/i.test(String(sender))){const a=sales.find(x=>x.status==='dialing'&&x.steps);if(a)return ussdStep(a,body)}
+  if(/^ussd$/i.test(String(sender))){const a=sales.find(x=>x.status==='dialing');if(a)return a.steps?ussdStep(a,body):ussdOne(a,body)}
   if(/recommendation for/i.test(body)&&(m=body.match(/for\s+(\S+)\s+submitted successfully/i)))return gotSubmitted(normPhone(m[1]),body);
   if(/purchased a gift bundle/i.test(body)&&(m=body.match(new RegExp('for\\s+'+PH,'i'))))return gotSuccess(normPhone(m[1]));
   if(/recommendation failed/i.test(body)){m=body.match(new RegExp(PH));return gotFail(m?normPhone(m[1]):null,/already been recommended/i.test(body)?'Customer already recommended':body.trim().slice(0,160))}
@@ -243,9 +252,11 @@ window.onSmsReceived=function(sender,body,slot){
 };
 
 function smsName(body){
-  const m=String(body||'').match(/\bfrom\s+([^\d]+?)\s*(?:\+?\d|\bon\b)/i);
-  if(!m)return '';
-  return m[1].replace(/[^A-Za-z .'\-]/g,' ').replace(/\s+/g,' ').trim().toLowerCase().replace(/(^|[ .'\-])([a-z])/g,(x,a,b)=>a+b.toUpperCase()).slice(0,40);
+  const t=String(body||'');const f=t.match(/\bfrom\s+([\s\S]+)/i);
+  if(!f)return '';
+  const cut=f[1].split(/\s+on\s+\d|\s+at\s+\d{1,2}[:.]\d|\.\s+[A-Z]|\s+New\s+M-?PESA|\s+Transaction\s+cost|\s+Balance/i)[0];
+  const w=cut.split(/\s+/).filter(x=>/^[A-Za-z][A-Za-z.'\-]*$/.test(x));
+  return w.join(' ').replace(/[.\s]+$/,'').toLowerCase().replace(/(^|[ .'\-])([a-z])/g,(x,a,b)=>a+b.toUpperCase()).slice(0,40);
 }
 function gotPayment(body){
   const code=(body.match(/\b(?=[A-Z0-9]*[A-Z])[A-Z0-9]{10}\b/)||[])[0]||('NOCODE'+uid());
@@ -264,7 +275,7 @@ function gotPayment(body){
 }
 function fail(s,r){s.status='failed';s.reason=r;s.ts=Date.now();if(s.steps)endSession()}
 const open=(ph,sts)=>sales.slice().reverse().find(s=>sts.includes(s.status)&&(!ph||s.phone===ph));
-function gotSubmitted(ph){const s=open(ph,['dialing','queued']);if(!s)return addLog('Submitted reply with no matching sale: '+ph);s.status='pending';s.ts=Date.now();done()}
+function gotSubmitted(ph){const s=open(ph,['dialing','queued','pending']);if(!s)return addLog('Submitted reply with no matching sale: '+ph);s.status='pending';s.ts=Date.now();done()}
 function gotSuccess(ph){const s=open(ph,['pending','dialing']);if(!s)return addLog('Success reply with no matching sale: '+ph);s.status='success';s.reason='';s.ts=Date.now();try{celebrate(s)}catch(e){}textClient(s,'ok');needBal=true;balAt=Date.now()+4000;done()}
 function gotFail(ph,r){const s=open(ph,['dialing','pending']);if(!s)return addLog('Failure reply with no matching sale: '+(ph||'?'));fail(s,r);if(isDup(r))textClient(s,'dup');needBal=true;balAt=Date.now()+4000;done()}
 /* ---------- texts to the customer ---------- */
@@ -298,9 +309,9 @@ function smsTest(){
 function done(){nextAt=Date.now()+spd()[1];save();pump();render()}
 
 /* ---------- dialing (one USSD at a time, no automatic retries) ---------- */
-let balWait=null,needBal=false,balAt=0;
+let balWait=null,needBal=false,balAt=0,balTry=0;
 let cal=null,calQ=[],calSum=[];
-const SPD={fast:[300,500],balanced:[700,1000],safe:[1400,2500]};/* [ms before each reply step, ms gap between customers] */
+const SPD={fast:[150,250],balanced:[400,600],safe:[1000,1600]};/* [ms before each reply step, ms gap between customers] */
 const spd=()=>SPD[set.speed]||SPD.balanced;
 let nextAt=0,pt=null;
 const simSlot=()=>set.dialSim==='auto'?-1:+set.dialSim;
@@ -326,9 +337,15 @@ function ussdStep(s,txt){
     },spd()[0]);
   }else{s.status='pending';endSession();done()}
 }
+function ussdOne(s,txt){
+  const t=txt.replace(/\s+/g,' ').trim();
+  addLog('USSD reply: '+t.slice(0,90));
+  if(FAILRE.test(t)){const why=t.slice(0,160);fail(s,why);if(isDup(why))textClient(s,'dup');return done()}
+  s.status='pending';s.ts=Date.now();done();
+}
 function dial(s){
   s.status='dialing';s.reason='';s.ts=Date.now();s.step=0;save();render();
-  if(hasBridge()){try{if(s.steps&&NativeBridge.dialUssdWake)NativeBridge.dialUssdWake(s.ussd,simSlot(),true);else NativeBridge.dialUssd(s.ussd,simSlot())}catch(e){fail(s,'Could not dial: '+e);save();render()}}
+  if(hasBridge()){try{if(NativeBridge.dialUssdWake)NativeBridge.dialUssdWake(s.ussd,simSlot(),true);else NativeBridge.dialUssd(s.ussd,simSlot())}catch(e){fail(s,'Could not dial: '+e);save();render()}}
   else addLog('TEST MODE - would dial '+(s.steps?s.steps.join(' > '):s.ussd));
 }
 function pump(){
@@ -338,7 +355,7 @@ function pump(){
   const w=nextAt-Date.now();
   if(w>0){clearTimeout(pt);pt=setTimeout(pump,w+20);return}
   /* customers first: the balance check waits until the queue is empty */
-  if(needBal&&Date.now()>=balAt&&!q){needBal=false;if(set.autoBal&&hasBridge()){refreshBal(true);return}}
+  if(needBal&&Date.now()>=balAt&&!q){if(set.autoBal&&hasBridge()){refreshBal(true);return}needBal=false}
   if(q)dial(q)}
 function dialNow(id){
   const s=sales.find(x=>x.id===id);if(!s)return;
@@ -356,7 +373,7 @@ setInterval(()=>{
   });
   save();pump();render();
 },5000);
-setInterval(pump,1000);
+setInterval(pump,400);
 
 /* ---------- calibrate: run every step of an advanced offer except the last option, and list what happened ---------- */
 const normMenu=t=>String(t||'').toLowerCase().replace(/\s+/g,' ').trim();
@@ -457,15 +474,22 @@ function calLine(o){
 
 /* ---------- airtime balance ---------- */
 window.onUssdResponse=t=>onSmsReceived('USSD',t);
-function setBal(v){bal={v,t:Date.now()};W('bs_bal',bal);addLog('Airtime balance KSh '+v);render();pump()}
+function setBal(v){needBal=false;balTry=0;bal={v,t:Date.now()};W('bs_bal',bal);addLog('Airtime balance KSh '+v);render();pump()}
 function editBal(){const x=prompt('Airtime balance (KSh)',bal?bal.v:'');if(x===null)return;const v=parseFloat(String(x).replace(/,/g,''));if(isNaN(v))return toast('Enter a number');setBal(v)}
+function balFail(why){
+  clearTimeout(balWait);balWait=null;
+  if(balTry<2){balTry++;needBal=true;balAt=Date.now()+15000;addLog('Balance check failed ('+why+'). Trying again in 15 seconds')}
+  else{balTry=0;needBal=false;addLog('Balance check failed: '+why+'. Tap the balance to try again')}
+  render();
+}
 function refreshBal(q){
   const say=m=>{if(!q)toast(m)};
   if(busy())return say('Another dial is running. Try again in a moment.');
-  if(!set.balCode)return say('Set the balance code in Settings');
-  if(!hasBridge()){addLog('TEST MODE - would dial '+set.balCode);return say('Test mode: send a test balance SMS from Settings')}
-  balWait=setTimeout(()=>{balWait=null;say('No balance reply. Try again.');render()},40000);
-  try{NativeBridge.dialUssd(set.balCode,simSlot())}catch(e){clearTimeout(balWait);balWait=null;say('Could not dial')}
+  if(!set.balCode){needBal=false;return say('Set the balance code in Settings')}
+  if(!hasBridge()){needBal=false;addLog('TEST MODE - would dial '+set.balCode);return say('Test mode: send a test balance SMS from Settings')}
+  if(!q){needBal=false;balTry=0}
+  balWait=setTimeout(()=>{balWait=null;if(q)balFail('no reply from Safaricom');else{say('No balance reply. Try again.');render()}},60000);
+  try{if(NativeBridge.dialUssdWake)NativeBridge.dialUssdWake(set.balCode,simSlot(),true);else NativeBridge.dialUssd(set.balCode,simSlot())}catch(e){clearTimeout(balWait);balWait=null;say('Could not dial');if(q)balFail('could not dial')}
   render();
 }
 
@@ -544,10 +568,20 @@ function saleRow(s){
   const [lab,c]=ST[s.status];let act='';
   if(s.status==='failed')act=`<button class="ic retry" title="Retry" aria-label="Retry ${esc(s.phone||'')}" onclick="dialNow('${s.id}')">&#8635;<small>Retry</small></button>`;
   if(s.status==='queued'&&!set.auto)act=`<button class="ic" title="Dial now" aria-label="Dial now" onclick="dialNow('${s.id}')">&#9654;</button>`;
-  return `<li class="row ${s.status}"><div class="amt">${s.amount}<small>KSh</small></div><div class="mid"><b>${esc(s.client||'Unnamed client')}</b><span>\uD83D\uDCF1 ${esc(s.phone||'No number')}</span><span>\uD83D\uDD52 ${tm(s.t)}</span>${s.reason?`<em>${esc(s.reason)}</em>`:''}</div><div class="end"><span class="chip ${c}">${lab}</span>${act}</div></li>`;
+  return `<li class="row ${s.status}"><div class="amt">${s.amount}<small>KSh</small></div><div class="mid"><b>${esc(s.client||s.phone||'Unknown client')}</b>${s.client&&s.phone?`<span>\uD83D\uDCF1 ${esc(s.phone)}</span>`:''}<span>\uD83D\uDD52 ${tm(s.t)}</span>${s.reason?`<em>${esc(s.reason)}</em>`:''}</div><div class="end"><span class="chip ${c}">${lab}</span>${act}</div></li>`;
+}
+const chipH=(c,t)=>'<span class="chip '+c+'">'+t+'</span>';
+function stepChips(o){
+  return '<div class="chips">'+o.steps.map((x,i)=>i===0?'<span class="sc d">'+esc(x)+'</span>':/^n$/i.test(x)?'<span class="sc n">\uD83D\uDCF1 number</span>':'<span class="sc">'+esc(x)+'</span>').join('<span class="ar">\u203A</span>')+'</div>';
 }
 function advRow(o){
-  return `<li class="row o"><div class="amt">${o.amount}<small>KSh</small></div><div class="mid"><b>${esc(o.name)}</b><span>${o.steps.map(esc).join('  \u2192  ')}</span>${calLine(o)}<div class="btns own"><button class="btn" onclick="calStart('${o.id}')">\uD83E\uDDEA Calibrate</button>${o.cal&&o.cal.trail?`<button class="btn" onclick="calShow('${o.id}')">\uD83D\uDCCB Steps</button>`:''}<button class="btn" onclick="openAdv('${o.id}')">\u270F\uFE0F Edit</button><button class="btn" onclick="togOffer('${o.id}')">${o.on?'\u23F8 Disable':'\u25B6 Enable'}</button><button class="btn d" onclick="delOffer('${o.id}')">\uD83D\uDDD1 Delete</button></div></div><div class="end"><span class="chip ${o.on?'g':'r'}">${o.on?'Active':'Off'}</span></div></li>`;
+  const c=o.cal;
+  return '<li class="oc'+(o.on?'':' off')+'"><div class="oc-h"><div class="amt">'+o.amount+'<small>KSh</small></div><div class="mid"><b>'+esc(o.name)+'</b>'+calLine(o)+'</div>'+chipH(o.on?'g':'r',o.on?'Active':'Off')+'</div>'+stepChips(o)
+    +'<div class="oc-b own"><button class="btn p" onclick="calStart(\''+o.id+'\')">\uD83E\uDDEA Calibrate</button>'
+    +(c&&c.trail?'<button class="btn" onclick="calShow(\''+o.id+'\')">\uD83D\uDCCB Steps</button>':'')
+    +'<button class="btn" onclick="openAdv(\''+o.id+'\')">\u270F\uFE0F Edit</button>'
+    +'<button class="btn ico" aria-label="'+(o.on?'Disable':'Enable')+'" title="'+(o.on?'Disable':'Enable')+'" onclick="togOffer(\''+o.id+'\')">'+(o.on?'\u23F8':'\u25B6')+'</button>'
+    +'<button class="btn ico d" aria-label="Delete" title="Delete" onclick="delOffer(\''+o.id+'\')">\uD83D\uDDD1</button></div></li>';
 }
 const adlg=$('#adlg');
 function openAdv(id){
@@ -583,10 +617,13 @@ function saveAdv(){
   offers.sort((a,b)=>a.amount-b.amount);save();adlg.close();render();
 }
 function offerRow(o){
-  return `<li class="row o"><div class="amt">${o.amount}<small>KSh</small></div><div class="mid"><b>${esc(o.name)}</b><span>${esc(o.ussd)}</span><div class="btns own"><button class="btn" onclick="openOffer('${o.id}')">\u270F\uFE0F Edit</button><button class="btn" onclick="togOffer('${o.id}')">${o.on?'\u23F8 Disable':'\u25B6 Enable'}</button><button class="btn d" onclick="delOffer('${o.id}')">\uD83D\uDDD1 Delete</button></div></div><div class="end"><span class="chip ${o.on?'g':'r'}">${o.on?'Active':'Off'}</span></div></li>`;
+  return '<li class="oc'+(o.on?'':' off')+'"><div class="oc-h"><div class="amt">'+o.amount+'<small>KSh</small></div><div class="mid"><b>'+esc(o.name)+'</b><div class="chips" style="margin-top:6px"><span class="sc d">'+esc(o.ussd)+'</span></div></div>'+chipH(o.on?'g':'r',o.on?'Active':'Off')+'</div>'
+    +'<div class="oc-b own"><button class="btn p" onclick="openOffer(\''+o.id+'\')">\u270F\uFE0F Edit</button>'
+    +'<button class="btn" onclick="togOffer(\''+o.id+'\')">'+(o.on?'\u23F8 Disable':'\u25B6 Enable')+'</button>'
+    +'<button class="btn ico d" aria-label="Delete" title="Delete" onclick="delOffer(\''+o.id+'\')">\uD83D\uDDD1</button></div></li>';
 }
 const SAMPLES=[
-  ()=>['MPESA','QK'+Math.random().toString(36).slice(2,10).toUpperCase()+' Confirmed. You have received Ksh20.00 from JOHN DOE 0712345678 on 18/11/26 at 8:54 AM.'],
+  ()=>['MPESA','QK'+Math.random().toString(36).slice(2,10).toUpperCase()+' Confirmed. Ksh20.00 received from 254712345678 JOHN DOE on 18/11/26 at 8:54 AM. New business balance is Ksh1,250.00.'],
   ()=>['Safaricom','Recommendation for 0712345678 submitted successfully. Keep selling!! Be a Bingwa Sokoni Champion.'],
   ()=>['Safaricom','Thank you for choosing Safaricom. You have purchased a gift bundle of 250 MBs for 0712345678. Continue connecting with Family & Friends!'],
   ()=>['Safaricom','Recommendation failed. The customer 0712345678 has already been recommended. Kindly recommend to another customer. Thank you'],
@@ -623,9 +660,15 @@ function render(){
     const f=sales.filter(x=>sf==='all'||(sf==='failed'?x.status==='failed':sf==='live'?LIVE.includes(x.status):x.status==='success'));
     v.innerHTML=seg(sf,[['all','All'],['live','Live'+(nl?' ('+nl+')':'')],['success','Success'],['failed','Failed'+(nf?' ('+nf+')':'')]],'sf')+(sf==='failed'&&f.length?'<p class="hint" style="margin:8px 2px 0">\u26A0\uFE0F '+f.length+' failed. Tap \u21BB Retry on a sale to dial it again (check first that it did not go through).</p>':'')+(f.length?'<ul>'+f.slice(0,150).map(saleRow).join('')+'</ul>':'<p class="empty"><big></big>'+(sales.length?(sf==='live'?'Nothing in progress right now.':'Nothing here.'):'No sales yet. Payments sent to your till will appear here.')+'</p>');
   }else if(tab==='offers'){
+    const adv=ot==='adv',list=offers.filter(o=>!!o.adv===adv),act=list.filter(o=>o.on),off=list.filter(o=>!o.on),rowFn=adv?advRow:offerRow;
     const head=seg(ot,[['normal','Normal ('+offers.filter(o=>!o.adv).length+')'],['adv','Advanced ('+offers.filter(o=>o.adv).length+')']],'ot');
-    if(ot==='adv'){const a=offers.filter(o=>o.adv);v.innerHTML=head+'<p class="note">Advanced offers are never dialed in one go. Write the full code once. The app dials the first part, waits for Safaricom\'s menu, then sends each next number one at a time.</p><p class="note">\uD83E\uDDEA <b>Calibrate</b> tests an offer without selling it: Bn runs every step, shows you what Safaricom answered at each one, and stops before the last option. Do it after Safaricom changes codes, so no client gets a bundle they did not pay for.</p><div class="btns own"><button class="btn p" onclick="openAdv()">+ Add advanced offer</button><button class="btn" onclick="calAll()">\uD83E\uDDEA Calibrate all</button></div>'+(a.length?'<ul>'+a.map(advRow).join('')+'</ul>':'<p class="empty"><big></big>No advanced offers yet.</p>')}
-    else v.innerHTML=head+'<div class="btns own"><button class="btn p" onclick="openOffer()">+ Add offer</button></div><ul>'+offers.filter(o=>!o.adv).map(offerRow).join('')+'</ul>';
+    const paused=list.filter(o=>o.cal&&o.cal.state==='bad'&&!o.on).length;
+    const tools='<div class="tools own"><button class="btn p" onclick="'+(adv?'openAdv()':'openOffer()')+'">+ Add offer</button>'+(adv?'<button class="btn" onclick="calAll()">\uD83E\uDDEA Calibrate all</button>':'')+'</div>';
+    const info=adv?'<details class="cd"><summary>How advanced offers and Calibrate work</summary><p class="hint">Write the full code once. Bn dials the first part, waits for Safaricom\'s menu, then sends each next number one at a time.</p><p class="hint">Calibrate runs every step on your own number, shows what Safaricom answered at each one, and stops before the last option so nothing is bought. Do it after Safaricom changes codes.</p></details>':'';
+    v.innerHTML=head+tools+(paused?'<p class="note">\u26A0\uFE0F '+paused+' offer'+(paused>1?'s were':' was')+' paused because calibration failed. Fix the code, then calibrate again.</p>':'')
+      +(act.length?'<div class="grp">Active \u00B7 '+act.length+'</div><ul>'+act.map(rowFn).join('')+'</ul>':'')
+      +(off.length?'<div class="grp">Off \u00B7 '+off.length+'</div><ul>'+off.map(rowFn).join('')+'</ul>':'')
+      +(list.length?'':'<p class="empty"><big></big>No '+(adv?'advanced ':'')+'offers yet.</p>')+info;
   }else if(tab==='team'&&window.Team)Team.view();
   if(fresh){fresh=false;v.classList.remove('anim');void v.offsetWidth;v.classList.add('anim');clearTimeout(window._an);window._an=setTimeout(()=>v.classList.remove('anim'),900)}
 }
@@ -637,7 +680,7 @@ function settingsView(){
     general:`${window.Team?Team.account():''}<h2>Appearance</h2><label class="f" for="th">Theme</label>${sel('th','theme',[['light','Light'],['dark','Dark'],['auto','Match phone']])}
   <div class="own"><h2>Profit</h2><label class="f" for="rate">Your commission on each sale (%)</label><input type="number" id="rate" min="0" step="0.5" value="${set.rate}" onchange="set.rate=Math.max(0,+this.value||0);save();render()"></div>
   <div class="own"><h2>Data</h2><div class="btns"><button class="btn d" onclick="if(confirm('Delete all sales history?')){sales=[];save();render();settingsView()}">Clear sales history</button></div></div>`,
-    dialing:`  <h2>Dialing speed</h2><label class="f" for="sp">How fast Bn sends each step and moves to the next customer</label>${sel('sp','speed',[['fast','Fast'],['balanced','Balanced (recommended)'],['safe','Careful (slow phones)']])}<p class="hint">Fast waits 0.3s between steps, Balanced 0.7s, Careful 1.4s. If your phone skips steps, pick a slower option.</p>
+    dialing:`  <h2>Dialing speed</h2><label class="f" for="sp">How fast Bn sends each step and moves to the next customer</label>${sel('sp','speed',[['fast','Fast'],['balanced','Balanced (recommended)'],['safe','Careful (slow phones)']])}<p class="hint">Fast waits 0.15s between steps, Balanced 0.4s, Careful 1s. If your phone skips steps, pick a slower option.</p>
   <h2>Confirmation wait</h2><label class="f" for="wait">Minutes to wait for Safaricom's success message before marking a sale Failed</label><input type="number" id="wait" min="1" value="${set.wait}" onchange="set.wait=Math.max(1,+this.value||3);save()">
   <h2>Airtime balance</h2><label class="f" for="bc">USSD code that shows your airtime balance</label><input type="text" id="bc" value="${esc(set.balCode)}" onchange="set.balCode=this.value.trim();save()">
   <label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="ab" ${set.autoBal?'checked':''} onchange="set.autoBal=this.checked;save()" style="width:auto">Check balance after every sale</label>
@@ -656,7 +699,7 @@ function settingsView(){
   <div class="btns"><button class="btn" onclick="smsTest()">\uD83D\uDCE8 Send me a test</button></div></div>
 `,
     phone:`  <h2>USSD helper</h2><p class="hint" id="a11y"></p><div class="btns"><button class="btn" onclick="a11yRestart()">\uD83D\uDD04 Restart helper now</button></div>
-  <h2>Screen off</h2><p class="hint">When a customer pays for an advanced offer while the phone is locked, Bn wakes the screen, types your phone PIN or password, runs the codes, then locks the phone again. Works with a PIN or password (not pattern or fingerprint). The PIN is stored encrypted on this phone only.</p>
+  <h2>Screen off</h2><p class="hint">When a customer pays while the phone is locked (any offer, normal or advanced), Bn wakes the screen, types your phone PIN or password, runs the codes, then locks the phone again. Works with a PIN or password (not pattern or fingerprint). The PIN is stored encrypted on this phone only.</p>
   <label class="f" for="pin">Phone PIN or password</label><input type="password" id="pin" autocomplete="off"><p class="hint" id="pinst"></p>
   <div class="btns"><button class="btn p" onclick="savePin()">Save</button><button class="btn" onclick="clearPin()">Remove</button><button class="btn" onclick="testWake()">\uD83E\uDDEA Test</button></div>
   <div class="own"><h2>Test an SMS</h2><div class="btns" style="flex-wrap:wrap"><button class="btn" onclick="fill(0)">Payment</button><button class="btn" onclick="fill(1)">Submitted</button><button class="btn" onclick="fill(2)">Success</button><button class="btn" onclick="fill(3)">Failed</button><button class="btn" onclick="fill(4)">USSD menu</button><button class="btn" onclick="fill(5)">Balance</button></div>
@@ -678,7 +721,7 @@ function a11yInfo(){
 function pinInfo(){
   const e=$('#pinst');if(!e)return;
   if(!hasBridge()||!NativeBridge.hasUnlockPin){e.textContent='Only available in the Android app.';return}
-  e.textContent=NativeBridge.hasUnlockPin()==='true'?'\u2705 PIN saved. Bn will wake and unlock the phone for advanced offers.':'Not set. Advanced offers can fail while the screen is off.';
+  e.textContent=NativeBridge.hasUnlockPin()==='true'?'\u2705 PIN saved. Bn will wake and unlock the phone to run offers.':'Not set. Offers can fail while the screen is off.';
 }
 function savePin(){
   const i=$('#pin'),v=i.value.trim();

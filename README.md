@@ -8,7 +8,8 @@ dial USSD codes, send step-by-step replies, and read payment SMS.
 - **Sell**: tap an offer, type the client's phone number (and optionally their name), tap Sell. The sale is dialed straight away,
   even if Auto-dial is off, and shows under Latest. Attendants can use it too.
 - **Sales**: All, **Live** (queued, dialing or waiting for Safaricom), Success, Failed. Retry failed sales here.
-- **Offers**: Normal and Advanced, with a count on each. Advanced offers have Calibrate / Calibrate all.
+- **Offers**: Normal and Advanced, with a count on each. Offers are grouped into Active and Off; each is a card with its steps shown as
+  chips and Calibrate / Steps / Edit / pause / delete buttons (advanced), or Edit / pause / delete (normal). Calibrate all sits at the top.
   A badge on the tab shows offers that were paused because calibration failed.
 - **Team** (owner only): attendants and their sales.
 - **Settings**, split into four tabs: **General** (account, theme, profit, data), **Dialing** (speed, wait,
@@ -117,3 +118,11 @@ To let attendants sign in with their own accounts while you stay the owner, foll
 
 ## Updating the app's screens
 Edit `app/src/main/assets/index.html` on GitHub and commit. A new APK is built automatically.
+
+
+## Balance, screen off and speed
+- **Balance**: after every sale Bn checks the airtime balance by itself (Settings > Dialing > Airtime balance). It wakes the phone if the
+  screen is off, and if the reply is missing or unreadable it tries again (up to 2 more times). Unreadable replies are written to the activity log.
+- **Screen off**: both normal and advanced offers wake and unlock the phone (needs the PIN saved in Settings > Phone > Screen off), run the code, then lock it again.
+- **Speed**: Balanced is now 0.4 s between steps and 0.6 s between customers (Fast 0.15 / 0.25, Careful 1 / 1.6). A normal offer no longer waits for
+  Safaricom's confirmation text before the next customer starts; it only waits for the USSD reply.

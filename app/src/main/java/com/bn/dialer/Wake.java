@@ -62,7 +62,7 @@ final class Wake {
         Bridge.toast("Waking the phone to run the codes");
         s.unlock(pin, ok -> {
             if (!ok) Bridge.toast("Could not unlock the phone (check the saved PIN)");
-            H.postDelayed(proceed, 800);
+            H.postDelayed(proceed, 400);
         });
     }
 

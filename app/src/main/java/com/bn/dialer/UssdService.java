@@ -85,14 +85,14 @@ public class UssdService extends AccessibilityService {
             if (text.isEmpty() || RUNNING.matcher(text).find()) return;
 
             long now = SystemClock.uptimeMillis();
-            if (text.equals(lastText) && now - lastAt < 2500) return;   // same pop-up, repeated event
+            if (text.equals(lastText) && now - lastAt < 1500) return;   // same pop-up, repeated event
             lastText = text;
             lastAt = now;
 
             Bridge.js("window.onUssdResponse(" + Bridge.q(text) + ")");
             if (!sc.input) {
                 // Final message (no reply box): the page has been told, now close it.
-                h.postDelayed(this::dismiss, 700);
+                h.postDelayed(this::dismiss, 400);
             }
         } catch (Exception ignored) {
         }
@@ -131,7 +131,7 @@ public class UssdService extends AccessibilityService {
         h.postDelayed(() -> {
             AccessibilityNodeInfo r = getRootInActiveWindow();
             if (r != null) press(r, SEND_BTN, true);
-        }, 200);
+        }, 120);
     }
 
     /** Close the USSD pop-up (Cancel / OK). */
