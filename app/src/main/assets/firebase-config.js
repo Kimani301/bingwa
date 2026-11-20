@@ -1,6 +1,4 @@
-/* Paste your Firebase web app details here (see FIREBASE-SETUP.md).
-   While both are empty, Bn works on one phone with no logins. */
 window.BN_FIREBASE = {
-  apiKey: "",
-  projectId: ""
+  apiKey: "AIzaSyAtKOjjt2mIXWFe2DKD3AKz8xgjtg2uVMQ",
+  projectId: "bingwa-edf42"
 };
