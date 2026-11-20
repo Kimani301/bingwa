@@ -26,6 +26,11 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.7
+      - name: Tell the app where to look for updates
+        run: |
+          OWNER=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
+          REPO="${GITHUB_REPOSITORY#*/}"
+          echo "https://${OWNER}.github.io/${REPO}/" > app/src/main/assets/update-url.txt
       - name: Build debug APK
         run: gradle assembleDebug --no-daemon
       - name: Assemble install site (page + APK)
@@ -34,8 +39,9 @@ jobs:
           cp -r docs/. site/
           cp app/build/outputs/apk/debug/app-debug.apk site/Bn.apk
           VER=$(grep -m1 versionName app/build.gradle | sed 's/.*"\(.*\)".*/\1/')
+          CODE=$(grep -m1 versionCode app/build.gradle | sed 's/[^0-9]//g')
           DATE=$(date -u +"%-d %b %Y")
-          echo "{\"version\":\"$VER\",\"date\":\"$DATE\",\"commit\":\"${GITHUB_SHA::7}\"}" > site/version.json
+          echo "{\"version\":\"$VER\",\"code\":$CODE,\"date\":\"$DATE\",\"commit\":\"${GITHUB_SHA::7}\"}" > site/version.json
       - name: Publish APK as a GitHub Release (download link that always works)
         env:
           GH_TOKEN: ${{ github.token }}
