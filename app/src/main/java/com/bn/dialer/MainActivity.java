@@ -22,6 +22,11 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +43,7 @@ public class MainActivity extends Activity {
     private boolean dialogOpen = false;
     private boolean askedBattery = false;
     private static boolean askedAccess = false;
+    private static boolean checkedUpdate = false;
 
     @Override
     protected void onCreate(Bundle b) {
@@ -62,7 +68,7 @@ public class MainActivity extends Activity {
             return ins;
         });
         setContentView(root);
-        applyBars(0xFF166534, 0xFFFFFEF9, false);
+        applyBars(0xFF350610, 0xFFFFFDFD, false);
         Bridge.web = web;
 
         WebSettings s = web.getSettings();
@@ -115,6 +121,67 @@ public class MainActivity extends Activity {
             startForegroundService(new Intent(this, BnService.class));
         } catch (Exception ignored) {
         }
+
+        checkForUpdate();
+    }
+
+    /* ---------------- automatic update check ---------------- */
+
+    /** Reads version.json from the install page and offers the new APK if there is a newer build. */
+    private void checkForUpdate() {
+        if (checkedUpdate) return;
+        checkedUpdate = true;
+        new Thread(() -> {
+            try {
+                String base = readAsset("update-url.txt").trim();
+                if (base.isEmpty() || !base.startsWith("http")) return;
+                if (!base.endsWith("/")) base += "/";
+                HttpURLConnection c = (HttpURLConnection) new URL(base + "version.json?t=" + System.currentTimeMillis()).openConnection();
+                c.setConnectTimeout(8000);
+                c.setReadTimeout(8000);
+                c.setUseCaches(false);
+                if (c.getResponseCode() != 200) return;
+                StringBuilder sb = new StringBuilder();
+                try (BufferedReader r = new BufferedReader(new InputStreamReader(c.getInputStream()))) {
+                    String line;
+                    while ((line = r.readLine()) != null) sb.append(line);
+                }
+                org.json.JSONObject j = new org.json.JSONObject(sb.toString());
+                final int latest = j.optInt("code", 0);
+                final String name = j.optString("version", "");
+                int mine = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
+                if (latest <= mine) return;
+                final String apk = base + "Bn.apk";
+                runOnUiThread(() -> {
+                    if (isFinishing()) return;
+                    new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("Update available")
+                            .setMessage("A new version of Bn" + (name.isEmpty() ? "" : " (" + name + ")")
+                                    + " is ready.\n\nTap Update, open the downloaded file and tap Install. "
+                                    + "Your sales, offers and settings are kept.")
+                            .setPositiveButton("Update", (d, w) -> {
+                                try {
+                                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(apk)));
+                                } catch (Exception ignored) {
+                                }
+                            })
+                            .setNegativeButton("Later", null)
+                            .show();
+                });
+            } catch (Exception ignored) {
+                // offline or no update info: stay silent
+            }
+        }).start();
+    }
+
+    private String readAsset(String name) throws Exception {
+        try (InputStream in = getAssets().open(name)) {
+            java.io.ByteArrayOutputStream o = new java.io.ByteArrayOutputStream();
+            byte[] buf = new byte[512];
+            int n;
+            while ((n = in.read(buf)) > 0) o.write(buf, 0, n);
+            return o.toString("UTF-8");
+        }
     }
 
     /** Colours the status bar (green) and navigation bar to match the page theme. */
@@ -140,7 +207,11 @@ public class MainActivity extends Activity {
         d.setSystemUiVisibility(f);
     }
 
-  
+    @Override
+    protected void onDestroy() {
+        if (inst == this) inst = null;
+        super.onDestroy();
+    }
 
     /* ---------------- first-run setup: permissions, accessibility, battery ---------------- */
 
@@ -269,12 +340,11 @@ public class MainActivity extends Activity {
         moveTaskToBack(true);   // keep Bn running instead of closing it
     }
 
-   @Override
-protected void onDestroy() {
-    if (inst == this) inst = null;
-    Bridge.ready = false;
-    Bridge.web = null;
-    if (web != null) web.destroy();
-    super.onDestroy();
-}
+    @Override
+    protected void onDestroy() {
+        Bridge.ready = false;
+        Bridge.web = null;
+        if (web != null) web.destroy();
+        super.onDestroy();
+    }
 }

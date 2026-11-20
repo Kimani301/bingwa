@@ -35,6 +35,16 @@ one and keeps your sales, offers, settings and granted permissions. Keep that fi
 (This key is for your own use; do not publish the repo's key for a Play Store app. A public repo also makes
 the key public, so only install APKs you built yourself.)
 
+## Releasing an update (users get a prompt inside the app)
+1. Edit `app/src/main/assets/index.html` (this is the file the app really shows).
+2. In `app/build.gradle` raise **both** `versionCode` (e.g. 4 -> 5) and `versionName` (e.g. "1.3" -> "1.4").
+   The prompt only appears when `versionCode` is higher than the one on the phone.
+3. Upload to GitHub and wait for the green ticks in **Actions**.
+4. When users open Bn (with internet) it shows **Update available**. They tap Update, open the downloaded
+   file and tap Install. Their data is kept because every build uses the same signing key.
+Phones running a version older than 1.3 do not have the checker yet; install 1.3 once from the install page
+and every later update will be offered automatically.
+
 ## If your GitHub link shows the wrong thing
 The link only shows the install page when GitHub Pages is told to use the build. Check these in order:
 1. **Settings > Pages > Source must be "GitHub Actions"** (not "Deploy from a branch"). With "Deploy from a branch"
