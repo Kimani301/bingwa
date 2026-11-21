@@ -649,6 +649,7 @@ setInterval(()=>{
 setInterval(pump,400);
 
 /* ---------- calibrate: run every step of an advanced offer except the last option, and list what happened ---------- */
+const PAYRE=/(airtime|m-?pesa|pay(?:ment)?\s*(?:with|method|using|via)|choose\s*payment)/i;
 const normMenu=t=>String(t||'').toLowerCase().replace(/\s+/g,' ').trim();
 function calStart(id,quiet){
   const o=offers.find(x=>x.id===id&&x.adv);if(!o){calQ=[];return}
@@ -656,14 +657,14 @@ function calStart(id,quiet){
   if(busy()){calQ=[];return toast('Another dial is running. Try again in a moment.')}
   let n=normPhone(set.calNum);
   if(!n){
-    const x=prompt('Calibrate runs the offer on a number of yours but never sends the last option, so nothing is bought.\nType your OWN phone number (asked only once):','');
+    const x=prompt('Your phone number','');
     if(x===null){calQ=[];return}
     n=normPhone(x);if(!n){calQ=[];return toast('Enter a valid number like 0712345678')}
     set.calNum=n;save();
   }
   cal={o,quiet:!!quiet,steps:o.steps.map(t=>t.replace(/\bn\b/gi,n)),step:0,ts:Date.now(),trail:[]};
-  addLog('Calibrating '+o.name+' (stops before the last option)');
-  toast('Calibrating '+o.name+'... do not touch the phone');
+  addLog('Calibrating '+o.name);
+  toast('Calibrating '+o.name);
   try{NativeBridge.dialUssd(cal.steps[0],simSlot())}catch(e){calEnd('fail','Could not dial: '+e)}
   render();
 }
@@ -675,6 +676,7 @@ function calReply(txt){
   c.trail.push(row);
   addLog('Calibrate step '+(c.step+1)+' reply: '+clean.slice(0,90));
   if(FAILRE.test(clean)){row.bad=1;return calEnd('fail','Safaricom said: '+clean.slice(0,160))}
+  if(c.step>0&&PAYRE.test(clean))return calEnd('reached','');   /* payment screen: stop, never answer it */
   c.step++;
   if(c.step<c.steps.length-1){            /* more steps to go, and the next one is not the last */
     const i=c.step;
@@ -690,8 +692,8 @@ function calEnd(kind,text){
   const o=c.o,last=c.steps[c.steps.length-1];
   let state,msg;
   if(kind==='reached'){
-    c.trail.push({did:'Last step "'+last+'" NOT sent',menu:'Bn stops here so nothing is bought.',skip:1});
-    state='review';msg='All '+(c.steps.length-1)+' steps ran. Bn stopped before the last option so nothing was bought. Check the last screen below, then tap the tick if it is right.';
+    c.trail.push({did:'Not sent: '+last,menu:'',skip:1});
+    state='review';msg='Ready to confirm';
   }else{
     if(!c.trail.length||!c.trail[c.trail.length-1].bad)c.trail.push({did:'Stopped',menu:text,bad:1});
     state='bad';msg=text;
@@ -717,7 +719,7 @@ function calNext(){
 function calAll(){
   const l=offers.filter(o=>o.adv&&o.on);
   if(!l.length)return toast('No active advanced offers to calibrate');
-  if(!confirm('Calibrate '+l.length+' advanced offer'+(l.length>1?'s':'')+'? Each one is run step by step but the last option is never sent.'))return;
+  if(!confirm('Calibrate '+l.length+' offer'+(l.length>1?'s':'')+'?'))return;
   calSum=[];calQ=l.map(o=>o.id);calNext();
 }
 const calSteps=o=>'<ol class="stp">'+((o.cal&&o.cal.trail)||[]).map((r,i)=>'<li class="'+(r.bad?'bad':r.skip?'skip':'')+'"><b>'+(r.bad?'\u274C':r.skip?'\u23F9':'\u2705')+' '+(i+1)+'. '+esc(r.did)+'</b>'+(r.menu?'<pre>'+esc(r.menu)+'</pre>':'')+'</li>').join('')+'</ol>';
@@ -725,39 +727,47 @@ const calIco=o=>o.cal&&o.cal.state==='review'?'\u23F3':o.cal&&o.cal.state==='ok'
 function calSummary(ids){
   const list=ids.map(id=>offers.find(x=>x.id===id)).filter(o=>o&&o.cal);
   $('#cT').textContent='Calibration done';
-  $('#cB').innerHTML=list.map(o=>'<p style="margin:10px 0 0"><b>'+calIco(o)+' '+esc(o.name)+'</b><br><span class="hint">'+esc(o.cal.msg)+(o.cal.paused?' Offer paused.':'')+'</span></p><details class="cd"><summary>See the steps</summary>'+calSteps(o)+'</details>'+calBtns(o)).join('')
-    +(list.some(o=>o.cal.paused)?'<p class="hint">Failed offers were paused so no client gets the wrong bundle. Fix the code, then calibrate again.</p>':'');
+  $('#cB').innerHTML=list.map(o=>'<p style="margin:10px 0 0"><b>'+calIco(o)+' '+esc(o.name)+'</b><br><span class="hint">'+(o.cal.state==='review'?'':esc(o.cal.msg))+'</span></p>'+calLastBox(o)+calBtns(o)).join('')
+    +'';
   $('#cBtns').innerHTML='<button type="button" class="btn p" onclick="cdlg.close()">Close</button>';
   cdlg.showModal();
 }
 function calBtns(o){
   if(!o.cal||o.cal.state!=='review')return '';
-  return '<div class="calrow"><button type="button" class="y" onclick="calApprove(\''+o.id+'\',true)" aria-label="It is okay, save"><i>\u2714</i>Okay, save</button><button type="button" class="n" onclick="calApprove(\''+o.id+'\',false)" aria-label="Not okay"><i>\u2716</i>Not okay</button></div>';
+  return '<div class="calrow"><button type="button" class="n" onclick="calCancel(\''+o.id+'\')" aria-label="Cancel"><i>\u2716</i>Cancel</button><button type="button" class="y" onclick="calApprove(\''+o.id+'\',true)" aria-label="Confirm"><i>\u2714</i>Confirm</button></div>';
 }
 function calLastBox(o){
   if(!o.cal||o.cal.state!=='review')return '';
   const r=o.cal.trail.filter(x=>!x.skip&&!x.bad),m=r.length?r[r.length-1].menu:'';
-  return '<div class="lastscr"><small>Last screen. Bn stopped here. Is this the right bundle for '+esc(o.name)+'?</small><pre>'+esc(m||'(no text)')+'</pre></div>';
+  return '<div class="lastscr"><pre>'+esc(m||'(no text)')+'</pre></div>';
+}
+function calCancel(id){
+  const o=offers.find(x=>x.id===id);if(!o)return;
+  endSession();
+  if(o.cal&&o.cal.state==='review'){delete o.cal}
+  addLog('Calibrate '+o.name+': cancelled, nothing sold');
+  save();render();
+  if(calIds.length>1&&calIds.includes(id)&&cdlg.open)calSummary(calIds);else cdlg.close();
 }
 function calApprove(id,ok){
   const o=offers.find(x=>x.id===id);if(!o||!o.cal)return;
-  if(ok){o.cal.state='ok';o.cal.t=Date.now();o.cal.msg='Checked by you and saved as OK.';if(o.cal.rewake&&!o.on)o.on=true;delete o.cal.paused;delete o.cal.rewake}
+  if(ok){o.cal.state='ok';o.cal.t=Date.now();o.cal.msg='OK';if(o.cal.rewake&&!o.on)o.on=true;delete o.cal.paused;delete o.cal.rewake}
   else{o.cal.state='bad';o.cal.t=Date.now();o.cal.msg='You marked this as not okay.';if(set.calOff!==false&&o.on){o.on=false;o.cal.paused=true}}
   addLog('Calibrate '+o.name+': '+(ok?'saved as OK':'marked not okay'));
-  save();render();toast(ok?'Saved as OK':'Marked not okay');
+  save();render();
   if(calIds.length>1&&calIds.includes(id)&&cdlg.open)calSummary(calIds);else cdlg.close();
 }
 const cdlg=$('#cdlg');
 function calShow(id){
   const o=offers.find(x=>x.id===id);if(!o||!o.cal||!o.cal.trail)return;
   $('#cT').textContent=calIco(o)+' '+o.name;
-  $('#cB').innerHTML='<p class="hint" style="margin-top:0"><b>'+esc(o.cal.msg)+'</b></p>'+calLastBox(o)+calBtns(o)+calSteps(o)+(o.cal.paused?'<p class="hint">\u23F8 This offer was paused so no client gets the wrong bundle.</p>':'');
+  $('#cB').innerHTML=(o.cal.state==='review'?'':'<p class="hint" style="margin-top:0"><b>'+esc(o.cal.msg)+'</b></p>')+calLastBox(o)+calBtns(o)+(o.cal.state==='review'?'':calSteps(o));
   $('#cBtns').innerHTML=(o.cal.state==='bad'?'<button type="button" class="btn p" onclick="cdlg.close();calStart(\''+o.id+'\')">Calibrate again</button>':'')+'<button type="button" class="btn" onclick="cdlg.close()">Close</button>';
   if(!cdlg.open)cdlg.showModal();
 }
 function calLine(o){
   const c=o.cal;
-  if(c&&c.trail&&c.state==='review')return '<em>\u23F3 Waiting for your OK - tap Steps</em>';
+  if(c&&c.trail&&c.state==='review')return '<em>\u23F3 Confirm or cancel</em>';
   if(!c||!c.trail||(c.state!=='ok'&&c.state!=='bad'))return '<span>\uD83E\uDDEA Not calibrated yet</span>';
   const t=tm(c.t);
   return c.state==='ok'?'<span>\u2705 Calibrated '+t+'</span>':'<em>\u274C Calibration failed '+t+': '+esc(c.msg)+'</em>';
@@ -980,7 +990,7 @@ function render(){
     const head=seg(ot,[['normal','Normal ('+offers.filter(o=>!o.adv).length+')'],['adv','Advanced ('+offers.filter(o=>o.adv).length+')']],'ot');
     const paused=list.filter(o=>o.cal&&o.cal.state==='bad'&&!o.on).length;
     const tools='<div class="tools own"><button class="btn p" onclick="'+(adv?'openAdv()':'openOffer()')+'">+ Add offer</button>'+(adv?'<button class="btn" onclick="calAll()">\uD83E\uDDEA Calibrate all</button>':'')+'</div>';
-    const info=adv?'<details class="cd"><summary>How advanced offers and Calibrate work</summary><p class="hint">Write the full code once. Bn dials the first part, waits for Safaricom\'s menu, then sends each next number one at a time.</p><p class="hint">Calibrate runs every step on your own number, shows what Safaricom answered at each one, and stops before the last option so nothing is bought. Do it after Safaricom changes codes.</p></details>':'';
+    const info='';
     v.innerHTML=head+tools+(paused?'<p class="note">\u26A0\uFE0F '+paused+' offer'+(paused>1?'s were':' was')+' paused because calibration failed. Fix the code, then calibrate again.</p>':'')
       +(act.length?'<div class="grp">Active \u00B7 '+act.length+'</div><ul>'+act.map(rowFn).join('')+'</ul>':'')
       +(off.length?'<div class="grp">Off \u00B7 '+off.length+'</div><ul>'+off.map(rowFn).join('')+'</ul>':'')
