@@ -1,5 +1,8 @@
 package com.bn.dialer;
 
+import android.database.Cursor;
+import android.net.Uri;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -86,6 +89,46 @@ public class Bridge {
                 }, 400L + i * 150L);
             }
         } catch (Exception ignored) {
+        }
+    }
+
+    /** M-Pesa texts in the phone inbox newer than "since" (ms), so the page can catch up on any it missed. */
+    @JavascriptInterface
+    public String inboxSince(long since) {
+        JSONArray out = new JSONArray();
+        try {
+            if (ctx.checkSelfPermission(Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) return "[]";
+            Cursor c = ctx.getContentResolver().query(Uri.parse("content://sms/inbox"),
+                    new String[]{"address", "body", "date"}, "date > ?", new String[]{String.valueOf(since)}, "date DESC LIMIT 80");
+            if (c != null) {
+                try {
+                    while (c.moveToNext()) {
+                        String a = c.getString(0);
+                        if (a == null || !a.toLowerCase().replaceAll("[^a-z]", "").contains("mpesa")) continue;
+                        JSONObject o = new JSONObject();
+                        o.put("a", a);
+                        o.put("b", c.getString(1));
+                        o.put("t", c.getLong(2));
+                        out.put(o);
+                    }
+                } finally {
+                    c.close();
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        return out.toString();
+    }
+
+    /** Copies text (a client number) to the phone clipboard. */
+    @JavascriptInterface
+    public String copyText(final String t) {
+        try {
+            android.content.ClipboardManager cm = (android.content.ClipboardManager) ctx.getSystemService(Context.CLIPBOARD_SERVICE);
+            cm.setPrimaryClip(android.content.ClipData.newPlainText("Bn", t));
+            return "ok";
+        } catch (Exception e) {
+            return "error";
         }
     }
 
