@@ -106,7 +106,7 @@ function draw(){const kinds=['All',...new Set(O.map(o=>kind(o.name)))],c=$('#chi
   c.hidden=kinds.length<3;c.innerHTML=kinds.map(k=>`<button class="${k===fil?'on':''}" onclick="fil='${k}';draw()">${k}</button>`).join('');
   const l=O.filter(o=>fil==='All'||kind(o.name)===fil);
   $('#grid').innerHTML=l.length?l.map(x=>`<button class="offer" onclick="pick('${esc(x.id)}')"><span class="k">${kind(x.name)}</span><b>${esc(x.name)}</b><div class="price"><small>KSh</small>${x.amount}</div><span class="buy">Buy now</span></button>`).join(''):'<div class="empty">No bundles are available right now. Please check back soon or call 0740430731.</div>'}
-async function load(){try{O=(await (await fetch('/api/offers')).json()).sort((a,b)=>a.amount-b.amount);if(!O.some(o=>kind(o.name)===fil))fil='All';draw()}catch(e){$('#grid').innerHTML='<div class="empty">Could not load bundles. Check your internet and refresh.</div>'}}
+async function load(){try{O=(await (await fetch('/api/offers',{cache:'no-store'})).json()).sort((a,b)=>a.amount-b.amount);if(!O.some(o=>kind(o.name)===fil))fil='All';draw()}catch(e){$('#grid').innerHTML='<div class="empty">Could not load bundles. Check your internet and refresh.</div>'}}
 function pick(id){cur=O.find(x=>x.id===id);mode='self';showForm()}
 function showForm(err){const f=mode==='friend';
   sh.innerHTML=`<h3>${esc(cur.name)}</h3><div class="pr">KSh ${cur.amount}</div>
@@ -132,5 +132,5 @@ function wait(id){sh.innerHTML=`<div class="state"><div class="spin"></div><h3>C
     else if(o.status==='failed'){clearInterval(timer);end('😕','Payment not completed',esc(o.reason||'The payment was cancelled or failed.')+' You have not been charged.',1)}
     else if(n>40){clearInterval(timer);end('⏳','Still waiting','We have not received your payment yet. If you paid, your data will still arrive. Otherwise try again, or call 0740430731.',1)}}catch(e){}},3000)}
 function end(i,t,m,retry){sh.innerHTML=`<div class="state"><big>${i}</big><h3>${t}</h3><p class="hint">${m}</p></div>${retry?'<button class="go" onclick="showForm()">Try again</button>':''}<button class="sec" onclick="dlg.close()">Close</button><p class="help">Need help? <a href="tel:0740430731">Call 0740430731</a></p>`}
-dlg.addEventListener('close',()=>clearInterval(timer));load();setInterval(()=>{if(!dlg.open)load()},60000);
+dlg.addEventListener('close',()=>clearInterval(timer));load();setInterval(()=>{if(!dlg.open)load()},15000);document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!dlg.open)load()});
 </script></body></html>

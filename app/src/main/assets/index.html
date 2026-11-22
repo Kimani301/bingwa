@@ -411,8 +411,8 @@ const tm=t=>new Date(t).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
 
 const DEF=[[19,'1GB - 1 hour',1],[20,'Bingwa 250MB - 24hrs',2],[48,'Bingwa 750MB - 24hrs',3],[49,'Bingwa 1.5GB - 3hrs',7],[51,'400MB - 7 days',4],[55,'Bingwa 1GB - till midnight',6],[99,'1.5GB - 24hrs',5]]
   .map(([a,n,k])=>({id:uid()+k,amount:a,name:n,ussd:'*180*5*2*n*'+k+'*1#',on:true}));
-let offers=L('bs_offers',DEF), sales=L('bs_sales',[]), set=Object.assign({auto:true,wait:3,rate:10,balCode:'*144#',dialSim:'auto',readSim:'both',autoBal:true,theme:'light',speed:'balanced',smsOn:true,smsFailOn:true,smsSim:'auto',smsOk:'Your offer of Ksh{amount} has been successfully renewed.',smsDup:'Hi, the number {phone} has already been recommended today. Kindly send a new number.'},L('bs_set',{})), bal=L('bs_bal',null), logs=L('bs_log',[]).filter(e=>e&&e.t>Date.now()-864e5), tab='home', per='today', sf='all', ot='normal';
-const save=()=>{W('bs_offers',offers);W('bs_sales',sales.slice(0,500));W('bs_set',set);window.Team&&Team.dirty()};
+let offers=L('bs_offers',DEF), sales=L('bs_sales',[]), set=Object.assign({auto:true,wait:3,gap:3,rate:10,balCode:'*144#',dialSim:'auto',readSim:'both',autoBal:true,theme:'light',speed:'balanced',smsOn:true,smsFailOn:true,smsSim:'auto',smsOk:'Your offer of Ksh{amount} has been successfully renewed.',smsDup:'Hi, the number {phone} has already been recommended today. Kindly send a new number.'},L('bs_set',{})), bal=L('bs_bal',null), logs=L('bs_log',[]).filter(e=>e&&e.t>Date.now()-864e5), tab='home', per='today', sf='all', ot='normal';
+const save=()=>{W('bs_offers',offers);W('bs_sales',sales.slice(0,500));W('bs_set',set);window.Team&&Team.dirty();window.Web&&Web.publishSoon()};
 const hasBridge=()=>!!(window.NativeBridge&&window.NativeBridge.dialUssd);
 
 function applyTheme(){
@@ -556,13 +556,14 @@ function smsTest(){
   sendText(n,fillMsg(set.smsOk,s));setTimeout(()=>sendText(n,fillMsg(set.smsDup,s)),2500);
   toast('Test messages sent to '+n);
 }
-function done(){nextAt=Date.now()+spd()[1];save();pump();render()}
+function done(){nextAt=Date.now()+gapMs();save();pump();render()}
 
 /* ---------- dialing (one USSD at a time, no automatic retries) ---------- */
 let balWait=null,needBal=false,balAt=0,balTry=0;
 let cal=null,calQ=[],calSum=[],calIds=[],scan=null;
 const SPD={fast:[100,150],balanced:[250,350],safe:[600,900]};/* [ms before each reply step, ms gap between customers] */
 const spd=()=>SPD[set.speed]||SPD.balanced;
+const gapMs=()=>Math.max(spd()[1],Math.max(0,+(set.gap??3)||0)*1000);/* pause between one customer's codes and the next */
 let nextAt=0,pt=null;
 const simSlot=()=>set.dialSim==='auto'?-1:+set.dialSim;
 const busy=()=>!!balWait||!!cal||!!scan||sales.some(s=>s.status==='dialing');
@@ -641,7 +642,7 @@ function dial(s){
 function pump(){
   if(window.Team&&!Team.canDial())return;
   if(busy())return;
-  const q=sales.slice().reverse().find(x=>x.status==='queued'&&(set.auto||x.manual));
+  const q=sales.filter(x=>x.status==='queued'&&(set.auto||x.manual)).sort((a,b)=>(a.t-b.t)||0)[0];
   const w=nextAt-Date.now();
   if(w>0){clearTimeout(pt);pt=setTimeout(pump,w+20);return}
   /* customers first: the balance check waits until the queue is empty */
@@ -834,7 +835,7 @@ function impStart(auto){
 function impStop(msg){
   if(!scan)return;
   const s=scan;scan=null;endSession();
-  if(msg!=='paused'&&msg!=='stopped'){imp={t:Date.now(),items:s.items,note:''};W('bs_imp',imp)}
+  if(s.items.length||(msg!=='paused'&&msg!=='stopped')){imp={t:Date.now(),items:s.items,note:''};W('bs_imp',imp)}
   addLog('Scan '+(msg||'done')+': '+s.items.length+' offers found');
   nextAt=Date.now()+spd()[1];render();pump();
 }
@@ -894,17 +895,19 @@ function impStatus(it){
   if(advCode(o.steps)!==advCode(it.steps)||(o.menus&&JSON.stringify(o.menus)!==JSON.stringify(it.menus)))return 'changed';
   return 'done';
 }
+function impFind(k){return (scan?scan.items:[]).concat(imp.items).find(x=>x.k===k)}
 function impImport(k){
-  const it=imp.items.find(x=>x.k===k);if(!it)return;
-  const cost=+($('#ic_'+k)||{}).value,amount=+($('#ip_'+k)||{}).value;
-  if(!(cost>0)||!(amount>0))return toast('Enter both prices');
-  if(amount<cost)return toast('Your price is below the Safaricom price');
+  const it=impFind(k);if(!it)return;
+  const ex=impOffer(it);
+  let cost=it.cost!=null?it.cost:(ex?ex.cost:null);
+  if(!(cost>0)){const x=prompt('Safaricom price for '+it.name+' (KSh)','');if(x===null)return;cost=+x;if(!(cost>0))return toast('Enter a valid price')}
+  const amount=ex&&ex.amount>0?ex.amount:cost;
   const cal={t:Date.now(),state:'ok',msg:'Imported',trail:it.trail};
-  let o=impOffer(it);
+  let o=ex;
   if(o){Object.assign(o,{steps:it.steps,menus:it.menus,cost,cal,impKey:k,on:true});delete o.cal.paused}
   else{o={id:uid(),name:it.name,amount,cost,steps:it.steps,adv:true,on:true,impKey:k,menus:it.menus,cal};offers.push(o)}
   offers.sort((a,b)=>a.amount-b.amount);
-  addLog('Imported '+o.name);save();fresh=false;render();
+  addLog('Imported '+o.name);toast('Added to Advanced offers');save();fresh=false;render();
 }
 function impCount(){return imp.items.filter(it=>impStatus(it)!=='done').length}
 function impView(){
@@ -913,15 +916,13 @@ function impView(){
   const head='<div class="tools own">'+btn+'<span class="hint" style="align-self:center">'+st+'</span></div>'
     +'<div class="own"><label class="f" for="icode">Menu codes</label><input type="text" id="icode" inputmode="text" autocapitalize="off" value="'+esc(set.impCode||IMP_ROOTS)+'" onchange="set.impCode=this.value.trim()||IMP_ROOTS;save()">'
     +'<label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" '+(set.impAuto!==false?'checked':'')+' onchange="set.impAuto=this.checked;save()" style="width:auto">Scan automatically every day</label></div>';
-  const gone=offers.filter(o=>o.adv&&o.impKey&&imp.t&&!imp.items.some(it=>it.k===o.impKey));
-  const rows=imp.items.slice().sort((a,b)=>(a.cost||0)-(b.cost||0)).map(it=>{
-    const stt=impStatus(it),o=impOffer(it),cost=o&&o.cost!=null?o.cost:(it.cost!=null?it.cost:''),amt=o?o.amount:(cost||'');
-    const chip=stt==='new'?chipH('b','New'):stt==='changed'?chipH('a','Changed'):chipH('g','Imported');
-    const inp=stt==='done'?'':'<div class="oc-b own" style="align-items:flex-end"><div style="flex:1"><label class="f" for="ic_'+it.k+'">Safaricom</label><input type="number" id="ic_'+it.k+'" inputmode="decimal" value="'+esc(cost)+'"></div>'
-      +'<div style="flex:1"><label class="f" for="ip_'+it.k+'">Your price</label><input type="number" id="ip_'+it.k+'" inputmode="decimal" value="'+esc(amt)+'"></div>'
-      +'<button class="btn p" onclick="impImport(\''+it.k+'\')">'+(stt==='new'?'Import':'Update')+'</button></div>';
-    return '<li class="oc"><div class="oc-h"><div class="amt">'+(it.cost!=null?it.cost:'?')+'<small>KSh</small></div><div class="mid"><b>'+esc(it.name)+'</b></div>'+chip+'</div>'+stepChips({steps:it.steps})
-      +'<details class="cd"><summary>Last screen</summary><pre class="hint" style="white-space:pre-wrap">'+esc(it.last||'')+'</pre></details>'+inp+'</li>';
+  const gone=sc?[]:offers.filter(o=>o.adv&&o.impKey&&imp.t&&!imp.items.some(it=>it.k===o.impKey));
+  const list=sc?sc.items:imp.items;
+  const rows=list.slice().sort((a,b)=>(a.cost||0)-(b.cost||0)).map(it=>{
+    const stt=impStatus(it);
+    const chip=stt==='new'?'':stt==='changed'?chipH('a','Changed'):chipH('g','Added');
+    const act=stt==='done'?'':'<button class="btn p own" aria-label="'+(stt==='new'?'Import':'Update')+' '+esc(it.name)+'" title="'+(stt==='new'?'Import':'Update')+'" onclick="impImport(\''+it.k+'\')" style="font-size:18px;min-width:44px">'+(stt==='new'?'\u2B07':'\u21BB')+'</button>';
+    return '<li class="oc"><div class="oc-h"><div class="amt">'+(it.cost!=null?it.cost:'?')+'<small>KSh</small></div><div class="mid"><b>'+esc(it.name)+'</b><div class="chips" style="margin-top:6px"><span class="sc d">'+esc(advCode(it.steps))+'</span></div></div>'+chip+act+'</div></li>';
   }).join('');
   const goneH=gone.length?'<div class="grp">Not in menu · '+gone.length+'</div><ul>'+gone.map(o=>'<li class="oc off"><div class="oc-h"><div class="amt">'+o.amount+'<small>KSh</small></div><div class="mid"><b>'+esc(o.name)+'</b></div>'+chipH('r','Gone')+'</div>'+(o.on?'<div class="oc-b own"><button class="btn" onclick="togOffer(\''+o.id+'\')">\u23F8 Pause</button></div>':'')+'</li>').join('')+'</ul>':'';
   return head+(rows?'<ul>'+rows+'</ul>':'<p class="empty"><big></big>'+(sc?'Scanning...':'No offers found yet.')+'</p>')+goneH;
@@ -950,7 +951,7 @@ function refreshBal(q){
 
 /* ---------- dashboard ---------- */
 const startOf=i=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-i);return +d};
-const PER={today:['Today',0],week:['7 days',6],month:['30 days',29],all:['All',null]};
+const PER={today:['Today',0],all:['All time',null]};
 function profitOf(x){
   if(x.adv===undefined){const o=offers.find(q=>q.name===x.name&&q.amount===x.amount)||offers.find(q=>q.amount===x.amount);x.adv=!!(o&&o.adv);if(o&&o.adv&&x.cost==null)x.cost=o.cost}
   if(x.adv)return x.cost!=null?x.amount-x.cost:0;
@@ -967,9 +968,9 @@ function home(){
   const bars=days.map((d,i)=>{const h=Math.round(d.v/mx*74),x=i*45.7+8.9,y=104-h;
     return `<rect x="${x}" y="${y}" width="28" height="${d.v?Math.max(h,2):0}" rx="9" fill="url(#${i===6?'gb':'gg'})"/>${d.v?`<text x="${x+14}" y="${y-4}" text-anchor="middle" font-size="10" fill="var(--ink)">${d.v}</text>`:''}<text x="${x+14}" y="120" text-anchor="middle" font-size="11" fill="var(--mute)">${d.l}</text>`}).join('');
   const rec=sales.slice(0,6);
-  return `<div class="stat s1 tot"><small>Total sales</small><b>KSh ${fmt(tot)}</b><div class="per">${Object.keys(PER).map(k=>`<button class="${k===per?'on':''}" onclick="per='${k}';fresh=true;render()">${PER[k][0]}</button>`).join('')}</div></div>
-  <div class="stats one"><div class="stat s2 own"><small>Profit</small><b>KSh ${fmt(ok.reduce((a,x)=>a+profitOf(x),0))}</b></div></div>
-  <div class="hd"><h2>Sales per day</h2><span style="font-size:13px;color:var(--mute)">7 days: KSh ${fmt(wk)}</span></div>
+  return `<div class="per">${Object.keys(PER).map(k=>`<button class="${k===per?'on':''}" onclick="per='${k}';fresh=true;render()">${PER[k][0]}</button>`).join('')}</div>
+  <div class="stats"><div class="stat s1"><small>Total sales</small><b>KSh ${fmt(tot)}</b></div><div class="stat s2 own"><small>Profit</small><b>KSh ${fmt(ok.reduce((a,x)=>a+profitOf(x),0))}</b></div></div>
+  <div class="hd"><h2>Sales per day</h2></div>
   <div class="chartbox"><svg viewBox="0 0 320 126" role="img" aria-label="Sales per day for the last 7 days"><defs><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4f9a6b"/><stop offset="1" stop-color="#166534"/></linearGradient><linearGradient id="gb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3c35a"/><stop offset="1" stop-color="#b8901f"/></linearGradient></defs><g stroke="var(--line)" stroke-dasharray="3 5"><line x1="0" y1="30.5" x2="320" y2="30.5"/><line x1="0" y1="55.5" x2="320" y2="55.5"/><line x1="0" y1="80.5" x2="320" y2="80.5"/></g><line x1="0" y1="104.5" x2="320" y2="104.5" stroke="var(--line)" stroke-width="2"/>${bars}</svg></div>
   <div class="hd"><h2>Recent sales</h2><button class="btn" onclick="tab='sales';fresh=true;render()">View all</button></div>
   ${rec.length?'<ul>'+rec.map(saleRow).join('')+'</ul>':'<p class="empty"><big></big>No activity yet. Payments sent to your till will appear here.</p>'}`;
@@ -1173,11 +1174,11 @@ function settingsView(){
   <div class="own"><h2>Profit</h2><label class="f" for="rate">Commission on normal offers (%)</label><input type="number" id="rate" min="0" step="0.5" value="${set.rate}" onchange="set.rate=Math.max(0,+this.value||0);save();render()"></div>
   <div class="own"><h2>Website</h2><p class="hint" style="margin-top:0">Show your active offers on your website and let clients pay with an M-Pesa prompt. Paid web orders are dialed here automatically.</p>
   <label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" ${set.webOn?'checked':''} onchange="set.webOn=this.checked;save();Web.sync()" style="width:auto">Sell from my website</label>
-  <label class="f" for="wu">Website address</label><input type="text" id="wu" inputmode="url" autocapitalize="off" placeholder="https://keymoney.example.com" value="${esc(set.webUrl||'')}" onchange="set.webUrl=this.value.trim();save()">
-  <label class="f" for="wk">Shop key</label><input type="password" id="wk" autocomplete="off" value="${esc(set.webKey||'')}" onchange="set.webKey=this.value.trim();save()">
+  <label class="f" for="wu">Website address</label><input type="text" id="wu" inputmode="url" autocapitalize="off" placeholder="https://keymoney.example.com" value="${esc(set.webUrl||'')}" onchange="set.webUrl=this.value.trim();save();Web.sync()">
+  <label class="f" for="wk">Shop key</label><input type="password" id="wk" autocomplete="off" value="${esc(set.webKey||'')}" onchange="set.webKey=this.value.trim();save();Web.sync()">
   <div class="btns"><button class="btn" onclick="Web.test()">Test connection</button></div></div>
   <div class="own"><h2>Data</h2><div class="btns"><button class="btn d" onclick="if(confirm('Delete all sales history?')){sales=[];save();render();settingsView()}">Clear sales history</button></div></div>`,
-    dialing:`  <h2>Dialing speed</h2><label class="f" for="sp">How fast Bn sends each step and moves to the next customer</label>${sel('sp','speed',[['fast','Fast'],['balanced','Balanced (recommended)'],['safe','Careful (slow phones)']])}<p class="hint">Fast waits 0.1s between steps, Balanced 0.25s, Careful 0.6s. If your phone skips steps, pick a slower option.</p>
+    dialing:`  <h2>Dialing speed</h2><label class="f" for="sp">How fast Bn sends each step and moves to the next customer</label>${sel('sp','speed',[['fast','Fast'],['balanced','Balanced (recommended)'],['safe','Careful (slow phones)']])}<p class="hint">Fast waits 0.1s between steps, Balanced 0.25s, Careful 0.6s. If your phone skips steps, pick a slower option.</p><label class="f" for="gap">Seconds to wait between customers</label><input type="number" id="gap" min="0" step="1" value="${set.gap??3}" onchange="set.gap=Math.max(0,+this.value||0);save()"><p class="hint">When payments arrive together, Bn finishes the first customer, waits this long, then starts the next, in the order they paid.</p>
   <h2>Confirmation wait</h2><label class="f" for="wait">Minutes to wait for Safaricom's success message before marking a sale Failed</label><input type="number" id="wait" min="1" value="${set.wait}" onchange="set.wait=Math.max(1,+this.value||3);save()">
   <h2>Airtime balance</h2><label class="f" for="bc">USSD code that shows your airtime balance</label><input type="text" id="bc" value="${esc(set.balCode)}" onchange="set.balCode=this.value.trim();save()">
   <label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="ab" ${set.autoBal?'checked':''} onchange="set.autoBal=this.checked;save()" style="width:auto">Check balance after every sale</label>
@@ -1240,6 +1241,18 @@ const Web=(()=>{
   const api=async(p,o={})=>{const r=await fetch(set.webUrl.replace(/\/+$/,'')+p,{method:o.method||'GET',headers:{'Content-Type':'application/json','x-shop-key':set.webKey},body:o.body});if(!r.ok)throw new Error(r.status===401?'wrong shop key':'error '+r.status);return r.json()};
   let last='',pend=[],busy=false;
   async function publish(){const b=JSON.stringify(offers.filter(o=>o.on).map(o=>({id:o.id,name:o.name,amount:o.amount})));if(b===last)return;await api('/api/offers',{method:'PUT',body:b});last=b}
+  let pt2=null,pubBusy=false;
+  function publishSoon(){
+    if(!on())return;
+    clearTimeout(pt2);
+    pt2=setTimeout(async()=>{
+      if(pubBusy)return publishSoon();
+      pubBusy=true;
+      try{const was=last;await publish();if(last!==was)addLog('Website offers updated')}
+      catch(e){addLog('Website offers not updated: '+e.message);pt2=setTimeout(publishSoon,8000)}
+      pubBusy=false;
+    },1200);
+  }
   async function take(w){
     const code=w.receipt||('WEB'+w.id);
     if(!sales.some(x=>x.code===code)){
@@ -1279,7 +1292,7 @@ const Web=(()=>{
     try{await api('/api/orders/open');last='';await publish();toast('Website connected');}catch(e){toast('Website: '+e.message)}
   }
   setInterval(sync,15000);setTimeout(sync,3000);
-  return{sync,claims,test,on};
+  return{sync,claims,test,on,publishSoon};
 })();
 window.Web=Web;
 /* ===== TEAM / FIREBASE (optional: switched on by filling firebase-config.js) ===== */

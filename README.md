@@ -5,7 +5,7 @@ dial USSD codes, send step-by-step replies, and read payment SMS.
 
 ## How the screens are arranged
 - **Top bar** (green): airtime balance (tap to refresh) and the Auto-dial icon (gold = on).
-- **Home**: Total sales with Today / 7 days / 30 days / All under it, then Profit, Sold and Failed, sales per day, recent activity (shows the client's name, taken from the M-Pesa message or typed on the Sell tab). The Failed card jumps to failed sales.
+- **Home**: Total sales and Profit side by side with Today / All time above them, sales per day, recent activity (shows the client's name, taken from the M-Pesa message or typed on the Sell tab). The Failed card jumps to failed sales.
 - **Sell**: tap an offer, type the client's phone number (and optionally their name), tap Sell. The sale is dialed straight away,
   even if Auto-dial is off, and shows under Latest. Attendants can use it too.
 - **Sales**: All, **Live** (queued, dialing or waiting for Safaricom), Success, Failed. Retry failed sales here.

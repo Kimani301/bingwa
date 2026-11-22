@@ -5,7 +5,7 @@ const BASE=E.DARAJA_BASE||(E.DARAJA_ENV==='production'?'https://api.safaricom.co
 const SHORTCODE=E.SHORTCODE||'174379',TILL=E.TILL||'3563482',TXN=E.TXN_TYPE||'CustomerBuyGoodsOnline';
 const DBF=path.join(E.DATA_DIR||__dirname,'data.json');let db={offers:[],orders:{}};
 try{db=JSON.parse(fs.readFileSync(DBF,'utf8'))}catch(e){}
-const save=()=>fs.writeFileSync(DBF,JSON.stringify(db));
+const save=()=>{fs.mkdirSync(path.dirname(DBF),{recursive:true});fs.writeFileSync(DBF,JSON.stringify(db))};
 const phone=p=>{const d=String(p||'').replace(/\D/g,'');if(/^0[17]\d{8}$/.test(d))return'254'+d.slice(1);if(/^254[17]\d{8}$/.test(d))return d;if(/^[17]\d{8}$/.test(d))return'254'+d;return null};
 const local=p=>'0'+String(p).slice(3);
 let tok={v:'',x:0};
@@ -18,7 +18,7 @@ async function daraja(p,body){const ts=stamp();
     body:JSON.stringify({BusinessShortCode:SHORTCODE,Password:Buffer.from(SHORTCODE+E.PASSKEY+ts).toString('base64'),Timestamp:ts,...body})});
   return r.json()}
 const CORS={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Headers':'Content-Type,x-shop-key','Access-Control-Allow-Methods':'GET,POST,PUT,OPTIONS'};
-const send=(res,c,o)=>{res.writeHead(c,{'Content-Type':'application/json',...CORS});res.end(JSON.stringify(o))};
+const send=(res,c,o)=>{res.writeHead(c,{'Content-Type':'application/json','Cache-Control':'no-store',...CORS});res.end(JSON.stringify(o))};
 const body=req=>new Promise(r=>{let b='';req.on('data',d=>{b+=d;if(b.length>2e4)req.destroy()});req.on('end',()=>{try{r(JSON.parse(b||'{}'))}catch(e){r({})}})});
 const openData=()=>{const all=Object.values(db.orders);
   return{pending:all.filter(o=>o.status==='pending'&&Date.now()-o.t<3e5).map(o=>({id:o.id,buyer:local(o.buyer),amount:o.amount})),
