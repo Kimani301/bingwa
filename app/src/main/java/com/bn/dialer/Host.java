@@ -120,6 +120,11 @@ final class Host {
             }
         });
 
+        try {
+            w.onResume();       // never leave the page in a paused state
+            w.resumeTimers();
+        } catch (Throwable ignored) {
+        }
         Bridge.ready = false;
         Bridge.web = w;
         w.loadUrl("file:///android_asset/index.html");

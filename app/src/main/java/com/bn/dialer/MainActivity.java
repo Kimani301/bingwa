@@ -73,7 +73,7 @@ public class MainActivity extends Activity {
             return ins;
         });
         setContentView(root);
-        applyBars(0xFF0B3A1E, 0xFFFDFFFE, false);
+        applyBars(0xFF0B3D1D, 0xFFFFFDFD, false);
         Bridge.js("if(window.applyTheme)applyTheme()");   // re-colour the bars when the screen is reopened over a running page
 
         try {
