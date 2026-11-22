@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.webkit.WebView;
 
@@ -21,14 +22,39 @@ import android.webkit.WebView;
  *  - every 2 minutes it switches it back on if it was turned off, or restarts it if it is on but dead.
  */
 public class BnService extends Service {
+    /** True while the service is alive (lets a payment text know whether it must start it). */
+    static volatile boolean up = false;
+
     private static final long CYCLE_MS = 20L * 60L * 1000L;
     private static final long HEAL_MS = 2L * 60L * 1000L;
 
     private final Handler h = new Handler(Looper.getMainLooper());
     private PowerManager.WakeLock wl;
     private int strikes = 0;
+    private long lastAlive = SystemClock.uptimeMillis();
 
     private final Runnable cycle = () -> attempt(0);
+
+    /** Every second: wake the page so queued sales keep dialing even when the screen is off. */
+    private final Runnable beat = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                WebView w = Bridge.web;
+                if (w != null && Bridge.ready) {
+                    w.resumeTimers();
+                    w.evaluateJavascript("window.bnTick&&window.bnTick();1", v -> lastAlive = SystemClock.uptimeMillis());
+                }
+                // Watchdog: if the page has not answered for a minute (or never finished loading), reload it.
+                if (w != null && SystemClock.uptimeMillis() - lastAlive > (Bridge.ready ? 60000L : 90000L)) {
+                    lastAlive = SystemClock.uptimeMillis();
+                    Host.reload();
+                }
+            } catch (Exception ignored) {
+            }
+            h.postDelayed(this, 1000);
+        }
+    };
 
     private final Runnable heal = new Runnable() {
         @Override
@@ -56,7 +82,13 @@ public class BnService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        up = true;
+        try {
+            Host.ensure(this);   // the page that handles payments lives here, not in the screen
+        } catch (Throwable ignored) {
+        }
         h.postDelayed(heal, 5000);
+        h.postDelayed(beat, 1000);
         h.postDelayed(cycle, CYCLE_MS);
     }
 
@@ -82,6 +114,10 @@ public class BnService extends Service {
             PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
             wl = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "bn:running");
             wl.acquire();
+        }
+        try {
+            Host.ensure(this);
+        } catch (Throwable ignored) {
         }
         return START_STICKY;
     }
@@ -133,6 +169,7 @@ public class BnService extends Service {
 
     @Override
     public void onDestroy() {
+        up = false;
         h.removeCallbacksAndMessages(null);
         if (wl != null && wl.isHeld()) wl.release();
         super.onDestroy();

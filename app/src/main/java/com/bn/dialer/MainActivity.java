@@ -33,7 +33,8 @@ import java.util.List;
 public class MainActivity extends Activity {
     private WebView web;
     private View topBar, bottomBar;
-    private static MainActivity inst;
+    private LinearLayout rootView;
+    static MainActivity inst;
 
     // setup flow state
     private boolean explained = false;
@@ -49,13 +50,17 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle b) {
         super.onCreate(b);
         inst = this;
-        web = new WebView(this);
+        // The page itself lives in Host (kept alive by the service); this screen only shows it.
+        web = Host.ensure(this);
+        Host.useActivity(this);
+        if (web.getParent() instanceof ViewGroup) ((ViewGroup) web.getParent()).removeView(web);
 
         // Keep the app inside the safe area: a green strip behind the status bar and a
         // matching strip behind the navigation bar, with the page in between.
         topBar = new View(this);
         bottomBar = new View(this);
         LinearLayout root = new LinearLayout(this);
+        rootView = root;
         root.setOrientation(LinearLayout.VERTICAL);
         root.addView(topBar, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
         root.addView(web, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
@@ -68,79 +73,52 @@ public class MainActivity extends Activity {
             return ins;
         });
         setContentView(root);
-        applyBars(0xFF350610, 0xFFFFFDFD, false);
-        Bridge.web = web;
-
-        WebSettings s = web.getSettings();
-        s.setJavaScriptEnabled(true);
-        s.setDomStorageEnabled(true);
-        s.setAllowFileAccess(true);
-        s.setAllowUniversalAccessFromFileURLs(true);   // lets the bundled page talk to Firebase
-
-        web.addJavascriptInterface(new Bridge(this), "NativeBridge");
-        web.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView v, String url) {
-                Bridge.ready = true;
-                Bridge.flush(MainActivity.this);
-            }
-        });
-        web.setWebChromeClient(new WebChromeClient() {
-            @Override
-            public boolean onJsAlert(WebView v, String url, String msg, final JsResult r) {
-                new AlertDialog.Builder(MainActivity.this).setMessage(msg)
-                        .setPositiveButton("OK", (d, w) -> r.confirm())
-                        .setOnCancelListener(d -> r.cancel()).show();
-                return true;
-            }
-
-            @Override
-            public boolean onJsConfirm(WebView v, String url, String msg, final JsResult r) {
-                new AlertDialog.Builder(MainActivity.this).setMessage(msg)
-                        .setPositiveButton("OK", (d, w) -> r.confirm())
-                        .setNegativeButton("Cancel", (d, w) -> r.cancel())
-                        .setOnCancelListener(d -> r.cancel()).show();
-                return true;
-            }
-
-            @Override
-            public boolean onJsPrompt(WebView v, String url, String msg, String def, final JsPromptResult r) {
-                final EditText in = new EditText(MainActivity.this);
-                in.setText(def == null ? "" : def);
-                new AlertDialog.Builder(MainActivity.this).setMessage(msg).setView(in)
-                        .setPositiveButton("OK", (d, w) -> r.confirm(in.getText().toString()))
-                        .setNegativeButton("Cancel", (d, w) -> r.cancel())
-                        .setOnCancelListener(d -> r.cancel()).show();
-                return true;
-            }
-        });
-
-        web.loadUrl("file:///android_asset/index.html");
+        applyBars(0xFF0B3A1E, 0xFFFDFFFE, false);
+        Bridge.js("if(window.applyTheme)applyTheme()");   // re-colour the bars when the screen is reopened over a running page
 
         try {
             startForegroundService(new Intent(this, BnService.class));
         } catch (Exception ignored) {
         }
 
-        checkForUpdate();
+        checkForUpdate(false);
+    }
+
+    /** Puts a rebuilt page back on screen (after the system killed the old one). */
+    void reattach() {
+        web = Host.ensure(this);
+        Host.useActivity(this);
+        if (web.getParent() instanceof ViewGroup) ((ViewGroup) web.getParent()).removeView(web);
+        rootView.addView(web, 1, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
+        Bridge.js("if(window.applyTheme)applyTheme()");
     }
 
     /* ---------------- automatic update check ---------------- */
 
     /** Reads version.json from the install page and offers the new APK if there is a newer build. */
-    private void checkForUpdate() {
-        if (checkedUpdate) return;
-        checkedUpdate = true;
+    void checkForUpdate(final boolean manual) {
+        if (!manual) {
+            if (checkedUpdate) return;
+            checkedUpdate = true;
+        } else {
+            Bridge.toast("Checking for updates...");
+        }
         new Thread(() -> {
             try {
                 String base = readAsset("update-url.txt").trim();
-                if (base.isEmpty() || !base.startsWith("http")) return;
+                if (base.isEmpty() || !base.startsWith("http")) {
+                    if (manual) Bridge.toast("Update address is not set up");
+                    return;
+                }
                 if (!base.endsWith("/")) base += "/";
                 HttpURLConnection c = (HttpURLConnection) new URL(base + "version.json?t=" + System.currentTimeMillis()).openConnection();
                 c.setConnectTimeout(8000);
                 c.setReadTimeout(8000);
                 c.setUseCaches(false);
-                if (c.getResponseCode() != 200) return;
+                if (c.getResponseCode() != 200) {
+                    if (manual) Bridge.toast("Could not check for updates right now");
+                    return;
+                }
                 StringBuilder sb = new StringBuilder();
                 try (BufferedReader r = new BufferedReader(new InputStreamReader(c.getInputStream()))) {
                     String line;
@@ -150,7 +128,12 @@ public class MainActivity extends Activity {
                 final int latest = j.optInt("code", 0);
                 final String name = j.optString("version", "");
                 int mine = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
-                if (latest <= mine) return;
+                if (latest <= mine) {
+                    Bridge.js("window.bnUpdate&&window.bnUpdate(false)");
+                    if (manual) Bridge.toast("Bn is up to date (" + getPackageManager().getPackageInfo(getPackageName(), 0).versionName + ")");
+                    return;
+                }
+                Bridge.js("window.bnUpdate&&window.bnUpdate(true)");
                 final String apk = base + "Bn.apk";
                 runOnUiThread(() -> {
                     if (isFinishing()) return;
@@ -169,7 +152,7 @@ public class MainActivity extends Activity {
                             .show();
                 });
             } catch (Exception ignored) {
-                // offline or no update info: stay silent
+                if (manual) Bridge.toast("No internet, could not check for updates");
             }
         }).start();
     }
@@ -331,15 +314,29 @@ public class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        moveTaskToBack(true);   // keep Bn running instead of closing it
+        // Back steps through the page first (close a box, return to Home); on Home it sends Bn to the
+        // background, where it keeps running, instead of closing it.
+        try {
+            if (web != null && Bridge.ready) {
+                web.evaluateJavascript("(window.bnBack&&window.bnBack())?'1':'0'", v -> {
+                    if (v == null || !v.contains("1")) moveTaskToBack(true);
+                });
+                return;
+            }
+        } catch (Exception ignored) {
+        }
+        moveTaskToBack(true);
     }
 
     @Override
     protected void onDestroy() {
         if (inst == this) inst = null;
-        Bridge.ready = false;
-        Bridge.web = null;
-        if (web != null) web.destroy();
+        // Do NOT destroy the page: it keeps handling payments after Bn is swiped away.
+        try {
+            if (web != null && web.getParent() instanceof ViewGroup) ((ViewGroup) web.getParent()).removeView(web);
+        } catch (Exception ignored) {
+        }
+        Host.useApp(this);
         super.onDestroy();
     }
 }

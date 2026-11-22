@@ -10,8 +10,8 @@ android {
         applicationId "com.bn.dialer"
         minSdk 26
         targetSdk 34
-        versionCode 16
-        versionName "1.15"
+        versionCode 23
+        versionName "1.22"
     }
 
     signingConfigs {

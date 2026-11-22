@@ -185,6 +185,15 @@ public class Bridge {
         });
     }
 
+    /** Closes a USSD window that is stuck (timed-out dial), even a "USSD code running" box with no button. */
+    @JavascriptInterface
+    public void closeUssd() {
+        MAIN.post(() -> {
+            UssdService s = UssdService.inst;
+            if (s != null) s.forceClose();
+        });
+    }
+
     @JavascriptInterface
     public String a11yState() {
         return "{\"perm\":" + A11y.canWrite(ctx) + ",\"on\":" + (UssdService.inst != null)
@@ -204,6 +213,15 @@ public class Bridge {
     }
 
     /** Like dialUssd, but first wakes and unlocks the phone if the screen is off (used for advanced offers). */
+    /** The update icon in the page: check now and offer the new version. */
+    @JavascriptInterface
+    public void checkUpdate() {
+        MAIN.post(() -> {
+            MainActivity a = MainActivity.inst;
+            if (a != null) a.checkForUpdate(true);
+        });
+    }
+
     @JavascriptInterface
     public void dialUssdWake(final String code, final int simSlot, final boolean wake) {
         if (!wake) {

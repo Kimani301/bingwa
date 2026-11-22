@@ -143,6 +143,29 @@ public class UssdService extends AccessibilityService {
         press(r, CLOSE_BTN, false);
     }
 
+    /**
+     * For a dial that timed out: keep trying for about a second to get rid of the USSD window.
+     * Presses Cancel/OK when there is a button, otherwise goes Back. Only acts while a phone window is on screen.
+     */
+    void forceClose() {
+        Wake.scheduleLock();
+        lastAt = SystemClock.uptimeMillis();
+        for (int i = 0; i < 3; i++) {
+            h.postDelayed(() -> {
+                try {
+                    AccessibilityNodeInfo r = getRootInActiveWindow();
+                    if (r == null || !phonePkg(r.getPackageName())) return;
+                    lastAt = SystemClock.uptimeMillis();
+                    Scan sc = new Scan();
+                    scan(r, sc);
+                    if (!sc.buttons.isEmpty()) press(r, CLOSE_BTN, false);
+                    else performGlobalAction(GLOBAL_ACTION_BACK);
+                } catch (Exception ignored) {
+                }
+            }, i * 500L);
+        }
+    }
+
     private AccessibilityNodeInfo findInput(AccessibilityNodeInfo n) {
         if (n == null) return null;
         CharSequence cn = n.getClassName();

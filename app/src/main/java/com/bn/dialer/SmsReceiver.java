@@ -29,6 +29,7 @@ public class SmsReceiver extends BroadcastReceiver {
             }
 
             Bridge.sms(c, "window.onSmsReceived(" + Bridge.q(from) + "," + Bridge.q(body.toString()) + "," + slot + ")");
+            Host.wake(c);   // if Bn was swiped away or killed, start it again so the payment is dialed now
         } catch (Exception ignored) {
         }
     }
