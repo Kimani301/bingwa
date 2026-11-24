@@ -363,11 +363,53 @@ nav i.ob{background:var(--r)}
 .oc-b{gap:8px;margin-top:10px}.oc-b .btn{min-height:40px;font-size:13px}
 .oc-b .btn.p{flex:1.4}.oc-b .btn.ico{flex:0 0 44px}
 .grp{margin-top:16px}
+
+/* ---- v1.25: nicer ON/OFF controls ---- */
+.adp{gap:10px;padding:5px 14px 5px 5px;background:rgba(0,0,0,.2);border:1.5px solid rgba(255,255,255,.22)}
+.adk{display:none}
+.adpw{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;flex:none;background:rgba(255,255,255,.14);color:rgba(255,255,255,.6);transition:.18s}
+.adt{min-width:48px;gap:1px}
+.adt small{order:1;font-size:10px;font-weight:700;opacity:.8;letter-spacing:.4px;margin:0;text-transform:uppercase}
+.adt b{order:2;font-size:16px;font-weight:900;letter-spacing:.6px;color:rgba(255,255,255,.7)}
+.adp:has(input:checked){background:rgba(34,197,94,.22);border-color:#4ade80}
+.adp input:checked~.adpw{background:#22c55e;color:#fff;box-shadow:0 0 0 4px rgba(74,222,128,.28),0 0 14px rgba(74,222,128,.6)}
+.adp input:checked~.adt b{color:#bbf7d0}
+@media(max-width:380px){.adp{gap:8px;padding:4px 11px 4px 4px}.adpw{width:34px;height:34px}.adt b{font-size:14px}}
+.osw{position:relative;width:52px;height:30px;padding:0;border:0;border-radius:15px;background:#b8bec7;color:transparent;font-size:0;flex:none;transition:.18s;flex-direction:row}
+.osw span{display:none}
+.osw i{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.3);transition:.18s}
+.osw.on{background:var(--g);flex-direction:row;padding:0}
+.osw.on i{left:25px;background:#fff}
+[data-theme=dark] .osw{background:#4b5563}[data-theme=dark] .osw.on{background:var(--g)}
+
+/* ---- v1.26: smaller, classic ---- */
+.adp{gap:7px;padding:5px 11px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,.4);box-shadow:none}
+.adp:has(input:checked){background:transparent;border-color:var(--gold)}
+.adpw,.adk{display:none}
+.addot{width:9px;height:9px;border-radius:50%;background:#9ca3af;flex:none;transition:.15s}
+.adp input:checked~.addot{background:#4ade80;box-shadow:0 0 0 3px rgba(74,222,128,.25)}
+.adt{flex-direction:row;align-items:baseline;gap:5px;min-width:0}
+.adt small{order:1;font:600 11px var(--serif);letter-spacing:.3px;text-transform:none;opacity:.9}
+.adt b{order:2;font:700 11px var(--font);letter-spacing:.8px;color:rgba(255,255,255,.65)}
+.adp input:checked~.adt b{color:var(--gold)}
+@media(max-width:380px){.adp{padding:4px 9px}}
+.osw{width:40px;height:22px;border-radius:11px}
+.osw i{top:3px;left:3px;width:16px;height:16px}
+.osw.on i{left:21px}
+
+/* ---- v1.27: icon only auto-dial ---- */
+.adp{padding:0;gap:0;border:0;background:none;border-radius:50%}
+.adp:has(input:checked){background:none;border:0}
+.adp .adpw{display:grid;width:34px;height:34px;border-radius:50%;place-items:center;background:transparent;border:1.5px solid rgba(255,255,255,.45);color:rgba(255,255,255,.55);box-shadow:none;position:relative;transition:.15s}
+.adp .adpw:after{content:"";position:absolute;width:2px;height:24px;background:currentColor;border-radius:1px;transform:rotate(45deg);opacity:.9}
+.adp input:checked~.adpw{background:#22c55e;border-color:#4ade80;color:#fff;box-shadow:0 0 0 3px rgba(74,222,128,.25)}
+.adp input:checked~.adpw:after{display:none}
+.addot,.adt{display:none}
 </style>
 </head>
 <body>
 <header>
-  <div class="brandline"><span class="brandmark" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M2.5 9.2a14 14 0 0 1 19 0"/><path d="M5.8 12.7a9.3 9.3 0 0 1 12.4 0"/><path d="M9.2 16.1a4.6 4.6 0 0 1 5.6 0"/><circle cx="12" cy="19.6" r="1.6" fill="#f59e0b" stroke="none"/></svg></span><span class="brandcopy"><b>Bn</b><small>SMART DATA SALES</small></span><label class="adp" aria-label="Auto-dial"><input type="checkbox" id="auto"><span class="adk"><i></i></span><span class="adt"><b id="adl">OFF</b><small>Auto-dial</small></span></label></div>
+  <div class="brandline"><span class="brandmark" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M2.5 9.2a14 14 0 0 1 19 0"/><path d="M5.8 12.7a9.3 9.3 0 0 1 12.4 0"/><path d="M9.2 16.1a4.6 4.6 0 0 1 5.6 0"/><circle cx="12" cy="19.6" r="1.6" fill="#f59e0b" stroke="none"/></svg></span><span class="brandcopy"><b>Bn</b><small>SMART DATA SALES</small></span><label class="adp" aria-label="Auto-dial" title="Auto-dial"><input type="checkbox" id="auto"><span class="adpw"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v8"/><path d="M17.7 6.8a8.5 8.5 0 1 1-11.4 0"/></svg></span><b id="adl" hidden>OFF</b></label></div>
   <div class="top">
     <button class="bal" onclick="refreshBal()" aria-label="Check airtime balance"><span class="bl"><small>Airtime balance</small><b id="balv"></b><small id="balt"></small></span><span class="rf" id="rf">&#8635;</span></button>
   </div>
@@ -551,13 +593,13 @@ window.onSmsReceived=function(sender,body,slot){
   addLog('Unrecognised SMS from '+sender+': '+body.slice(0,100));
 };
 
-function firstName(n){return String(n||'').trim().split(/\s+/)[0]||''}
+function firstName(n){return String(n||'').trim().split(/\s+/).slice(0,2).join(' ')}
 function smsName(body){
   const t=String(body||'');const f=t.match(/\bfrom\s+([\s\S]+)/i);
   if(!f)return '';
   const cut=f[1].split(/\s+on\s+\d|\s+at\s+\d{1,2}[:.]\d|\.\s+[A-Z]|\s+New\s+M-?PESA|\s+Transaction\s+cost|\s+Balance/i)[0];
   const w=cut.split(/\s+/).filter(x=>/^[A-Za-z][A-Za-z.'\-]*$/.test(x));
-  return w.slice(0,1).join(' ').replace(/[.\s]+$/,'').toLowerCase().replace(/(^|[ .'\-])([a-z])/g,(x,a,b)=>a+b.toUpperCase()).slice(0,40);
+  return w.slice(0,2).join(' ').replace(/[.\s]+$/,'').toLowerCase().replace(/(^|[ .'\-])([a-z])/g,(x,a,b)=>a+b.toUpperCase()).slice(0,40);
 }
 async function gotPayment(body){
   const code=(body.match(/\b(?=[A-Z0-9]*[A-Z])[A-Z0-9]{10}\b/)||[])[0]||('NOCODE'+uid());
@@ -641,9 +683,9 @@ function ussdStep(s,txt){
     const o=offers.find(x=>x.id===s.oid)||offers.find(x=>x.adv&&x.name===s.name);
     if(o&&o.menus&&o.menus[s.step]!=null&&menuSig(txt)!==o.menus[s.step]){
       fail(s,'Menu changed - nothing was sent');
-      o.on=false;o.cal={t:Date.now(),state:'bad',msg:'Menu changed',trail:(o.cal&&o.cal.trail)||[],paused:true};delete o.menus;
+      o.on=false;o.chg={t:Date.now(),why:'Menu changed'};o.cal={t:Date.now(),state:'bad',msg:'Menu changed',trail:(o.cal&&o.cal.trail)||[],paused:true};delete o.menus;
       addLog('Menu changed at step '+(s.step+1)+' for '+o.name+'. Sale stopped, offer paused');
-      toast('Menu changed: '+o.name+' paused');save();return done();
+      toast('Menu changed: '+o.name+' paused. Open Offers > Import to get the new USSD.');save();return done();
     }
   }
   s.step++;s.ts=Date.now();
@@ -889,8 +931,9 @@ function calLine(o){
 
 /* ---------- import offers: scan the gift menu in the background and list ready-made advanced offers ---------- */
 let imp=L('bs_imp',{t:0,items:[],note:''});
-const IMP_MAXD=7,IMP_MAXN=250,IMP_ROOTS='*544#, *444#';
-const IMP_ACCEPT=/(accept|confirm|agree|^yes|proceed)/i;
+const IMP_MAXD=7,IMP_MAXN=400,IMP_MAXP=8,IMP_ROOTS='*544#, *444#';
+const IMP_PAG=/^(more|next|show more|view more|see more|continue)/i;
+const IMP_ACCEPT=/(accept|confirm|agree|^yes|proceed|^ok\b|^buy|^pay\b)/i;
 const IMP_DENY=/(my\s?self|my\s?number|own\s?number|confirm|accept|agree|pay\s?now|^yes$|cancel|exit|^back|home|stop|unsubscribe|auto.?renew|deactivate|opt.?out)/i;
 const IMP_GIFT=/(gift|other|another|someone|bingwa)/i;
 function impOpts(txt){
@@ -899,9 +942,9 @@ function impOpts(txt){
   if(o.length<2){o=[];const re=/(?:^|\s)(\d{1,2})[.)]\s*([^\n]*?)(?=\s+\d{1,2}[.)]\s|\n|$)/g;let m;while((m=re.exec(t)))o.push({key:m[1],label:m[2].trim()})}
   return o;
 }
-const impPrompt=t=>/(enter|type|key in|provide|input)[^\n]{0,60}(number|msisdn|phone|recipient)|(number|msisdn|phone)[^\n]{0,40}(enter|type)/i.test(String(t||''));
+const impPrompt=t=>/(enter|type|key in|provide|input|put)[^\n]{0,80}(number|\bno\b\.?|msisdn|phone|mobile|recipient|receiver|beneficiary)|(number|msisdn|phone|mobile)[^\n]{0,40}(enter|type)/i.test(String(t||''));
 const impSlug=a=>a.join('_').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,80)||'x';
-const impPrice=a=>{for(let i=a.length-1;i>=0;i--){const m=String(a[i]).match(/\b(?:ksh|kes|sh)\.?\s?(\d[\d,]*(?:\.\d+)?)/i);if(m)return parseFloat(m[1].replace(/,/g,''))}return null};
+const impPrice=a=>{for(let i=a.length-1;i>=0;i--){const x=String(a[i]);const m=x.match(/(?:\bksh?s?|\bkes|\bsh)\.?\s*(\d[\d,]*(?:\.\d+)?)/i)||x.match(/@\s*(\d[\d,]*(?:\.\d+)?)/)||x.match(/\b(\d[\d,]*(?:\.\d+)?)\s*\/-/);if(m)return parseFloat(m[1].replace(/,/g,''))}return null};
 const impIdle=()=>!sales.some(s=>['queued','dialing','pending'].includes(s.status))&&!busy();
 function impStart(auto){
   if(scan)return;
@@ -916,65 +959,105 @@ function impStart(auto){
   }
   const roots=String(set.impCode||IMP_ROOTS).split(/[\s,;]+/).filter(x=>/^\*[0-9*]+#$/.test(x));
   if(!roots.length)return toast('Enter a menu code like *544#');
-  scan={n,q:roots.map(r=>({root:r,path:[],labels:[]})),seen:{},items:[],nodes:0,cur:null,auto:!!auto,t:Date.now()};
+  scan={n,q:roots.map(r=>({root:r,path:[],labels:[],pg:0})),seen:{},items:[],nodes:0,cur:null,auto:!!auto,t:Date.now(),rep:[],roots};
   addLog('Scanning '+roots.join(' '));toast('Scanning offers');
   impNext();render();
 }
+function impRep(c,note,txt){const s=scan;if(!s)return;s.rep.push({p:(c.root+(c.path.length?' > '+c.path.join(' > '):'')),n:note,m:String(txt||'').replace(/\s+/g,' ').slice(0,160)});if(s.rep.length>300)s.rep.shift()}
 function impStop(msg){
   if(!scan)return;
   const s=scan;scan=null;endSession();
-  if(s.items.length||(msg!=='paused'&&msg!=='stopped')){imp={t:Date.now(),items:s.items,note:''};W('bs_imp',imp)}
+  const complete=msg==='done'&&!s.q.length&&s.nodes<IMP_MAXN;
+  if(s.items.length||(msg!=='paused'&&msg!=='stopped')){imp={t:Date.now(),items:s.items,note:'',rep:s.rep};W('bs_imp',imp)}
   addLog('Scan '+(msg||'done')+': '+s.items.length+' offers found');
+  if(msg==='done'&&s.items.length)impGuard(s,complete);
   nextAt=Date.now()+spd()[1];render();pump();
 }
+/* a finished scan: any imported offer whose menu changed (or vanished) is paused at once so no money is lost */
+function impGuard(s,complete){
+  let n=0;
+  offers.forEach(o=>{
+    if(!o.adv||!o.impKey||!o.on)return;
+    if(!s.roots.includes(o.steps[0]))return;
+    const it=s.items.find(x=>x.k===o.impKey)||s.items.find(x=>advCode(x.steps)===advCode(o.steps));
+    let why='';
+    if(it){if(impStatus(it)==='changed')why='Menu changed'}
+    else if(complete)why='Offer no longer in the menu';
+    if(!why)return;
+    o.on=false;o.chg={t:Date.now(),why};
+    o.cal={t:Date.now(),state:'bad',msg:why,trail:(o.cal&&o.cal.trail)||[],paused:true};
+    addLog(why+' for '+o.name+'. Offer paused');n++;
+  });
+  if(n){save();toast(n+' offer'+(n>1?'s':'')+' paused: Safaricom changed the menu. Open Offers > Import to get the new USSD.')}
+}
+function impGo(){tab='offers';ot='imp';fresh=true;render();if(!scan)impStart()}
 function impNext(){
   const s=scan;if(!s)return;
   if(sales.some(x=>x.status==='queued')){return impStop('paused')}
   if(!s.q.length||s.nodes>=IMP_MAXN)return impStop('done');
   const it=s.q.shift();s.nodes++;
-  s.cur={root:it.root,path:it.path,labels:it.labels,k:0,replies:[],stage:0,ts:Date.now()};
+  s.cur={root:it.root,path:it.path,labels:it.labels,pg:it.pg||0,k:0,replies:[],stage:0,ts:Date.now()};
   render();
   try{if(NativeBridge.dialUssdWake)NativeBridge.dialUssdWake(s.cur.root,simSlot(),true);else NativeBridge.dialUssd(s.cur.root,simSlot())}
   catch(e){impStop('stopped')}
 }
 function impAfter(ms){const s=scan;endSession();setTimeout(()=>{if(scan===s)impNext()},ms||2500)}
+function impAdd(s,c,steps,full){
+  const nm=c.labels.filter(l=>!IMP_PAG.test(l));
+  const name=(nm[nm.length-1]||'Offer').replace(/\s+/g,' ').slice(0,60);
+  let k=impSlug(nm);while(s.items.some(x=>x.k===k))k+='-2';
+  s.items.push({k,name,cost:impPrice(nm.slice().reverse().concat([c.prompt||''])),steps,menus:c.replies.map(menuSig),last:full,
+    trail:c.replies.map((m,i)=>({did:i===0?'Dialed '+steps[0]:'Sent '+steps[i],menu:m}))});
+  impRep(c,'FOUND '+name,full);
+}
 function impReply(txt){
   const s=scan,c=s&&s.cur;if(!c)return;
   const full=String(txt||'').trim();c.ts=Date.now();c.replies.push(full.slice(0,400));
-  if(FAILRE.test(full)&&!impOpts(full).length)return impAfter();
+  if(FAILRE.test(full)&&!impOpts(full).length){impRep(c,'error screen',full);return impAfter()}
   if(c.k<c.path.length){const i=c.k++;return setTimeout(()=>{if(scan!==s||s.cur!==c)return;try{NativeBridge.replyUssd(c.path[i])}catch(e){impAfter()}},spd()[0])}
   const opts=impOpts(full);
   if(c.stage===1){                       /* screen after the client number: pick airtime, never M-Pesa */
     const f=opts.find(o=>/airtime/i.test(o.label));
-    if(!f)return impAfter();
+    if(!f){
+      const a=opts.find(o=>IMP_ACCEPT.test(o.label));       /* some menus go straight to Accept */
+      if(a&&!opts.some(o=>/m-?pesa/i.test(o.label))){
+        const steps=[c.root].concat(c.path,['n',a.key]);
+        impAdd(s,c,steps,full);
+      }else impRep(c,'no airtime option after number',full);
+      return impAfter();
+    }
     c.air=f.key;c.stage=2;
     return setTimeout(()=>{if(scan!==s||s.cur!==c)return;try{NativeBridge.replyUssd(f.key)}catch(e){impAfter()}},spd()[0]);
   }
   if(c.stage===2){                       /* confirm screen: only note the Accept key, never press it */
     const a=opts.find(o=>IMP_ACCEPT.test(o.label));
     if(a){
-      const steps=[c.root].concat(c.path,['n',c.air,a.key]);
-      const nm=c.labels.filter(l=>!/^(next|more)/i.test(l));
-      const name=(nm[nm.length-1]||'Offer').replace(/\s+/g,' ').slice(0,60);
-      let k=impSlug(nm);while(s.items.some(x=>x.k===k))k+='-2';
-      s.items.push({k,name,cost:impPrice(nm.slice().reverse().concat([c.prompt||''])),steps,menus:c.replies.map(menuSig),last:full,
-        trail:c.replies.map((m,i)=>({did:i===0?'Dialed '+steps[0]:'Sent '+steps[i],menu:m}))});
-    }else addLog('Scan: no Accept option for '+(c.labels[c.labels.length-1]||'an offer')+', skipped');
+      impAdd(s,c,[c.root].concat(c.path,['n',c.air,a.key]),full);
+    }else{addLog('Scan: no Accept option for '+(c.labels[c.labels.length-1]||'an offer')+', skipped');impRep(c,'no Accept option',full)}
     return impAfter();
   }
   if(!opts.length&&impPrompt(full)){
     c.stage=1;c.prompt=full;
     return setTimeout(()=>{if(scan!==s||s.cur!==c)return;try{NativeBridge.replyUssd(s.n)}catch(e){impAfter()}},spd()[0]);
   }
-  if(opts.length&&c.path.length<IMP_MAXD){
-    let ch=opts.filter(o=>!IMP_DENY.test(o.label)&&!/airtime/i.test(o.label)&&!/^0{1,2}$/.test(o.key));
-    const pag=ch.filter(o=>/^(more|next)/i.test(o.label));
+  if(opts.length&&c.path.length-c.pg<IMP_MAXD){
+    impRep(c,'menu',full);
+    let ch=opts.filter(o=>!IMP_DENY.test(o.label)&&!/airtime/i.test(o.label)&&(!/^0{1,2}$/.test(o.key)||IMP_PAG.test(o.label)));
+    const pag=ch.filter(o=>IMP_PAG.test(o.label));
     if(!c.labels.some(l=>IMP_GIFT.test(l))){           /* still looking for the gift menu: follow Gift, else More */
       const g=ch.filter(o=>IMP_GIFT.test(o.label));
-      if(g.length)ch=g.concat(pag.filter(o=>!g.includes(o)));else if(pag.length)ch=pag;
+      if(g.length)ch=g.concat(pag.filter(o=>!g.includes(o)));else if(pag.length)ch=pag.concat(ch.filter(o=>!pag.includes(o)));
     }
-    ch.forEach(o=>{const p=c.path.concat([o.key]),id=c.root+'>'+p.join('>');if(s.seen[id])return;s.seen[id]=1;s.q.push({root:c.root,path:p,labels:c.labels.concat([o.label])})});
-  }
+    ch.forEach(o=>{
+      const isP=IMP_PAG.test(o.label),pg=c.pg+(isP?1:0);
+      if(pg>IMP_MAXP)return;
+      const p=c.path.concat([o.key]),id=c.root+'>'+p.join('>');if(s.seen[id])return;s.seen[id]=1;
+      s.q.push({root:c.root,path:p,labels:c.labels.concat([o.label]),pg});
+    });
+  }else if(opts.length){
+    /* an offer leaf that goes straight to a pay / confirm screen without asking for a number */
+    impRep(c,'too deep or leaf',full);
+  }else impRep(c,'unrecognised screen',full);
   impAfter();
 }
 function impOffer(it){return offers.find(o=>o.adv&&o.impKey===it.k)||offers.find(o=>o.adv&&advCode(o.steps)===advCode(it.steps))}
@@ -992,7 +1075,7 @@ function impImport(k){
   const amount=ex&&ex.amount>0?ex.amount:cost;
   const cal={t:Date.now(),state:'ok',msg:'Imported',trail:it.trail};
   let o=ex;
-  if(o){Object.assign(o,{steps:it.steps,menus:it.menus,cost,cal,impKey:k,on:true});delete o.cal.paused}
+  if(o){Object.assign(o,{steps:it.steps,menus:it.menus,cost,cal,impKey:k,on:true});delete o.cal.paused;delete o.chg}
   else{o={id:uid(),name:it.name,amount,cost,steps:it.steps,adv:true,on:true,impKey:k,menus:it.menus,cal};offers.push(o)}
   offers.sort((a,b)=>a.amount-b.amount);
   addLog('Imported '+o.name);toast('Added to Advanced offers');save();fresh=false;render();
@@ -1013,7 +1096,9 @@ function impView(){
     return '<li class="oc"><div class="oc-h"><div class="amt">'+(it.cost!=null?it.cost:'?')+'<small>KSh</small></div><div class="mid"><b>'+esc(it.name)+'</b><div class="chips" style="margin-top:6px"><span class="sc d">'+esc(advCode(it.steps))+'</span></div></div>'+chip+act+'</div></li>';
   }).join('');
   const goneH=gone.length?'<div class="grp">Not in menu · '+gone.length+'</div><ul>'+gone.map(o=>'<li class="oc off"><div class="oc-h"><div class="amt">'+o.amount+'<small>KSh</small></div><div class="mid"><b>'+esc(o.name)+'</b></div>'+chipH('r','Gone')+'</div>'+(o.on?'<div class="oc-b own"><button class="btn" onclick="togOffer(\''+o.id+'\')">\u23F8 Pause</button></div>':'')+'</li>').join('')+'</ul>':'';
-  return head+(rows?'<ul>'+rows+'</ul>':'<p class="empty"><big></big>'+(sc?'Scanning...':'No offers found yet.')+'</p>')+goneH;
+  const rp=(sc?sc.rep:imp.rep)||[];
+  const repH=rp.length?'<details class="own" style="margin-top:14px"><summary class="hint">Scan report ('+rp.length+' screens)</summary><ul>'+rp.slice().reverse().map(r=>'<li class="oc"><div class="mid"><b>'+esc(r.n)+'</b><div class="hint">'+esc(r.p)+'</div><pre style="white-space:pre-wrap;margin:4px 0 0;font-size:12px">'+esc(r.m)+'</pre></div></li>').join('')+'</ul></details>':'';
+  return head+(rows?'<ul>'+rows+'</ul>':'<p class="empty"><big></big>'+(sc?'Scanning...':'No offers found yet.')+'</p>')+goneH+repH;
 }
 
 /* ---------- airtime balance ---------- */
@@ -1057,7 +1142,7 @@ function home(){
   const bars=days.map((d,i)=>{const h=Math.round(d.v/mx*74),x=i*45.7+8.9,y=104-h;
     return `<rect x="${x}" y="${y}" width="28" height="${d.v?Math.max(h,2):0}" rx="9" fill="url(#${i===ti?'gb':'gg'})"/>${d.v?`<text x="${x+14}" y="${y-4}" text-anchor="middle" font-size="10" fill="var(--ink)">${d.v}</text>`:''}<text x="${x+14}" y="120" text-anchor="middle" font-size="11" fill="var(--mute)">${d.l}</text>`}).join('');
   const rec=sales.slice(0,6);
-  return `<div class="per">${Object.keys(PER).map(k=>`<button class="${k===per?'on':''}" onclick="per='${k}';fresh=true;render()">${PER[k][0]}</button>`).join('')}</div>
+  return chgBanner()+`<div class="per">${Object.keys(PER).map(k=>`<button class="${k===per?'on':''}" onclick="per='${k}';fresh=true;render()">${PER[k][0]}</button>`).join('')}</div>
   <div class="stats"><div class="stat s1"><small>Total sales</small><b>KSh ${fmt(tot)}</b></div><div class="stat s2 own"><small>Profit</small><b>KSh ${fmt(ok.reduce((a,x)=>a+profitOf(x),0))}</b></div></div>
   <div class="hd"><h2>Sales this week</h2><small class="wk">KSh ${fmt(wk)} · resets Monday</small></div>
   <div class="chartbox"><svg viewBox="0 0 320 126" role="img" aria-label="Sales per day this week, Monday to Sunday"><defs><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4f9a6b"/><stop offset="1" stop-color="#166534"/></linearGradient><linearGradient id="gb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3c35a"/><stop offset="1" stop-color="#b8901f"/></linearGradient></defs><g stroke="var(--line)" stroke-dasharray="3 5"><line x1="0" y1="30.5" x2="320" y2="30.5"/><line x1="0" y1="55.5" x2="320" y2="55.5"/><line x1="0" y1="80.5" x2="320" y2="80.5"/></g><line x1="0" y1="104.5" x2="320" y2="104.5" stroke="var(--line)" stroke-width="2"/>${bars}</svg></div>
@@ -1155,9 +1240,14 @@ const chipH=(c,t)=>'<span class="chip '+c+'">'+t+'</span>';
 function stepChips(o){
   return '<div class="chips">'+o.steps.map((x,i)=>i===0?'<span class="sc d">'+esc(x)+'</span>':/^n$/i.test(x)?'<span class="sc n">\uD83D\uDCF1 number</span>':'<span class="sc">'+esc(x)+'</span>').join('<span class="ar">\u203A</span>')+'</div>';
 }
+function chgList(){return offers.filter(o=>o.adv&&!o.on&&o.chg)}
+function chgBanner(){
+  const l=chgList();if(!l.length)return '';
+  return '<div class="note own" role="alert"><b>\u26A0\uFE0F Safaricom changed the menu</b><br>'+l.map(o=>esc(o.name)).join(', ')+' '+(l.length>1?'were':'was')+' paused so no airtime is lost. Find the updated USSD and turn '+(l.length>1?'them':'it')+' back on.<div class="btns" style="margin-top:8px"><button class="btn p" onclick="impGo()">Find updated USSD</button></div></div>';
+}
 function advRow(o){
   const c=o.cal;
-  return '<li class="oc'+(o.on?'':' off')+'"><div class="oc-h"><div class="amt">'+o.amount+'<small>KSh</small></div><div class="mid"><b>'+esc(o.name)+'</b>'+calLine(o)+'</div>'+'<button type="button" class="osw'+(o.on?' on':'')+'" role="switch" aria-checked="'+o.on+'" aria-label="'+(o.on?'Turn off':'Turn on')+'" onclick="togOffer(\''+o.id+'\')"><i></i><span>'+(o.on?'ON':'OFF')+'</span></button>'+'</div>'+stepChips(o)
+  return '<li class="oc'+(o.on?'':' off')+'"><div class="oc-h"><div class="amt">'+o.amount+'<small>KSh</small></div><div class="mid"><b>'+esc(o.name)+'</b>'+calLine(o)+'</div>'+'<button type="button" class="osw'+(o.on?' on':'')+'" role="switch" aria-checked="'+o.on+'" aria-label="'+(o.on?'Turn off':'Turn on')+'" onclick="togOffer(\''+o.id+'\')"><i></i><span>'+(o.on?'ON':'OFF')+'</span></button>'+'</div>'+(o.chg&&!o.on?'<p class="note own" style="margin:8px 0 0">\u26A0\uFE0F '+esc(o.chg.why)+'. Paused. <a href="#" onclick="impGo();return false"><b>Find the updated USSD</b></a></p>':'')+stepChips(o)
     +'<div class="oc-b own"><button class="btn p" onclick="calStart(\''+o.id+'\')">\uD83E\uDDEA Calibrate</button>'
     +(c&&c.trail?'<button class="btn" onclick="calShow(\''+o.id+'\')">\uD83D\uDCCB Steps</button>':'')
     +'<button class="btn" onclick="openAdv(\''+o.id+'\')">\u270F\uFE0F Edit</button>'
@@ -1246,7 +1336,7 @@ function render(){
     const tools='<div class="tools own"><button class="btn p" onclick="'+(adv?'openAdv()':'openOffer()')+'">+ Add offer</button>'+(adv?'<button class="btn" onclick="calAll()">\uD83E\uDDEA Calibrate all</button>':'')+'</div>';
     const info='';
     if(ot==='imp'){const typing=v.contains(document.activeElement)&&document.activeElement.tagName==='INPUT';if(!typing)v.innerHTML=head+impView()}
-    else v.innerHTML=head+tools+(paused?'<p class="note">\u26A0\uFE0F '+paused+' offer'+(paused>1?'s were':' was')+' paused because calibration failed. Fix the code, then calibrate again.</p>':'')
+    else v.innerHTML=head+chgBanner()+tools+(paused?'<p class="note">\u26A0\uFE0F '+paused+' offer'+(paused>1?'s were':' was')+' paused because calibration failed. Fix the code, then calibrate again.</p>':'')
       +(act.length?'<div class="grp">Active \u00B7 '+act.length+'</div><ul>'+act.map(rowFn).join('')+'</ul>':'')
       +(off.length?'<div class="grp">Off \u00B7 '+off.length+'</div><ul>'+off.map(rowFn).join('')+'</ul>':'')
       +(list.length?'':'<p class="empty"><big></big>No '+(adv?'advanced ':'')+'offers yet.</p>')+info;
