@@ -29,7 +29,7 @@ h1{font:900 26px var(--font);margin:0;letter-spacing:.5px}header p{margin:1px 0 
 @media(prefers-reduced-motion:reduce){.rf.spin{animation:none}}
 nav{display:flex;position:fixed;left:0;right:0;bottom:0;background:var(--card);border-radius:30px 30px 0 0;box-shadow:0 -4px 18px rgba(16,24,40,.12);z-index:5;padding:8px 8px calc(10px + env(safe-area-inset-bottom));gap:2px}
 nav button{--tc:#4f46e5;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 2px;border:0;background:none;color:var(--mute);font:inherit;font-size:12px;font-weight:800;position:relative}
-nav button:nth-child(2){--tc:#ff8a1f}nav button:nth-child(3){--tc:#1e88ff}nav button:nth-child(4){--tc:#e91e8c}nav button:nth-child(5){--tc:#e5484d}nav button:nth-child(6){--tc:#14b8a6}nav button[hidden]{display:none}
+nav button:nth-child(2){--tc:#ff8a1f}nav button:nth-child(3){--tc:#1e88ff}nav button:nth-child(4){--tc:#e91e8c}nav button:nth-child(5){--tc:#e5484d}nav button:nth-child(6){--tc:#14b8a6}nav button:nth-child(7){--tc:#8b5cf6}nav button[hidden]{display:none}
 nav svg{width:50px;height:32px;padding:5px 14px;border-radius:17px;stroke-width:2.2;transition:.15s}
 nav button.on{color:var(--tc)}nav button.on svg{background:var(--tc);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.18)}
 .per+h2,.per+.own>h2:first-child,.per+.note{margin-top:14px}
@@ -421,6 +421,7 @@ nav i.ob{background:var(--r)}
   <button data-t="sales"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg><span>Sales</span><i id="nb" hidden></i></button>
   <button data-t="offers"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1"/></svg><span>Offers</span><i id="ob" class="ob" hidden></i></button>
   <button data-t="team" hidden><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg><span>Team</span></button>
+  <button data-t="more"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V11M10 20V4M16 20v-7M21 20H3"/></svg><span>More</span><i id="mb" class="ob" hidden></i></button>
   <button data-t="settings"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><span>Settings</span><i id="sdot" class="ob" hidden>1</i></button>
 </nav>
 
@@ -496,7 +497,7 @@ const tm=t=>new Date(t).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
 const DEF=[[19,'1GB - 1 hour',1],[20,'Bingwa 250MB - 24hrs',2],[48,'Bingwa 750MB - 24hrs',3],[49,'Bingwa 1.5GB - 3hrs',7],[51,'400MB - 7 days',4],[55,'Bingwa 1GB - till midnight',6],[99,'1.5GB - 24hrs',5]]
   .map(([a,n,k])=>({id:uid()+k,amount:a,name:n,ussd:'*180*5*2*n*'+k+'*1#',on:true}));
 let offers=L('bs_offers',DEF), sales=L('bs_sales',[]), set=Object.assign({auto:true,wait:3,gap:3,rate:10,balCode:'*144#',dialSim:'auto',readSim:'both',autoBal:true,theme:'light',speed:'balanced',smsOn:true,smsFailOn:true,smsSim:'auto',smsOk:'Your offer of Ksh{amount} has been successfully renewed.',smsNoOn:true,smsNo:'Hi, we received your payment of Ksh{amount} but we have no bundle at that price right now. Please contact us to get your bundle or a refund.',smsDup:'Hi, the number {phone} has already been recommended today. Kindly send a new number.'},L('bs_set',{})), bal=L('bs_bal',null), logs=L('bs_log',[]).filter(e=>e&&e.t>Date.now()-864e5), tab='home', per='today', sf='all', ot='normal';
-const save=()=>{try{syncDaily()}catch(e){}W('bs_offers',offers);W('bs_sales',sales.slice(0,500));W('bs_set',set);window.Team&&Team.dirty();window.Web&&Web.publishSoon()};
+const save=()=>{try{syncDaily()}catch(e){}try{BX('custSync')}catch(e){}W('bs_offers',offers);W('bs_sales',sales.slice(0,500));W('bs_set',set);window.Team&&Team.dirty();window.Web&&Web.publishSoon()};
 /* weekly sales chart: kept apart from the sales list, so Clear sales history never wipes it. It starts fresh every Monday. */
 const weekStart=()=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-((d.getDay()+6)%7));return +d};
 let daily=L('bs_daily',{});
@@ -508,6 +509,9 @@ function syncDaily(){
   if(ch)W('bs_daily',daily)
 }
 const hasBridge=()=>!!(window.NativeBridge&&window.NativeBridge.dialUssd);
+const BX=(n,...a)=>typeof window[n]==='function'?window[n](...a):'';
+function inHours(o){const m=String(o&&o.hrs||'').match(/^(\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})$/);if(!m)return true;const n=new Date(),t=n.getHours()*60+n.getMinutes(),a=+m[1]*60+ +m[2],b=+m[3]*60+ +m[4];return a<=b?(t>=a&&t<=b):(t>=a||t<=b)}
+const offerLive=o=>!!o&&!!o.on&&inHours(o);
 
 function applyTheme(){
   const d=set.theme==='dark'||(set.theme==='auto'&&matchMedia('(prefers-color-scheme:dark)').matches);
@@ -609,8 +613,9 @@ async function gotPayment(body){
   const amount=am?parseFloat(am[1].replace(/,/g,'')):0;
   const phone=pm?normPhone(pm):null;
   if(window.Web&&await Web.claims(code,amount,phone))return addLog('Website payment '+code+' is handled by its web order');
-  const o=offers.find(x=>x.on&&x.amount===amount);
+  const o=offers.find(x=>offerLive(x)&&x.amount===amount);
   const s={id:uid(),code,amount,phone,client:smsName(body),name:o?o.name:'',ussd:'',status:'queued',reason:'',t:Date.now(),ts:Date.now()};
+  if(phone&&BX('isBlocked',phone)){fail(s,'Blocked number. Payment kept for refund');s.blocked=1;sales.unshift(s);addLog('Blocked number '+phone+' paid KSh '+amount);save();render();return}
   if(!phone)fail(s,'No valid phone number in the payment SMS');
   else if(!o)fail(s,'No active offer priced KSh '+amount);
   else build(s,o);
@@ -643,7 +648,7 @@ function textClient(s,kind){
   const flag=kind==='ok'?'smsOk':kind==='nooffer'?'smsNo':'smsDup';
   if(s[flag]||!s.phone)return;
   const on=kind==='ok'?set.smsOn:kind==='nooffer'?set.smsNoOn!==false:set.smsFailOn,tpl=kind==='ok'?set.smsOk:kind==='nooffer'?set.smsNo:set.smsDup;
-  const msg=fillMsg(tpl,s).trim();
+  const msg=(fillMsg(tpl,s).trim()+(kind==='nooffer'?BX('nearOffers',s):'')).trim();
   if(!on||!msg)return;
   s[flag]=1;sendText(s.phone,msg);
 }
@@ -748,12 +753,13 @@ function pump(){
   if(w>0){clearTimeout(pt);pt=setTimeout(pump,w+20);return}
   /* customers first: the balance check waits until the queue is empty */
   if(needBal&&Date.now()>=balAt&&!q){if(set.autoBal&&hasBridge()){refreshBal(true);return}needBal=false}
+  if(q&&BX('bnHold',q))return;
   if(q)dial(q)}
 function dialNow(id){
   const s=sales.find(x=>x.id===id);if(!s)return;
   if((s.status==='failed'||s.status==='success')&&!confirm((s.soft?'This sale timed out waiting for Safaricom, but the customer may already have the bundle. Check with them first.\n\n':'')+'Dial again for '+s.phone+'?'))return;
   s.msg='';delete s.smsOk;delete s.smsDup;delete s.smsNo;
-  if(!s.ussd){const o=offers.find(x=>x.amount===s.amount&&x.on);if(!o||!s.phone)return toast('Still no active offer or number for this sale');build(s,o)}
+  if(!s.ussd){const o=offers.find(x=>x.amount===s.amount&&offerLive(x));if(!o||!s.phone)return toast('Still no active offer or number for this sale');build(s,o)}
   if(busy()){s.status='queued';s.reason='';save();render();return toast('Queued - another dial is running')}
   dial(s);
 }
@@ -767,7 +773,7 @@ const slowTick=()=>{
     addLog('Queued sale waiting: '+(window.Team&&!Team.canDial()?'not signed in. ':'')+(!set.auto&&!qw.manual?'auto-dial is OFF. ':'')+(balWait?'balance check running. ':'')+(cal?'calibration running. ':'')+(scan?'offer scan running. ':'')+(sales.some(x=>x.status==='dialing')?'another sale is dialing. ':'')+(nextAt>now?'waiting between customers. ':''))}
   if(cal&&now-cal.ts>45000)calEnd('fail','No reply from Safaricom at step '+(cal.step+1));
   if(scan&&scan.cur&&now-scan.cur.ts>45000){addLog('Scan: no reply, skipping a path');impAfter(500);scan.cur.ts=now}
-  if(!scan&&set.impAuto!==false&&imp.t&&now-imp.t>24*36e5&&impIdle()&&hasBridge())impStart(true);
+  if(!scan&&set.impAuto!==false&&imp.t&&(now-imp.t>24*36e5||(imp.part&&now-imp.part>10*60000))&&impIdle()&&hasBridge())impStart(true);
   sales.forEach(s=>{
     if(s.status==='dialing'&&now-s.ts>45000){
       fail(s,s.steps?'No reply at step '+(s.step+1):'No reply after dialing');
@@ -934,7 +940,7 @@ let imp=L('bs_imp',{t:0,items:[],note:''});
 const IMP_MAXD=7,IMP_MAXN=400,IMP_MAXP=8,IMP_ROOTS='*544#, *444#';
 const IMP_PAG=/^(more|next|show more|view more|see more|continue)/i;
 const IMP_ACCEPT=/(accept|confirm|agree|^yes|proceed|^ok\b|^buy|^pay\b)/i;
-const IMP_DENY=/(my\s?self|my\s?number|own\s?number|confirm|accept|agree|pay\s?now|^yes$|cancel|exit|^back|home|stop|unsubscribe|auto.?renew|deactivate|opt.?out)/i;
+const IMP_DENY=/(m-?pesa|my\s?self|my\s?number|own\s?number|confirm|accept|agree|pay\s?now|^yes$|cancel|exit|^back|home|stop|unsubscribe|auto.?renew|deactivate|opt.?out)/i;
 const IMP_GIFT=/(gift|other|another|someone|bingwa)/i;
 function impOpts(txt){
   const t=String(txt||'');let o=[];
@@ -968,7 +974,12 @@ function impStop(msg){
   if(!scan)return;
   const s=scan;scan=null;endSession();
   const complete=msg==='done'&&!s.q.length&&s.nodes<IMP_MAXN;
-  if(s.items.length||(msg!=='paused'&&msg!=='stopped')){imp={t:Date.now(),items:s.items,note:'',rep:s.rep};W('bs_imp',imp)}
+  /* an interrupted scan (customer arrived, Stop pressed, 400-screen limit) must never wipe the list or hide the 24h rescan */
+  const partial=msg==='paused'||msg==='stopped'||!complete;
+  if(s.items.length||s.rep.length){
+    const items=s.items.length?(partial?s.items.concat(imp.items.filter(o=>!s.items.some(x=>x.k===o.k))):s.items):imp.items;
+    imp={t:partial&&imp.t?imp.t:Date.now(),items,note:'',rep:s.rep,part:partial?Date.now():0};W('bs_imp',imp)
+  }
   addLog('Scan '+(msg||'done')+': '+s.items.length+' offers found');
   if(msg==='done'&&s.items.length)impGuard(s,complete);
   nextAt=Date.now()+spd()[1];render();pump();
@@ -1083,7 +1094,7 @@ function impImport(k){
 function impCount(){return imp.items.filter(it=>impStatus(it)!=='done').length}
 function impView(){
   const sc=scan,btn=sc?'<button class="btn d" onclick="impStop(\'stopped\')">Stop</button>':'<button class="btn p" onclick="impStart()">Scan now</button>';
-  const st=sc?'Scanning '+sc.nodes+' · found '+sc.items.length:(imp.t?'Last scan '+tm(imp.t):'Not scanned yet');
+  const st=sc?'Scanning '+sc.nodes+' · found '+sc.items.length:(imp.t?(imp.part?'Last scan stopped early ('+tm(imp.part)+'). Scan again':'Last scan '+tm(imp.t)):'Not scanned yet');
   const head='<div class="tools own">'+btn+'<span class="hint" style="align-self:center">'+st+'</span></div>'
     +'<div class="own"><label class="f" for="icode">Menu codes</label><input type="text" id="icode" inputmode="text" autocapitalize="off" value="'+esc(set.impCode||IMP_ROOTS)+'" onchange="set.impCode=this.value.trim()||IMP_ROOTS;save()">'
     +'<label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" '+(set.impAuto!==false?'checked':'')+' onchange="set.impAuto=this.checked;save()" style="width:auto">Scan automatically every day</label></div>';
@@ -1142,7 +1153,7 @@ function home(){
   const bars=days.map((d,i)=>{const h=Math.round(d.v/mx*74),x=i*45.7+8.9,y=104-h;
     return `<rect x="${x}" y="${y}" width="28" height="${d.v?Math.max(h,2):0}" rx="9" fill="url(#${i===ti?'gb':'gg'})"/>${d.v?`<text x="${x+14}" y="${y-4}" text-anchor="middle" font-size="10" fill="var(--ink)">${d.v}</text>`:''}<text x="${x+14}" y="120" text-anchor="middle" font-size="11" fill="var(--mute)">${d.l}</text>`}).join('');
   const rec=sales.slice(0,6);
-  return chgBanner()+`<div class="per">${Object.keys(PER).map(k=>`<button class="${k===per?'on':''}" onclick="per='${k}';fresh=true;render()">${PER[k][0]}</button>`).join('')}</div>
+  return chgBanner()+BX('bnBanners')+`<div class="per">${Object.keys(PER).map(k=>`<button class="${k===per?'on':''}" onclick="per='${k}';fresh=true;render()">${PER[k][0]}</button>`).join('')}</div>
   <div class="stats"><div class="stat s1"><small>Total sales</small><b>KSh ${fmt(tot)}</b></div><div class="stat s2 own"><small>Profit</small><b>KSh ${fmt(ok.reduce((a,x)=>a+profitOf(x),0))}</b></div></div>
   <div class="hd"><h2>Sales this week</h2><small class="wk">KSh ${fmt(wk)} · resets Monday</small></div>
   <div class="chartbox"><svg viewBox="0 0 320 126" role="img" aria-label="Sales per day this week, Monday to Sunday"><defs><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4f9a6b"/><stop offset="1" stop-color="#166534"/></linearGradient><linearGradient id="gb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3c35a"/><stop offset="1" stop-color="#b8901f"/></linearGradient></defs><g stroke="var(--line)" stroke-dasharray="3 5"><line x1="0" y1="30.5" x2="320" y2="30.5"/><line x1="0" y1="55.5" x2="320" y2="55.5"/><line x1="0" y1="80.5" x2="320" y2="80.5"/></g><line x1="0" y1="104.5" x2="320" y2="104.5" stroke="var(--line)" stroke-width="2"/>${bars}</svg></div>
@@ -1172,26 +1183,27 @@ let sellId='',sellPhone='',sellName='',sellBuilt=false;
 const sdlg=$('#sdlg');
 function sellView(){
   const all=offers.slice().sort((a,b)=>a.amount-b.amount);
-  const card=x=>'<button type="button" class="pk'+(x.on?'':' off')+'" onclick="sellPick(\''+x.id+'\')"><b>'+x.amount+'<small>KSh</small></b><span>'+esc(x.name)+'</span></button>';
+  const card=x=>'<button type="button" class="pk'+(offerLive(x)?'':' off')+'" onclick="sellPick(\''+x.id+'\')"><b>'+x.amount+'<small>KSh</small></b><span>'+esc(x.name)+'</span></button>';
   const grp=(t,l)=>l.length?'<h2 style="margin-top:12px">'+t+'</h2><div class="pick">'+l.map(card).join('')+'</div>':'';
-  const nor=all.filter(o=>!o.adv&&o.on),adv=all.filter(o=>o.adv);
+  const nor=all.filter(o=>!o.adv&&offerLive(o)),adv=all.filter(o=>o.adv);
   const rec=sales.slice(0,5);
   return (nor.length||adv.length?grp('Offers',nor)+grp('Advanced offers',adv):'<p class="empty"><big></big>No active offers. Add or enable one in the Offers tab.</p>')
     +(rec.length?'<div class="hd"><h2>Latest</h2><button class="btn" onclick="tab=\'sales\';fresh=true;render()">View all</button></div><ul>'+rec.map(saleRow).join('')+'</ul>':'');
 }
 function sellPick(id){
   const o=offers.find(x=>x.id===id);if(!o)return;
-  if(!o.on)return toast('This offer is paused. Calibrate or enable it in the Offers tab.');
+  if(!offerLive(o))return toast(o.on?'This offer is outside its active hours now.':'This offer is paused. Calibrate or enable it in the Offers tab.');
   sellId=id;
   $('#sdT').textContent=o.name;$('#sdS').textContent='KSh '+o.amount+(o.adv?' \u00B7 advanced offer':'');
   $('#sdPh').value=sellPhone;$('#sdNm').value=sellName;$('#sdB').textContent='Sell '+o.name+' \u00B7 KSh '+o.amount;
   sdlg.showModal();setTimeout(()=>$('#sdPh').focus(),80);
 }
 function sellNow(){
-  const o=offers.find(x=>x.id===sellId&&x.on);
+  const o=offers.find(x=>x.id===sellId&&offerLive(x));
   if(!o)return toast('Choose an offer first');
   const ph=normPhone(sellPhone);
   if(!ph)return toast('Enter a valid number like 0712345678');
+  if(BX('isBlocked',ph))return toast('This number is blocked');
   if(window.Team&&!Team.canDial())return toast('Sign in first');
   const s={id:uid(),code:'SELL'+uid(),amount:o.amount,phone:ph,client:sellName.trim().slice(0,40),name:o.name,ussd:'',status:'queued',reason:'',t:Date.now(),ts:Date.now(),manual:1};
   build(s,o);sales.unshift(s);addLog('Manual sale: '+o.name+' to '+ph);
@@ -1220,12 +1232,13 @@ function delSale(id){
   save();toast('Sale deleted');render();
 }
 function saleRow(s){
-  const [lab,c]=ST[s.status];
+  let [lab,c]=ST[s.status];if(s.refunded){lab='Refunded';c='b'}
   const open=!!openSales[s.id];
   const name=esc(firstName(s.client)||s.phone||'Unknown client');
   const cp=s.phone?'<button type="button" class="cp" aria-label="Copy number '+esc(s.phone)+'" onclick="event.stopPropagation();copyNum(\''+esc(s.phone)+'\')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6.5A2.5 2.5 0 0 1 7.5 4H15"/></svg></button>':'';
   let acts='';
   if(s.phone&&s.status!=='dialing'&&s.status!=='queued')acts+=`<button class="btn p" aria-label="Retry sale" onclick="event.stopPropagation();dialNow('${s.id}')">&#8635; Retry</button>`;
+  acts+=BX('bnSaleActs',s);
   acts+=`<button class="btn d sr-del" aria-label="Delete sale" onclick="event.stopPropagation();delSale('${s.id}')">&#128465; Delete</button>`;
   const det=`<div class="sr-d">
     <div class="sr-g"><div><small>Phone</small><b>${esc(s.phone||'None')}</b></div><div><small>Time</small><b>${tm(s.t)}</b></div></div>
@@ -1250,7 +1263,7 @@ function advRow(o){
   return '<li class="oc'+(o.on?'':' off')+'"><div class="oc-h"><div class="amt">'+o.amount+'<small>KSh</small></div><div class="mid"><b>'+esc(o.name)+'</b>'+calLine(o)+'</div>'+'<button type="button" class="osw'+(o.on?' on':'')+'" role="switch" aria-checked="'+o.on+'" aria-label="'+(o.on?'Turn off':'Turn on')+'" onclick="togOffer(\''+o.id+'\')"><i></i><span>'+(o.on?'ON':'OFF')+'</span></button>'+'</div>'+(o.chg&&!o.on?'<p class="note own" style="margin:8px 0 0">\u26A0\uFE0F '+esc(o.chg.why)+'. Paused. <a href="#" onclick="impGo();return false"><b>Find the updated USSD</b></a></p>':'')+stepChips(o)
     +'<div class="oc-b own"><button class="btn p" onclick="calStart(\''+o.id+'\')">\uD83E\uDDEA Calibrate</button>'
     +(c&&c.trail?'<button class="btn" onclick="calShow(\''+o.id+'\')">\uD83D\uDCCB Steps</button>':'')
-    +'<button class="btn" onclick="openAdv(\''+o.id+'\')">\u270F\uFE0F Edit</button>'
+    +'<button class="btn" onclick="openAdv(\''+o.id+'\')">\u270F\uFE0F Edit</button>'+BX('hoursBtn',o)
     +'<button class="btn ico d" aria-label="Delete" title="Delete" onclick="delOffer(\''+o.id+'\')">\uD83D\uDDD1</button></div></li>';
 }
 const adlg=$('#adlg');
@@ -1292,7 +1305,7 @@ function saveAdv(){
 }
 function offerRow(o){
   return '<li class="oc'+(o.on?'':' off')+'"><div class="oc-h"><div class="amt">'+o.amount+'<small>KSh</small></div><div class="mid"><b>'+esc(o.name)+'</b><div class="chips" style="margin-top:6px"><span class="sc d">'+esc(o.ussd)+'</span></div></div>'+'<button type="button" class="osw'+(o.on?' on':'')+'" role="switch" aria-checked="'+o.on+'" aria-label="'+(o.on?'Turn off':'Turn on')+'" onclick="togOffer(\''+o.id+'\')"><i></i><span>'+(o.on?'ON':'OFF')+'</span></button>'+'</div>'
-    +'<div class="oc-b own"><button class="btn p" onclick="openOffer(\''+o.id+'\')">\u270F\uFE0F Edit</button>'
+    +'<div class="oc-b own"><button class="btn p" onclick="openOffer(\''+o.id+'\')">\u270F\uFE0F Edit</button>'+BX('hoursBtn',o)
     +'<button class="btn ico d" aria-label="Delete" title="Delete" onclick="delOffer(\''+o.id+'\')">\uD83D\uDDD1</button></div></li>';
 }
 const SAMPLES=[
@@ -1316,6 +1329,7 @@ function render(){
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===tab));
   $('#nb').textContent=nf;$('#nb').hidden=!nf;
   {const np=offers.filter(o=>o.cal&&o.cal.state==='bad'&&o.cal.paused&&!o.on).length;$('#ob').textContent=np;$('#ob').hidden=!np}
+  {const hb=+BX('bnHealthBad')||0,mb=$('#mb');if(mb){mb.textContent=hb;mb.hidden=!hb}}
   const v=$('#view');
   const bdg=l=>String(l).replace(/\s*\((\d+)\)$/,(m,n)=>' <i class="cnt">'+n+'</i>');
   const seg=(cur,opts,v2)=>`<div class="per sub" role="tablist">${opts.map(([k,l])=>`<button role="tab" aria-selected="${k===cur}" class="${k===cur?'on':''}" onclick="${v2}='${k}';fresh=true;render()">${bdg(l)}</button>`).join('')}</div>`;
@@ -1327,8 +1341,9 @@ function render(){
   }
   else if(tab==='sales'){
     const LIVE=['queued','dialing','pending'],nl=sales.filter(x=>LIVE.includes(x.status)).length;
-    const f=sales.filter(x=>sf==='all'||(sf==='failed'?x.status==='failed':sf==='live'?LIVE.includes(x.status):x.status==='success'));
-    v.innerHTML=seg(sf,[['all','All ('+sales.length+')'],['live','Live'+(nl?' ('+nl+')':'')],['success','Success ('+sales.filter(x=>x.status==='success').length+')'],['failed','Failed'+(nf?' ('+nf+')':'')]],'sf')+(sf==='failed'&&f.length?'<p class="hint" style="margin:8px 2px 0">\u26A0\uFE0F '+f.length+' failed. Tap a sale to review its details.</p>':'')+(f.length?'<ul>'+f.slice(0,150).map(saleRow).join('')+'</ul>':'<p class="empty"><big></big>'+(sales.length?(sf==='live'?'Nothing in progress right now.':'Nothing here.'):'No sales yet. Payments sent to your till will appear here.')+'</p>');
+    const nr=sales.filter(x=>x.status==='failed'&&!x.refunded).length;
+    const f=sales.filter(x=>sf==='all'||(sf==='refund'?(x.status==='failed'&&!x.refunded):sf==='failed'?x.status==='failed':sf==='live'?LIVE.includes(x.status):x.status==='success'));
+    v.innerHTML=seg(sf,[['all','All ('+sales.length+')'],['live','Live'+(nl?' ('+nl+')':'')],['success','Success ('+sales.filter(x=>x.status==='success').length+')'],['failed','Failed'+(nf?' ('+nf+')':'')],['refund','Refund'+(nr?' ('+nr+')':'')]],'sf')+(sf==='refund'&&f.length?'<p class="hint" style="margin:8px 2px 0">\uD83D\uDCB8 KSh '+fmt(f.reduce((a,x)=>a+x.amount,0))+' to give back or retry across '+f.length+' sale'+(f.length>1?'s':'')+'. Tap a sale, then Retry or Refunded.</p>':'')+(sf==='failed'&&f.length?'<p class="hint" style="margin:8px 2px 0">\u26A0\uFE0F '+f.length+' failed. Tap a sale to review its details.</p>':'')+(f.length?'<ul>'+f.slice(0,150).map(saleRow).join('')+'</ul>':'<p class="empty"><big></big>'+(sales.length?(sf==='live'?'Nothing in progress right now.':'Nothing here.'):'No sales yet. Payments sent to your till will appear here.')+'</p>');
   }else if(tab==='offers'){
     const adv=ot==='adv',list=offers.filter(o=>!!o.adv===adv).sort((a,b)=>a.amount-b.amount||String(a.name).localeCompare(String(b.name))),act=list.filter(o=>o.on),off=list.filter(o=>!o.on),rowFn=adv?advRow:offerRow;
     const head=seg(ot,[['normal','Normal ('+offers.filter(o=>!o.adv).length+')'],['adv','Advanced ('+offers.filter(o=>o.adv).length+')'],['imp','Import'+(impCount()?' ('+impCount()+')':'')]],'ot');
@@ -1340,7 +1355,8 @@ function render(){
       +(act.length?'<div class="grp">Active \u00B7 '+act.length+'</div><ul>'+act.map(rowFn).join('')+'</ul>':'')
       +(off.length?'<div class="grp">Off \u00B7 '+off.length+'</div><ul>'+off.map(rowFn).join('')+'</ul>':'')
       +(list.length?'':'<p class="empty"><big></big>No '+(adv?'advanced ':'')+'offers yet.</p>')+info;
-  }else if(tab==='team'&&window.Team)Team.view();
+  }else if(tab==='more'){const ae=document.activeElement,typing=v.contains(ae)&&/^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName);if(!typing)v.innerHTML=BX('bnMore')}
+  else if(tab==='team'&&window.Team)Team.view();
   if(fresh){fresh=false;v.classList.remove('anim');void v.offsetWidth;v.classList.add('anim');clearTimeout(window._an);window._an=setTimeout(()=>v.classList.remove('anim'),900)}
 }
 const sel=(id,k,o)=>`<select id="${id}" onchange="set.${k}=this.value;save();applyTheme()">${o.map(([v,l])=>`<option value="${v}"${String(set[k])===v?' selected':''}>${l}</option>`).join('')}</select>`;
@@ -1356,7 +1372,7 @@ function settingsView(){
   <label class="f" for="wu">Website address</label><input type="text" id="wu" inputmode="url" autocapitalize="off" placeholder="https://keymoney.example.com" value="${esc(set.webUrl||'')}" onchange="set.webUrl=this.value.trim();save();Web.sync()">
   <label class="f" for="wk">Shop key</label><input type="password" id="wk" autocomplete="off" value="${esc(set.webKey||'')}" onchange="set.webKey=this.value.trim();save();Web.sync()">
   <div class="btns"><button class="btn" onclick="Web.test()">Test connection</button></div></div>
-  <div class="own"><h2>Data</h2><div class="btns"><button class="btn d" onclick="if(confirm('Delete all sales history? The weekly sales chart is kept.')){syncDaily();sales=[];save();render();settingsView()}">Clear sales history</button></div><p class="hint">The weekly chart on Home is not cleared by this. It starts fresh every Monday.</p></div>`,
+  <div class="own"><h2>Data</h2><div class="btns"><button class="btn d" onclick="bnClearHist()">Clear sales history</button></div><p class="hint">The weekly chart on Home is not cleared by this. It starts fresh every Monday.</p></div>`,
     dialing:`  <h2>Dialing speed</h2><label class="f" for="sp">How fast Bn sends each step and moves to the next customer</label>${sel('sp','speed',[['fast','Fast'],['balanced','Balanced (recommended)'],['safe','Careful (slow phones)']])}<p class="hint">Fast waits 0.1s between steps, Balanced 0.25s, Careful 0.6s. If your phone skips steps, pick a slower option.</p><label class="f" for="gap">Seconds to wait between customers</label><input type="number" id="gap" min="0" step="1" value="${set.gap??3}" onchange="set.gap=Math.max(0,+this.value||0);save()"><p class="hint">When payments arrive together, Bn finishes the first customer, waits this long, then starts the next, in the order they paid.</p>
   <h2>Confirmation wait</h2><label class="f" for="wait">Minutes to wait for Safaricom's success message before marking a sale Failed</label><input type="number" id="wait" min="1" value="${set.wait}" onchange="set.wait=Math.max(1,+this.value||3);save()">
   <h2>Airtime balance</h2><label class="f" for="bc">USSD code that shows your airtime balance</label><input type="text" id="bc" value="${esc(set.balCode)}" onchange="set.balCode=this.value.trim();save()">
@@ -1422,7 +1438,7 @@ const Web=(()=>{
   /* every website call has a time limit, so a slow or sleeping server can never hang Bn */
   const api=async(p,o={})=>{const ac=new AbortController();const to=setTimeout(()=>ac.abort(),o.ms||8000);try{const r=await fetch(set.webUrl.replace(/\/+$/,'')+p,{method:o.method||'GET',headers:{'Content-Type':'application/json','x-shop-key':set.webKey},body:o.body,signal:ac.signal});if(!r.ok)throw new Error(r.status===401?'wrong shop key':'error '+r.status);return await r.json()}catch(e){if(e&&e.name==='AbortError')throw new Error('website not answering');throw e}finally{clearTimeout(to)}};
   let last='',pend=[],busy=false;
-  async function publish(){const b=JSON.stringify(offers.filter(o=>o.on).map(o=>({id:o.id,name:o.name,amount:o.amount})));if(b===last)return;await api('/api/offers',{method:'PUT',body:b});last=b}
+  async function publish(){const b=JSON.stringify(offers.filter(offerLive).map(o=>({id:o.id,name:o.name,amount:o.amount})));if(b===last)return;await api('/api/offers',{method:'PUT',body:b});last=b}
   let pt2=null,pubBusy=false;
   function publishSoon(){
     if(!on())return;
@@ -1549,6 +1565,8 @@ const Team=(()=>{
   function applyRole(){
     document.body.classList.toggle('att',!!(T.on&&T.me&&T.me.role==='attendant'));
     const tb=document.querySelector('nav button[data-t=team]');if(tb)tb.hidden=!isOwner();
+    const mb=document.querySelector('nav button[data-t=more]');if(mb)mb.hidden=!!(T.on&&!isOwner());
+    if(tab==='more'&&mb&&mb.hidden)tab='home';
     if(tab==='team'&&!isOwner())tab='home';
     const g=$('#gate');if(g)g.hidden=!T.on||!!(T.ses&&T.me);
   }
@@ -1723,6 +1741,365 @@ render();pump();
 (function(){const v=document.getElementById('view');if(!v||!window.MutationObserver)return;
   const c=()=>{const b=v.querySelector('.per.sub button.on');const bar=b&&b.parentElement;if(bar)bar.scrollLeft=b.offsetLeft-(bar.clientWidth-b.offsetWidth)/2};
   new MutationObserver(()=>requestAnimationFrame(c)).observe(v,{childList:true});c()})();
+</script>
+<script>
+/* ===== Bn v1.30: money protection, customers, reports, health, safety ===== */
+(function(){
+const money=n=>'KSh '+fmt(Math.round((+n||0)*100)/100);
+const who=()=>{try{const m=Team.T.me;return m?(m.name||m.email||'Owner'):'Owner'}catch(e){return 'Owner'}};
+const dlab=t=>{const d=new Date(t),n=new Date();n.setHours(0,0,0,0);const a=new Date(d);a.setHours(0,0,0,0);const k=Math.round((n-a)/864e5);return k===0?'today':k===1?'yesterday':k<7?k+' days ago':d.toLocaleDateString([],{day:'numeric',month:'short'})};
+const hm=t=>new Date(t).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+[['lowOn',true],['lowBal',100],['near',true],['eodTime','21:00'],['target',0]].forEach(([k,v])=>{if(set[k]===undefined)set[k]=v});
+if(!Array.isArray(set.block))set.block=[];
+
+/* ---------- activity (audit) log: kept, not cleared after 24h ---------- */
+let audit=L('bs_audit',[]);
+function aud(a,d){audit.unshift({t:Date.now(),w:who(),a:a,d:String(d||'').slice(0,120)});if(audit.length>300)audit.length=300;W('bs_audit',audit)}
+
+/* ---------- owner PIN ---------- */
+const hash=s=>{let h=5381;const x='bn|'+s;for(let i=0;i<x.length;i++)h=((h<<5)+h+x.charCodeAt(i))|0;return String(h)};
+let unl=0,pcb=null,pmode='ask';
+const pd=document.createElement('dialog');
+pd.innerHTML='<h2 id="pdT" style="margin-top:0">Owner PIN</h2><p class="hint" id="pdS" style="margin-top:0"></p><input type="password" id="pdI" inputmode="numeric" autocomplete="off" placeholder="PIN" onkeydown="if(event.key===\'Enter\')bnPinOk()"><p class="hint" id="pdE" style="color:var(--r);min-height:1em"></p><div class="btns"><button type="button" class="btn p" onclick="bnPinOk()">OK</button><button type="button" class="btn" onclick="bnPinNo()">Cancel</button></div>';
+document.body.appendChild(pd);
+function pinShow(mode,title,sub){pmode=mode;$('#pdT').textContent=title;$('#pdS').textContent=sub;$('#pdI').value='';$('#pdE').textContent='';pd.showModal();setTimeout(()=>$('#pdI').focus(),80)}
+function guard(why,fn){if(!set.ownerPin||Date.now()<unl)return fn();pcb=fn;pinShow('ask','Owner PIN','Enter the PIN to '+why+'.')}
+function bnPinOk(){
+  const v=$('#pdI').value.trim();
+  if(pmode==='ask'){
+    if(hash(v)!==set.ownerPin){$('#pdE').textContent='Wrong PIN';$('#pdI').value='';return}
+    unl=Date.now()+120000;pd.close();const f=pcb;pcb=null;if(f)f();return;
+  }
+  if(!/^\d{4,8}$/.test(v)){$('#pdE').textContent='Use 4 to 8 digits';return}
+  set.ownerPin=hash(v);unl=Date.now()+120000;save();aud('Owner PIN set','');pd.close();toast('Owner PIN saved');render();
+}
+function bnPinNo(){pcb=null;pd.close()}
+function bnSetPin(){guard('change the PIN',()=>pinShow('set','New owner PIN','Choose 4 to 8 digits. You will need it to delete sales, delete offers, switch offers on or off and change prices.'))}
+function bnRemovePin(){guard('remove the PIN',()=>{delete set.ownerPin;save();aud('Owner PIN removed','');toast('PIN removed');render()})}
+
+/* ---------- wrap risky actions with PIN + audit ---------- */
+const _ds=window.delSale;
+window.delSale=function(id){const s=sales.find(x=>x.id===id);guard('delete a sale',()=>{const n=sales.length;_ds(id);if(sales.length<n)aud('Deleted sale',s?money(s.amount)+' '+(s.phone||'')+' '+(s.client||''):id)})};
+const _do=window.delOffer;
+window.delOffer=function(id){const o=offers.find(x=>x.id===id);guard('delete an offer',()=>{const n=offers.length;_do(id);if(offers.length<n)aud('Deleted offer',o?o.name+' '+o.amount:id)})};
+const _to=window.togOffer;
+window.togOffer=function(id){const o=offers.find(x=>x.id===id);guard('switch this offer on or off',()=>{_to(id);if(o)aud(o.on?'Offer ON':'Offer OFF',o.name+' '+o.amount)})};
+const _so=window.saveOffer;
+window.saveOffer=function(){const ed=!!$('#oId').value,go=()=>{_so();if(!dlg.open)aud(ed?'Edited offer':'Added offer',$('#oName').value+' '+$('#oAmt').value)};ed?guard('change an offer',go):go()};
+const _sa=window.saveAdv;
+window.saveAdv=function(){const ed=!!$('#aId').value,go=()=>{_sa();if(!adlg.open)aud(ed?'Edited advanced offer':'Added advanced offer',$('#aName').value+' '+$('#aAmt').value)};ed?guard('change an offer',go):go()};
+function bnClearHist(){guard('delete all sales history',()=>{if(!confirm('Delete all sales history? The weekly sales chart is kept.'))return;syncDaily();const n=sales.length;sales=[];save();aud('Cleared sales history',n+' sales');render();settingsView()})}
+
+/* ---------- refund list + blocked numbers ---------- */
+function bnRefund(id){const s=sales.find(x=>x.id===id);if(!s)return;if(!confirm('Mark '+money(s.amount)+' for '+(s.phone||'this customer')+' as refunded?'))return;s.refunded=Date.now();save();aud('Marked refunded',money(s.amount)+' '+(s.phone||''));toast('Marked refunded');render()}
+function bnUnrefund(id){const s=sales.find(x=>x.id===id);if(!s)return;delete s.refunded;save();aud('Undid refund',money(s.amount)+' '+(s.phone||''));render()}
+const isBlocked=p=>!!p&&(set.block||[]).includes(p);
+function bnBlock(p){if(!p)return;if(!confirm('Block '+p+'? Payments from this number will not be dialed and the customer is not texted.'))return;if(!isBlocked(p))set.block.push(p);save();aud('Blocked number',p);toast(p+' blocked');render()}
+function bnUnblock(p){set.block=(set.block||[]).filter(x=>x!==p);save();aud('Unblocked number',p);render()}
+function bnBlockAdd(){const x=prompt('Number to block','');if(x===null)return;const n=normPhone(x);if(!n)return toast('Enter a valid number like 0712345678');bnBlock(n)}
+function bnSaleActs(s){
+  let h='';
+  if(s.status==='failed'&&!s.refunded)h+='<button class="btn" onclick="event.stopPropagation();bnRefund(\''+s.id+'\')">\uD83D\uDCB8 Refunded</button>';
+  if(s.refunded)h+='<button class="btn" onclick="event.stopPropagation();bnUnrefund(\''+s.id+'\')">Undo refund</button>';
+  if(s.phone)h+=isBlocked(s.phone)?'<button class="btn" onclick="event.stopPropagation();bnUnblock(\''+s.phone+'\')">Unblock</button>':'<button class="btn" onclick="event.stopPropagation();bnBlock(\''+s.phone+'\')">\uD83D\uDEAB Block</button>';
+  return h;
+}
+
+/* ---------- scheduled offers ---------- */
+function bnHours(id){
+  const o=offers.find(x=>x.id===id);if(!o)return;
+  const x=prompt('Active hours for '+o.name+', like 18:00-23:59.\nLeave empty to sell it all day.',o.hrs||'');if(x===null)return;
+  const v=x.replace(/\s+/g,'');
+  if(!v){delete o.hrs}else{
+    const m=v.match(/^(\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})$/);
+    if(!m||+m[1]>23||+m[3]>23||+m[2]>59||+m[4]>59)return toast('Use the form 18:00-23:59');
+    o.hrs=('0'+m[1]).slice(-2)+':'+m[2]+'-'+('0'+m[3]).slice(-2)+':'+m[4];
+  }
+  save();aud('Offer hours',o.name+' '+(o.hrs||'all day'));render();
+}
+function hoursBtn(o){
+  const closed=o.hrs&&o.on&&!inHours(o);
+  return '<button class="btn ico" title="Active hours" aria-label="Active hours" onclick="bnHours(\''+o.id+'\')"'+(o.hrs?' style="flex:0 0 auto;padding:6px 10px"':'')+'>\uD83D\uDD52'+(o.hrs?' '+o.hrs+(closed?' (closed now)':''):'')+'</button>';
+}
+
+/* ---------- smart reply for wrong amounts ---------- */
+function nearOffers(s){
+  if(set.near===false)return '';
+  const l=offers.filter(offerLive).map(o=>({o:o,d:Math.abs(o.amount-s.amount)})).sort((a,b)=>a.d-b.d||a.o.amount-b.o.amount).slice(0,3);
+  if(!l.length)return '';
+  return ' Offers close to Ksh'+s.amount+': '+l.sort((a,b)=>a.o.amount-b.o.amount).map(x=>'Ksh'+x.o.amount+' '+String(x.o.name).slice(0,28)).join(', ')+'.';
+}
+
+/* ---------- low airtime: hold dialing when the balance cannot cover the next sale ---------- */
+let lowFlag=0,lowOver=0,lowAt=0;
+function alertOwner(msg){
+  const n=normPhone(set.ownerNum);if(!n)return;
+  if(Date.now()-(set.lastLowAlert||0)<3*36e5)return;
+  set.lastLowAlert=Date.now();save();sendText(n,msg);
+}
+function bnHold(q){
+  if(set.lowOn===false||!bal||Date.now()<lowOver)return false;
+  const need=Math.max(0,q.amount-profitOf(q));
+  if(bal.v>=need){if(lowFlag){lowFlag=0;addLog('Airtime is enough again. Dialing resumed')}return false}
+  if(!lowFlag){lowFlag=Date.now();addLog('Airtime KSh '+bal.v+' cannot cover a KSh '+need+' sale. Dialing is on hold');alertOwner('Bn: airtime is low (KSh '+bal.v+'). Sales are on hold. Please top up.');render()}
+  if(Date.now()-bal.t>120000&&Date.now()-lowAt>120000&&hasBridge()&&set.balCode&&!busy()){lowAt=Date.now();refreshBal(true)}
+  return true;
+}
+function bnOverride(){lowOver=Date.now()+10*60000;lowFlag=0;addLog('Low airtime hold skipped for 10 minutes');pump();render()}
+
+/* ---------- customers ---------- */
+let cust=L('bs_cust',{});
+function custSync(){
+  let ch=0;
+  sales.forEach(s=>{
+    if(s.status!=='success'||!s.phone||s.cc)return;
+    s.cc=1;ch=1;
+    const c=cust[s.phone]||(cust[s.phone]={n:'',c:0,t:0,l:0,o:{}});
+    if(s.client&&s.client!=='Website')c.n=s.client;
+    c.c++;c.t+=s.amount;c.l=Math.max(c.l,s.t);
+    const k=s.name||('KSh '+s.amount);c.o[k]=(c.o[k]||0)+1;
+  });
+  if(ch)W('bs_cust',cust);
+}
+const custList=()=>Object.keys(cust).map(p=>Object.assign({p:p},cust[p])).sort((a,b)=>b.c-a.c||b.t-a.t);
+const isReg=c=>c.c>=3,isLapsed=c=>c.c>=2&&Date.now()-c.l>14*864e5;
+const topOf=c=>{let b='',n=0;Object.keys(c.o||{}).forEach(k=>{if(c.o[k]>n){n=c.o[k];b=k}});return b};
+function bnText(p){const c=cust[p]||{};const m=prompt('Text to '+(c.n||p),'');if(m===null||!m.trim())return;sendText(p,m.trim());aud('Texted customer',p);toast('Sent')}
+
+/* ---------- bulk offer SMS ---------- */
+let bulk={txt:'',aud:'regs',run:false,q:[],i:0,sent:0},cf='all';
+function bulkDefault(){
+  const l=offers.filter(offerLive).sort((a,b)=>a.amount-b.amount).slice(0,8);
+  return l.length?"Hi! Today's data offers: "+l.map(o=>'Ksh'+o.amount+' '+String(o.name).slice(0,26)).join(', ')+'. Pay to our till to get yours.':"Hi! We have new data offers today. Pay to our till to get yours.";
+}
+const bulkAud=()=>{const l=custList().filter(c=>!isBlocked(c.p));return bulk.aud==='all'?l:bulk.aud==='lapsed'?l.filter(isLapsed):l.filter(isReg)};
+function bnBulkSend(){
+  const l=bulkAud().slice(0,200),txt=(bulk.txt||bulkDefault()).trim();
+  if(!l.length)return toast('No customers in this group yet');
+  if(!txt)return toast('Write the message first');
+  guard('send texts to customers',()=>{
+    if(!confirm('Send this text to '+l.length+' customer'+(l.length>1?'s':'')+'? Each text uses airtime from your SIM.'))return;
+    bulk.txt=txt;bulk.q=l.map(c=>c.p);bulk.i=0;bulk.sent=0;bulk.run=true;aud('Bulk SMS started',l.length+' customers');bulkStep();
+  });
+}
+function bulkStep(){
+  if(!bulk.run)return;
+  if(bulk.i>=bulk.q.length){bulk.run=false;toast('Sent to '+bulk.sent+' customer'+(bulk.sent===1?'':'s'));aud('Bulk SMS finished',bulk.sent+' sent');render();return}
+  const p=bulk.q[bulk.i++],r=sendText(p,bulk.txt);
+  if(r==='no_permission'){bulk.run=false;render();return}
+  if(r==='ok'||r==='test')bulk.sent++;
+  render();setTimeout(bulkStep,3500);
+}
+function bnBulkStop(){bulk.run=false;toast('Stopped. Sent '+bulk.sent);render()}
+
+/* ---------- reports ---------- */
+let mt='reports',rpk='today';
+function range(k){const n=new Date();n.setHours(0,0,0,0);const t0=+n;const m={today:[t0,Infinity],yest:[t0-864e5,t0],week:[t0-6*864e5,Infinity],all:[0,Infinity]}[k]||[0,Infinity];return sales.filter(s=>s.t>=m[0]&&s.t<m[1])}
+function summ(l){
+  const S={paid:0,ok:0,bad:0,ref:0,wait:0,nbad:0,nok:0,cost:0,profit:0};
+  l.forEach(s=>{
+    S.paid+=s.amount;
+    if(s.status==='success'){S.ok+=s.amount;S.nok++;const p=profitOf(s);S.profit+=p;S.cost+=s.amount-p}
+    else if(s.status==='failed'){if(s.refunded)S.ref+=s.amount;else{S.bad+=s.amount;S.nbad++}}
+    else S.wait+=s.amount;
+  });
+  return S;
+}
+function byOffer(l){
+  const m={};
+  l.filter(s=>s.status==='success').forEach(s=>{const k=s.name||('KSh '+s.amount),r=m[k]||(m[k]={k:k,n:0,rev:0,pr:0});r.n++;r.rev+=s.amount;r.pr+=profitOf(s)});
+  return Object.keys(m).map(k=>m[k]).sort((a,b)=>b.pr-a.pr||b.n-a.n);
+}
+function reportText(k){
+  const l=range(k||'today'),S=summ(l),t=byOffer(l)[0];
+  const nm={today:'today',yest:'yesterday',week:'last 7 days',all:'all time'}[k||'today'];
+  return 'Bn report ('+nm+'): sold '+money(S.ok)+' ('+S.nok+' sales). Not delivered '+money(S.bad)+' ('+S.nbad+'). Refunded '+money(S.ref)+'. Profit '+money(S.profit)+'.'+(t?' Top: '+t.k+' x'+t.n+'.':'')+(bal?' Airtime KSh '+bal.v+'.':'');
+}
+const csvq=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+function salesCsv(l){
+  const rows=[['Date','Time','Phone','Name','Offer','Amount','Status','Refunded','Reason','Code']];
+  l.slice().sort((a,b)=>a.t-b.t).forEach(s=>{const d=new Date(s.t);rows.push([d.toLocaleDateString(),hm(s.t),s.phone||'',s.client||'',s.name||'',s.amount,s.status,s.refunded?'yes':'',s.reason||'',s.code||''])});
+  return rows.map(r=>r.map(csvq).join(',')).join('\n');
+}
+function custCsv(){const rows=[['Phone','Name','Purchases','Total KSh','Last purchase','Usual offer']];custList().forEach(c=>rows.push([c.p,c.n,c.c,c.t,new Date(c.l).toLocaleDateString(),topOf(c)]));return rows.map(r=>r.map(csvq).join(',')).join('\n')}
+function shareOut(title,text,file){
+  try{if(hasBridge()&&NativeBridge.shareText){NativeBridge.shareText(title,text);return}}catch(e){}
+  try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/csv'}));a.download=file||'bn.txt';document.body.appendChild(a);a.click();a.remove();toast('Downloaded '+(file||'file'))}catch(e){copyNum(text)}
+}
+function bnExport(kind){
+  guard('export data',()=>{
+    if(kind==='sales'){shareOut('Bn sales '+rpk,salesCsv(range(rpk)),'bn-sales.csv')}
+    else if(kind==='cust'){shareOut('Bn customers',custCsv(),'bn-customers.csv')}
+    else if(kind==='report'){shareOut('Bn report',reportText(rpk),'bn-report.txt')}
+    aud('Exported',kind);
+  });
+}
+function bnCopyReport(){copyNum(reportText(rpk))}
+function bnEodNow(){const n=normPhone(set.ownerNum);if(!n)return toast('Enter the owner number first');sendText(n,reportText('today'));toast('Report sent to '+n)}
+let eodChk=0;
+function eodTick(){
+  if(!set.eodOn||!normPhone(set.ownerNum))return;
+  const n=new Date(),key=n.getFullYear()+'-'+(n.getMonth()+1)+'-'+n.getDate(),m=String(set.eodTime||'21:00').match(/^(\d{1,2}):(\d{2})$/);if(!m)return;
+  if(set.eodLast===key)return;
+  if(n.getHours()*60+n.getMinutes()<+m[1]*60+ +m[2])return;
+  set.eodLast=key;save();sendText(normPhone(set.ownerNum),reportText('today'));addLog('End-of-day report sent');
+}
+setInterval(eodTick,60000);setTimeout(eodTick,8000);
+
+/* ---------- backup / restore ---------- */
+function backupJson(){const s2=Object.assign({},set);delete s2.ownerPin;delete s2.webKey;return JSON.stringify({bn:1,t:Date.now(),offers:offers,set:s2,sales:sales.slice(0,500),cust:cust,audit:audit})}
+function bnBackup(){guard('back up',()=>{shareOut('Bn backup '+new Date().toLocaleDateString(),backupJson(),'bn-backup.json');aud('Backup shared','')})}
+function bnRestore(){
+  guard('restore a backup',()=>{
+    const t=rstTxt||($('#rst')||{}).value||'';
+    let d;try{d=JSON.parse(t.trim())}catch(e){return toast('That is not a Bn backup. Paste the whole backup text.')}
+    if(!d||d.bn!==1||!Array.isArray(d.offers))return toast('That is not a Bn backup.');
+    if(!confirm('Replace this phone\'s offers, settings, sales and customers with the backup?'))return;
+    const keep={ownerPin:set.ownerPin,webKey:set.webKey};offers=d.offers;Object.keys(set).forEach(k=>delete set[k]);Object.assign(set,d.set||{});if(keep.ownerPin)set.ownerPin=keep.ownerPin;if(keep.webKey)set.webKey=keep.webKey;rstTxt='';
+    if(Array.isArray(d.sales))sales=d.sales;cust=d.cust||{};W('bs_cust',cust);audit=d.audit||[];W('bs_audit',audit);
+    save();aud('Restored backup','');toast('Backup restored');render();
+  });
+}
+
+/* ---------- health ---------- */
+let hcache=null,hcT=0;
+function healthRows(force){
+  if(!force&&hcache&&Date.now()-hcT<15000)return hcache;
+  const R=[],add=(ok,t,d,fix,fl)=>R.push({ok:ok,t:t,d:d||'',fix:fix||'',fl:fl||''});
+  let a={},h={},pin='';
+  if(hasBridge()){
+    try{a=JSON.parse(NativeBridge.a11yState())}catch(e){}
+    try{if(NativeBridge.health)h=JSON.parse(NativeBridge.health())}catch(e){}
+    try{if(NativeBridge.hasUnlockPin)pin=NativeBridge.hasUnlockPin()}catch(e){}
+    add(a.on?2:0,'USSD helper (accessibility)',a.on?'Running.':'Off. Bn cannot dial or read USSD screens.','a11y','Open settings');
+    add(a.perm?2:1,'Auto-restart of the helper',a.perm?'Bn can switch the helper back on by itself.':'One-time setup not done. See Settings > Phone.');
+    if(h.readSms!==undefined){
+      add(h.readSms&&h.recvSms?2:0,'Reading M-Pesa texts',h.readSms&&h.recvSms?'Allowed.':'SMS permission is missing. Payments will not be seen.','app','Open app settings');
+      add(h.call?2:0,'Dialing permission',h.call?'Allowed.':'Phone permission is missing. Bn cannot dial.','app','Open app settings');
+      add(h.sendSms?2:(set.smsAll===false?1:0),'Texting customers',h.sendSms?'Allowed.':'SMS sending is not allowed. Customer and report texts will fail.','app','Open app settings');
+      add(h.battery?2:1,'Battery optimisation',h.battery?'Bn is not restricted.':'The phone may stop Bn in the background. Allow Bn to run without limits.','battery','Fix');
+      add(h.notif?2:1,'Notifications',h.notif?'On.':'Off. The running notice may be hidden.','notif','Open settings');
+    }
+    add(pin==='true'?2:1,'Phone PIN for screen-off selling',pin==='true'?'Saved.':'Not set. Sales can fail while the screen is off.');
+  }else add(1,'Phone checks','Only available in the Android app.');
+  add(set.auto?2:1,'Auto-dial',set.auto?'ON.':'OFF. Payments wait until you dial them.','auto','Turn on');
+  if(bal){const lw=bal.v<(+set.lowBal||0);add(lw?(lowFlag?0:1):2,'Airtime balance','KSh '+bal.v+' (checked '+hm(bal.t)+')'+(lowFlag?'. Dialing is on hold.':lw?'. Getting low.':'.'),'bal','Refresh')}
+  else add(1,'Airtime balance','Not checked yet.','bal','Check now');
+  const qw=sales.filter(x=>x.status==='queued'&&Date.now()-x.ts>180000).length;
+  add(qw&&set.auto?0:2,'Sales waiting',qw?qw+' sale'+(qw>1?'s':'')+' queued for over 3 minutes.':'None stuck.');
+  if(window.Team&&Team.T.on)add(Team.canDial()?2:0,'Shop sign-in',Team.canDial()?'Signed in.':'Not signed in. Bn will not sell.');
+  const ch=chgList().length;add(ch?0:2,'Menu changes',ch?ch+' offer'+(ch>1?'s were':' was')+' paused because Safaricom changed a menu.':'No offers paused for menu changes.','imp','Find updated USSD');
+  add(normPhone(set.calNum)?2:1,'Your own number',normPhone(set.calNum)?'Saved for calibration and scans.':'Not set. Scans and calibration need it (Settings > Dialing).');
+  add(normPhone(set.ownerNum)?2:1,'Owner alert number',normPhone(set.ownerNum)?'Low-airtime alerts and the daily report go to '+normPhone(set.ownerNum)+'.':'Not set. Add it in More > Tools to get alerts by SMS.');
+  hcache=R;hcT=Date.now();return R;
+}
+const healthBad=()=>healthRows().filter(r=>r.ok===0).length;
+function bnFix(k){
+  if(k==='auto'){set.auto=true;try{$('#auto').checked=true}catch(e){}save();pump();hcache=null;return render()}
+  if(k==='bal'){hcache=null;return refreshBal()}
+  if(k==='imp'){return impGo()}
+  try{NativeBridge.openSetting(k)}catch(e){toast('Open your phone settings to fix this')}
+}
+function healthView(){
+  const R=healthRows(true);
+  const sum=R.filter(r=>r.ok===0).length;
+  const head=sum?'<p class="note" role="alert"><b>\u274C '+sum+' problem'+(sum>1?'s':'')+' to fix</b></p>':'<p class="note" style="background:var(--gs);color:var(--g)">\u2705 Everything Bn needs is working.</p>';
+  return head+'<ul>'+R.slice().sort((a,b)=>a.ok-b.ok).map(r=>'<li class="oc"><div class="oc-h"><div class="mid"><b>'+(r.ok===2?'\u2705':r.ok===1?'\u26A0\uFE0F':'\u274C')+' '+esc(r.t)+'</b><div class="hint" style="margin:4px 0 0">'+esc(r.d)+'</div></div>'+(r.fix&&r.ok<2?'<button class="btn p" style="min-height:38px;padding:6px 12px;font-size:13px" onclick="bnFix(\''+r.fix+'\')">'+esc(r.fl||'Fix')+'</button>':'')+'</div></li>').join('')+'</ul>';
+}
+
+/* ---------- heartbeat: tell the owner if Bn was not running ---------- */
+let hbPrev=L('bs_hb',0),gap=null;
+if(hbPrev&&Date.now()-hbPrev>10*60000&&L('bs_gapseen',0)<hbPrev){gap={a:hbPrev,b:Date.now()};addLog('Bn was not running from '+hm(gap.a)+' to '+hm(gap.b)+'. Missed payment texts are caught up from the inbox')}
+let hbLast=0;
+const beat=()=>{if(Date.now()-hbLast<25000)return;hbLast=Date.now();W('bs_hb',Date.now())};
+beat();setInterval(beat,30000);
+const _bt=window.bnTick;if(typeof _bt==='function')window.bnTick=function(){try{beat()}catch(e){}return _bt.apply(this,arguments)};
+function bnGapOk(){W('bs_gapseen',Date.now());gap=null;render()}
+
+/* ---------- Home banners ---------- */
+function bnBanners(){
+  let h='';
+  if(bal&&set.lowOn!==false){
+    const low=bal.v<(+set.lowBal||0);
+    if(lowFlag)h+='<p class="note" role="alert"><b>\u26D4 Airtime KSh '+bal.v+' is too low for the next sale.</b> Dialing is on hold. Top up, then tap the balance to refresh.<span class="btns"><button class="btn" onclick="bnOverride()">Dial anyway</button></span></p>';
+    else if(low)h+='<p class="note" role="alert">\u26A0\uFE0F Airtime is low: <b>KSh '+bal.v+'</b>. Top up soon.</p>';
+  }
+  if(gap)h+='<p class="note" role="alert">\u26A0\uFE0F Bn was not running from <b>'+hm(gap.a)+'</b> to <b>'+hm(gap.b)+'</b> ('+Math.round((gap.b-gap.a)/60000)+' min). Payment texts from that time were caught up from your inbox. Check the Sales tab.<span class="btns"><button class="btn" onclick="bnGapOk()">OK</button></span></p>';
+  const hb=healthBad();
+  if(hb&&!lowFlag)h+='<p class="note own" role="alert">\u274C '+hb+' problem'+(hb>1?'s':'')+' stop Bn from working properly.<span class="btns"><button class="btn p" onclick="bnGoHealth()">Open health check</button></span></p>';
+  if(+set.target>0){
+    const done=sales.filter(x=>x.status==='success'&&x.t>=startOf(0)).reduce((a,x)=>a+x.amount,0),pc=Math.min(100,Math.round(done/set.target*100));
+    h+='<div class="own" style="margin:12px 2px 0"><div class="hint" style="margin:0 0 4px">Today\'s target: <b>'+money(done)+'</b> of '+money(set.target)+' ('+pc+'%)</div><div style="height:10px;border-radius:6px;background:var(--line)"><div style="height:10px;border-radius:6px;width:'+pc+'%;background:var(--g)"></div></div></div>';
+  }
+  return h;
+}
+
+/* ---------- More tab ---------- */
+const segH=(cur,opts,fn)=>'<div class="per sub" role="tablist">'+opts.map(o=>'<button role="tab" aria-selected="'+(o[0]===cur)+'" class="'+(o[0]===cur?'on':'')+'" onclick="'+fn+'(\''+o[0]+'\')">'+o[1]+'</button>').join('')+'</div>';
+function bnTab(k){mt=k;fresh=true;render()}
+function bnGoHealth(){tab='more';mt='health';fresh=true;render()}
+let rstTxt='';function bnRst(v){rstTxt=v}
+function bnRp(k){rpk=k;fresh=true;render()}
+function bnCf(k){cf=k;fresh=true;render()}
+function bnMore(){
+  const hb=healthBad();
+  return segH(mt,[['reports','Reports'],['customers','Customers'],['health','Health'+(hb?' ('+hb+')':'')],['tools','Tools']],'bnTab')+(mt==='reports'?repView():mt==='customers'?custView():mt==='health'?healthView():toolsView());
+}
+function repView(){
+  const l=range(rpk),S=summ(l),top=byOffer(l);
+  const rows=top.length?'<ul>'+top.map((r,i)=>'<li class="row"><div class="amt">'+r.n+'<small>sold</small></div><div class="mid"><b>'+(i===0?'\uD83C\uDFC6 ':'')+esc(r.k)+'</b><span>Revenue '+money(r.rev)+'</span></div><div class="end"><span class="chip g">'+money(r.pr)+' profit</span></div></li>').join('')+'</ul>':'<p class="empty"><big></big>No successful sales in this period.</p>';
+  return segH(rpk,[['today','Today'],['yest','Yesterday'],['week','7 days'],['all','All']],'bnRp')
+   +'<div class="stats"><div class="stat s1"><small>Paid in</small><b>'+money(S.paid)+'</b></div><div class="stat s2"><small>Delivered</small><b>'+money(S.ok)+'</b></div></div>'
+   +'<div class="stats own"><div class="stat s4"'+(S.bad?' style="background:linear-gradient(135deg,#ff6b78,#e0293b);color:#fff"':'')+'><small>Not delivered</small><b>'+money(S.bad)+'</b></div><div class="stat s3"><small>Profit</small><b>'+money(S.profit)+'</b></div></div>'
+   +(S.nbad?'<p class="note">\u26A0\uFE0F '+money(S.bad)+' was paid by '+S.nbad+' customer'+(S.nbad>1?'s':'')+' but not delivered. Retry them or refund.<span class="btns"><button class="btn p" onclick="tab=\'sales\';sf=\'refund\';fresh=true;render()">Open refund list</button></span></p>':'')
+   +(S.wait?'<p class="hint" style="margin:6px 2px">\u23F3 '+money(S.wait)+' is still in progress.</p>':'')
+   +'<p class="hint own" style="margin:6px 2px">Airtime spent on delivered sales: <b>'+money(S.cost)+'</b>'+(S.ref?' \u00B7 Refunded: <b>'+money(S.ref)+'</b>':'')+'</p>'
+   +'<div class="own"><div class="hd"><h2>Profit by offer</h2></div>'+rows
+   +'<h2>Share this report</h2><div class="btns"><button class="btn p" onclick="bnExport(\'report\')">Share summary</button><button class="btn" onclick="bnCopyReport()">Copy</button><button class="btn" onclick="bnExport(\'sales\')">Sales as CSV</button></div><p class="hint">Sharing opens your phone\'s share menu (WhatsApp, email, Drive). The CSV opens in Excel.</p></div>';
+}
+function custView(){
+  const all=custList(),l=all.filter(c=>cf==='all'?true:cf==='reg'?isReg(c):isLapsed(c));
+  const bt=bulk.txt||bulkDefault(),n=bulkAud().length;
+  const rows=l.slice(0,100).map(c=>'<li class="row"><div class="amt">'+c.c+'<small>buys</small></div><div class="mid"><b>'+esc(c.n||c.p)+(isReg(c)?' \u2B50':'')+'</b><span>'+esc(c.p)+' \u00B7 '+money(c.t)+' \u00B7 last '+dlab(c.l)+'</span>'+(topOf(c)?'<span>Usually '+esc(topOf(c))+'</span>':'')+'</div><div class="end" style="display:flex;gap:6px"><button class="btn ico" style="min-height:40px;padding:4px 10px" aria-label="Text" onclick="bnText(\''+c.p+'\')">\u2709\uFE0F</button><button class="btn ico" style="min-height:40px;padding:4px 10px" aria-label="Copy number" onclick="copyNum(\''+c.p+'\')">\uD83D\uDCCB</button></div></li>').join('');
+  return segH(cf,[['all','All ('+all.length+')'],['reg','Regulars ('+all.filter(isReg).length+')'],['lapsed','Not back in 14 days ('+all.filter(isLapsed).length+')']],'bnCf')
+   +'<div class="own"><h2>Text your customers</h2>'
+   +'<label class="f" for="bat">Send to</label><select id="bat" onchange="bnBulkAud(this.value)"><option value="regs"'+(bulk.aud==='regs'?' selected':'')+'>Regulars (3+ purchases)</option><option value="lapsed"'+(bulk.aud==='lapsed'?' selected':'')+'>Customers not back in 14 days</option><option value="all"'+(bulk.aud==='all'?' selected':'')+'>Everyone</option></select>'
+   +'<label class="f" for="bmt">Message ('+bt.length+' characters)</label><textarea id="bmt" rows="4" oninput="bulk_set(this.value)">'+esc(bt)+'</textarea>'
+   +'<div class="btns">'+(bulk.run?'<button class="btn d" onclick="bnBulkStop()">Stop ('+bulk.i+' of '+bulk.q.length+')</button>':'<button class="btn p" onclick="bnBulkSend()">Send to '+n+' customer'+(n===1?'':'s')+'</button><button class="btn" onclick="bnBulkReset()">Use today\'s offers</button>')+'</div><p class="hint">Texts go one by one, a few seconds apart. Each uses airtime. Blocked numbers are skipped.</p></div>'
+   +(rows?'<ul>'+rows+'</ul>':'<p class="empty"><big></big>No customers yet. They are added after each successful sale.</p>')
+   +(all.length?'<div class="btns own"><button class="btn" onclick="bnExport(\'cust\')">Customers as CSV</button></div>':'');
+}
+function toolsView(){
+  const blk=(set.block||[]).map(p=>'<li class="row"><div class="mid"><b>'+esc(p)+'</b></div><div class="end"><button class="btn" onclick="bnUnblock(\''+p+'\')">Unblock</button></div></li>').join('');
+  const au=audit.slice(0,40).map(a=>'<div style="padding:6px 0;border-bottom:1px solid var(--line);font-size:13px"><b>'+esc(a.a)+'</b> \u00B7 '+esc(a.w)+'<br><span class="hint" style="margin:0">'+dlab(a.t)+' '+hm(a.t)+(a.d?' \u00B7 '+esc(a.d):'')+'</span></div>').join('');
+  return '<div class="own"><h2>Alerts</h2>'
+   +'<label class="f" for="own">Owner number (alerts and daily report go here)</label><input type="text" id="own" inputmode="tel" placeholder="0712345678" value="'+esc(set.ownerNum||'')+'" onchange="bnSetOwner(this.value)">'
+   +'<label class="tg"><span>Hold dialing when airtime cannot cover a sale</span><input type="checkbox" '+(set.lowOn!==false?'checked':'')+' onchange="set.lowOn=this.checked;save();render()"><span class="sl"></span></label>'
+   +'<label class="f" for="lb">Warn me when airtime is below (KSh)</label><input type="number" id="lb" inputmode="numeric" value="'+(+set.lowBal||0)+'" onchange="set.lowBal=Math.max(0,+this.value||0);save();render()">'
+   +'<label class="tg"><span>Send the day\'s report to the owner number</span><input type="checkbox" '+(set.eodOn?'checked':'')+' onchange="set.eodOn=this.checked;save()"><span class="sl"></span></label>'
+   +'<label class="f" for="et">Send at</label><input type="text" id="et" inputmode="numeric" placeholder="21:00" value="'+esc(set.eodTime||'21:00')+'" onchange="bnEodTime(this.value)">'
+   +'<div class="btns"><button class="btn" onclick="bnEodNow()">Send report now</button></div>'
+   +'<label class="f" for="tg">Daily sales target (KSh, 0 = off)</label><input type="number" id="tg" inputmode="numeric" value="'+(+set.target||0)+'" onchange="set.target=Math.max(0,+this.value||0);save();render()">'
+   +'<label class="tg"><span>Text customers the closest offers when they pay a wrong amount</span><input type="checkbox" '+(set.near!==false?'checked':'')+' onchange="set.near=this.checked;save()"><span class="sl"></span></label>'
+   +'<h2>Safety</h2><p class="hint" style="margin-top:0">The owner PIN is asked before deleting sales or offers, switching offers on or off, changing offers, exporting or texting customers. It keeps casual taps out. It is not a bank-grade lock.</p>'
+   +'<div class="btns"><button class="btn p" onclick="bnSetPin()">'+(set.ownerPin?'Change owner PIN':'Set owner PIN')+'</button>'+(set.ownerPin?'<button class="btn d" onclick="bnRemovePin()">Remove PIN</button>':'')+'</div>'
+   +'<h2>Blocked numbers</h2>'+(blk?'<ul>'+blk+'</ul>':'<p class="hint" style="margin-top:0">None. Block a number from its sale in the Sales tab.</p>')+'<div class="btns"><button class="btn" onclick="bnBlockAdd()">+ Block a number</button></div>'
+   +'<h2>Backup and restore</h2><p class="hint" style="margin-top:0">Backup shares all offers, settings, sales and customers as text (your shop key and PIN are left out). Keep it in WhatsApp, email or Drive. To restore on a new phone, paste it below.</p>'
+   +'<div class="btns"><button class="btn p" onclick="bnBackup()">Back up now</button></div>'
+   +'<label class="f" for="rst">Paste a backup here to restore</label><textarea id="rst" rows="3" oninput="bnRst(this.value)">'+esc(rstTxt)+'</textarea><div class="btns"><button class="btn d" onclick="bnRestore()">Restore</button></div>'
+   +'<h2>Activity history</h2><p class="hint" style="margin-top:0">Who deleted, edited, refunded or blocked something. Kept on this phone.</p>'+(au||'<p class="hint">Nothing yet.</p>')+'</div>';
+}
+function bnSetOwner(v){const n=normPhone(v);if(v.trim()&&!n){toast('Enter a valid number like 0712345678');return}set.ownerNum=n||'';save();hcache=null;render()}
+function bnEodTime(v){const m=String(v).trim().match(/^(\d{1,2}):(\d{2})$/);if(!m||+m[1]>23||+m[2]>59)return toast('Use a time like 21:00');set.eodTime=('0'+m[1]).slice(-2)+':'+m[2];save()}
+function bnBulkAud(v){bulk.aud=v;render()}
+function bulk_set(v){bulk.txt=v}
+function bnBulkReset(){bulk.txt='';render()}
+
+Object.assign(window,{bnPinOk,bnPinNo,bnSetPin,bnRemovePin,bnClearHist,bnRefund,bnUnrefund,isBlocked,bnBlock,bnUnblock,bnBlockAdd,bnSaleActs,bnHours,hoursBtn,nearOffers,bnHold,bnOverride,custSync,bnText,bnBulkSend,bnBulkStop,bnExport,bnCopyReport,bnEodNow,bnBackup,bnRestore,bnFix,bnGapOk,bnBanners,bnTab,bnGoHealth,bnRst,bnRp,bnCf,bnMore,bnSetOwner,bnEodTime,bnBulkAud,bulk_set,bnBulkReset});
+window.bnHealthBad=healthBad;
+try{custSync()}catch(e){}
+})();
+
 </script>
 </body>
 </html>

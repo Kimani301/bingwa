@@ -297,6 +297,70 @@ public class Bridge {
         return SmsManager.getDefault();
     }
 
+    /* ---------------- health check, settings shortcuts and sharing ---------------- */
+
+    /** Permissions and phone settings Bn needs, as JSON for the Health screen. */
+    @JavascriptInterface
+    public String health() {
+        try {
+            JSONObject o = new JSONObject();
+            o.put("readSms", ctx.checkSelfPermission(Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED);
+            o.put("recvSms", ctx.checkSelfPermission(Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED);
+            o.put("sendSms", ctx.checkSelfPermission(Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED);
+            o.put("call", ctx.checkSelfPermission(Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED);
+            android.os.PowerManager pm = (android.os.PowerManager) ctx.getSystemService(Context.POWER_SERVICE);
+            o.put("battery", pm != null && pm.isIgnoringBatteryOptimizations(ctx.getPackageName()));
+            android.app.NotificationManager nm =
+                    (android.app.NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+            o.put("notif", nm != null && nm.areNotificationsEnabled());
+            return o.toString();
+        } catch (Exception e) {
+            return "{}";
+        }
+    }
+
+    /** Opens the phone setting that fixes a Health problem: a11y, battery, notif or app. */
+    @JavascriptInterface
+    public void openSetting(final String what) {
+        MAIN.post(() -> {
+            try {
+                android.content.Intent i;
+                if ("a11y".equals(what)) {
+                    i = new android.content.Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                } else if ("battery".equals(what)) {
+                    i = new android.content.Intent(android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                            Uri.parse("package:" + ctx.getPackageName()));
+                } else if ("notif".equals(what)) {
+                    i = new android.content.Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS);
+                    i.putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, ctx.getPackageName());
+                } else {
+                    i = new android.content.Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.parse("package:" + ctx.getPackageName()));
+                }
+                i.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+                ctx.startActivity(i);
+            } catch (Exception ignored) {
+            }
+        });
+    }
+
+    /** Opens the phone's share menu with some text (reports, CSV, backups). */
+    @JavascriptInterface
+    public void shareText(final String title, final String text) {
+        MAIN.post(() -> {
+            try {
+                android.content.Intent i = new android.content.Intent(android.content.Intent.ACTION_SEND);
+                i.setType("text/plain");
+                i.putExtra(android.content.Intent.EXTRA_SUBJECT, title);
+                i.putExtra(android.content.Intent.EXTRA_TEXT, text);
+                android.content.Intent c = android.content.Intent.createChooser(i, title);
+                c.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+                ctx.startActivity(c);
+            } catch (Exception ignored) {
+            }
+        });
+    }
+
     /* ---------------- SIM selection ---------------- */
 
     private PhoneAccountHandle handleFor(int slot, TelecomManager tm) {

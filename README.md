@@ -12,6 +12,8 @@ dial USSD codes, send step-by-step replies, and read payment SMS.
 - **Offers**: Normal and Advanced, with a count on each. Offers are grouped into Active and Off; each is a card with its steps shown as
   chips and Calibrate / Steps / Edit / pause / delete buttons (advanced), or Edit / pause / delete (normal). Calibrate all sits at the top.
   A badge on the tab shows offers that were paused because calibration failed.
+- **More** (owner only): **Reports** (paid in vs delivered vs not delivered, profit by offer, share/CSV, daily report by SMS), **Customers** (regulars, bulk offer texts), **Health** (permissions, helper, battery, balance, stuck sales) and **Tools** (alerts, owner PIN, blocked numbers, backup/restore, activity history).
+- **Money protection**: dialing is held when airtime cannot cover the next sale; failed sales go to the **Refund** filter in Sales; offers can have active hours (clock button on an offer); a payment for an amount with no live offer gets a text listing the closest offers.
 - **Team** (owner only): attendants and their sales.
 - **Settings**, split into four tabs: **General** (account, theme, profit, data), **Dialing** (speed, wait,
   airtime balance, SIMs, calibrate), **Texts** (customer messages), **Phone** (USSD helper, screen off, test SMS, activity log).
