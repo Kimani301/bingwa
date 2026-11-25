@@ -418,6 +418,15 @@ nav button[data-t=team]{display:none!important}
 .per.mini button{min-height:34px;font-size:12.5px;padding:4px 6px;border-radius:9px}
 .per.mini button.on{background:var(--prs);color:var(--pr);box-shadow:none}
 #bmt{line-height:1.5}
+
+/* bigger Sales and Profit cards */
+.stats{gap:12px;margin:12px 0}
+.stats .stat{padding:20px 16px 18px;min-height:112px;border-radius:20px}
+.stats .stat small{font-size:15px;font-weight:700}
+.stats .stat b{font-size:clamp(24px,7.4vw,34px);margin:8px 0 4px}
+.stats .stat span{font-size:13px}
+.stat.tot b,.stat.s1.tot b{font-size:clamp(32px,9.5vw,42px)}
+.per button{min-height:46px;font-size:15px}
 </style>
 </head>
 <body>
@@ -468,9 +477,7 @@ nav button[data-t=team]{display:none!important}
 <dialog id="adlg">
   <h2 id="aT" style="margin-top:0">Advanced offer</h2>
   <input type="hidden" id="aId">
-  <label class="f" for="aName">Name</label><input type="text" id="aName" placeholder="Bingwa 2GB - 30 days">
-  <label class="f" for="aCost">Safaricom price (KSh)</label><input type="number" id="aCost" inputmode="decimal" placeholder="230">
-  <label class="f" for="aAmt">Your price (KSh)</label><input type="number" id="aAmt" inputmode="decimal" placeholder="250">
+  <label class="f" for="aName">Name</label><input type="text" id="aName" placeholder="Bingwa 250MB @ Ksh 20">
   <label class="f" for="aCode">Full USSD code</label><input type="text" id="aCode" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="*444*5*3*2*1*n*2#" oninput="advPreview()">
   <div id="aPrev" class="hint" style="margin-top:8px"></div>
   <div class="btns"><button type="button" class="btn p" onclick="saveAdv()">Save offer</button><button type="button" class="btn" onclick="adlg.close()">Cancel</button></div>
@@ -583,7 +590,6 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)catchUp()}
 
 window.onSmsReceived=function(sender,body,slot){
   body=String(body||'');let m;
-  if(scan&&/^ussd$/i.test(String(sender)))return impReply(body);
   if(cal&&/^ussd$/i.test(String(sender)))return calReply(body);
   if(balWait&&/^ussd$/i.test(String(sender))){
     const x=body.match(/(?:ksh|kes)\.?\s?([\d,]+(?:\.\d+)?)/i)||body.match(/bal(?:ance)?[^\d]{0,40}([\d,]+(?:\.\d+)?)/i)||body.match(/airtime[^\d]{0,40}([\d,]+(?:\.\d+)?)/i);
@@ -676,14 +682,14 @@ function done(){nextAt=Date.now()+gapMs();save();pump();render()}
 
 /* ---------- dialing (one USSD at a time, no automatic retries) ---------- */
 let balWait=null,balTs=0,needBal=false,balAt=0,balTry=0;
-let cal=null,calQ=[],calSum=[],calIds=[],scan=null;
+let cal=null,calQ=[],calSum=[],calIds=[];
 const SPD={fast:[100,150],balanced:[250,350],safe:[600,900]};/* [ms before each reply step, ms gap between customers] */
 const spd=()=>SPD[set.speed]||SPD.balanced;
 if(set.gapV!==2){set.gap=2;set.gapV=2}
 const gapMs=()=>Math.max(spd()[1],Math.max(0,+(set.gap??3)||0)*1000);/* pause between one customer's codes and the next */
 let nextAt=0,pt=null;
 const simSlot=()=>set.dialSim==='auto'?-1:+set.dialSim;
-const busy=()=>!!balWait||!!cal||!!scan||sales.some(s=>s.status==='dialing');
+const busy=()=>!!balWait||!!cal||sales.some(s=>s.status==='dialing');
 function build(s,o){
   s.name=o.name;s.oid=o.id;s.adv=!!o.adv;if(o.adv)s.cost=o.cost;else delete s.cost;
   if(o.adv){s.steps=o.steps.map(t=>t.replace(/\bn\b/gi,s.phone));s.ussd=s.steps[0]}
@@ -703,7 +709,7 @@ function ussdStep(s,txt){
       fail(s,'Menu changed - nothing was sent');
       o.on=false;o.chg={t:Date.now(),why:'Menu changed'};o.cal={t:Date.now(),state:'bad',msg:'Menu changed',trail:(o.cal&&o.cal.trail)||[],paused:true};delete o.menus;
       addLog('Menu changed at step '+(s.step+1)+' for '+o.name+'. Sale stopped, offer paused');
-      toast('Menu changed: '+o.name+' paused. Open Offers > Import to get the new USSD.');save();return done();
+      toast('Menu changed: '+o.name+' paused. Open Offers and calibrate it again.');save();return done();
     }
   }
   s.step++;s.ts=Date.now();
@@ -781,12 +787,9 @@ const slowTick=()=>{
   /* the phone's heartbeat checks these deadlines, so a paused page timer can never leave customers stuck in the queue */
   if(balWait&&now-balTs>75000){clearTimeout(balWait);balWait=null;needBal=false;addLog('Balance check cleared (no reply). Sales can dial again')}
   const qw=sales.find(x=>x.status==='queued'&&now-x.ts>20000);
-  if(scan&&qw){impStop('paused')}      /* customers first: a scan never holds a paying customer back */
   if(qw&&now-(window._qlog||0)>60000){window._qlog=now;
-    addLog('Queued sale waiting: '+(window.Team&&!Team.canDial()?'not signed in. ':'')+(!set.auto&&!qw.manual?'auto-dial is OFF. ':'')+(balWait?'balance check running. ':'')+(cal?'calibration running. ':'')+(scan?'offer scan running. ':'')+(sales.some(x=>x.status==='dialing')?'another sale is dialing. ':'')+(nextAt>now?'waiting between customers. ':''))}
+    addLog('Queued sale waiting: '+(window.Team&&!Team.canDial()?'not signed in. ':'')+(!set.auto&&!qw.manual?'auto-dial is OFF. ':'')+(balWait?'balance check running. ':'')+(cal?'calibration running. ':'')+(sales.some(x=>x.status==='dialing')?'another sale is dialing. ':'')+(nextAt>now?'waiting between customers. ':''))}
   if(cal&&now-cal.ts>45000)calEnd('fail','No reply from Safaricom at step '+(cal.step+1));
-  if(scan&&scan.cur&&now-scan.cur.ts>45000){addLog('Scan: no reply, skipping a path');impAfter(500);scan.cur.ts=now}
-  if(!scan&&set.impAuto!==false&&hasBridge()&&impDue(now)&&impIdle())impStart(true);   /* rescan the offer menu every 40 minutes, only when no sale is waiting */
   sales.forEach(s=>{
     if(s.status==='dialing'&&now-s.ts>45000){
       fail(s,s.steps?'No reply at step '+(s.step+1):'No reply after dialing');
@@ -926,7 +929,7 @@ function calCancel(id){
 }
 function calApprove(id,ok){
   const o=offers.find(x=>x.id===id);if(!o||!o.cal)return;
-  if(ok){o.menus=(o.cal.trail||[]).filter(r=>!r.skip&&!r.bad).map(r=>menuSig(r.menu));o.cal.state='ok';o.cal.t=Date.now();o.cal.msg='OK';if(o.cal.rewake&&!o.on)o.on=true;delete o.cal.paused;delete o.cal.rewake}
+  if(ok){o.menus=(o.cal.trail||[]).filter(r=>!r.skip&&!r.bad).map(r=>menuSig(r.menu));o.cal.state='ok';o.cal.t=Date.now();o.cal.msg='OK';if(o.autoCost){const tr=(o.cal.trail||[]).filter(r=>!r.skip&&!r.bad),pc=tr.length?priceIn(tr[tr.length-1].menu):null;if(pc>0&&pc<=o.amount)o.cost=pc;delete o.autoCost}if(o.cal.rewake&&!o.on)o.on=true;delete o.cal.paused;delete o.cal.rewake}
   else{o.cal.state='bad';o.cal.t=Date.now();o.cal.msg='You marked this as not okay.';if(set.calOff!==false&&o.on){o.on=false;o.cal.paused=true}}
   addLog('Calibrate '+o.name+': '+(ok?'saved as OK':'marked not okay'));
   save();render();
@@ -946,270 +949,6 @@ function calLine(o){
   if(!c||!c.trail||(c.state!=='ok'&&c.state!=='bad'))return '<span>\uD83E\uDDEA Not calibrated yet</span>';
   const t=tm(c.t);
   return c.state==='ok'?'<span>\u2705 Calibrated '+t+'</span>':'<em>\u274C Calibration failed '+t+': '+esc(c.msg)+'</em>';
-}
-
-/* ---------- import offers: scan the gift menu in the background and list ready-made advanced offers ---------- */
-let imp=L('bs_imp',{t:0,items:[],note:''});
-const IMP_MAXD=7,IMP_MAXN=400,IMP_MAXP=8,IMP_EVERY=40*60000,IMP_RETRY=10*60000,IMP_MAXT=35*60000;
-const IMP_ROOTS='*444*3*1*n#';
-if(set.impCode==='*544#, *444#')delete set.impCode;
-const IMP_PAG=/^(more|next|show more|view more|see more|continue)/i;
-const IMP_ACCEPT=/(accept|confirm|agree|^yes|proceed|^ok\b|^buy|^pay\b)/i;
-const IMP_DENY=/(m-?pesa|my\s?self|my\s?number|own\s?number|confirm|accept|agree|pay\s?now|^yes$|cancel|exit|^back|home|stop|unsubscribe|auto.?renew|deactivate|opt.?out)/i;
-const IMP_GIFT=/(gift|other|another|someone|bingwa)/i;
-function impOpts(txt){
-  const t=String(txt||'');let o=[];
-  t.split(/\n+/).forEach(l=>{const m=l.match(/^\s*(\d{1,2})[.):\-\s]+\s*(\S.*)$/);if(m)o.push({key:m[1],label:m[2].trim()})});
-  if(o.length<2){o=[];const re=/(?:^|\s)(\d{1,2})[.)]\s*([^\n]*?)(?=\s+\d{1,2}[.)]\s|\n|$)/g;let m;while((m=re.exec(t)))o.push({key:m[1],label:m[2].trim()})}
-  return o;
-}
-const impPrompt=t=>/(enter|type|key in|provide|input|put)[^\n]{0,80}(number|\bno\b\.?|msisdn|phone|mobile|recipient|receiver|beneficiary)|(number|msisdn|phone|mobile)[^\n]{0,40}(enter|type)/i.test(String(t||''));
-const impSlug=a=>a.join('_').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,80)||'x';
-const impPrice=a=>{for(let i=a.length-1;i>=0;i--){const x=String(a[i]);const m=x.match(/(?:\bksh?s?|\bkes|\bsh)\.?\s*(\d[\d,]*(?:\.\d+)?)/i)||x.match(/@\s*(\d[\d,]*(?:\.\d+)?)/)||x.match(/\b(\d[\d,]*(?:\.\d+)?)\s*\/-/);if(m)return parseFloat(m[1].replace(/,/g,''))}return null};
-const impIdle=()=>!sales.some(s=>['queued','dialing','pending'].includes(s.status))&&!busy();
-/* "*444*3*1*n#" -> dial *444#, press 3 then 1, then the client number goes in. Anything after n is pressed after the number. A stray # in the middle is ignored. */
-function impParse(txt){
-  const out=[],seen={};
-  String(txt||'').split(/[\s,;]+/).forEach(w=>{
-    if(!w)return;
-    const p=w.replace(/#/g,'').split('*').filter(Boolean);
-    if(!p.length||!/^\d{2,4}$/.test(p[0])||!p.slice(1).every(x=>/^(\d{1,4}|n)$/i.test(x)))return;
-    const rest=p.slice(1).map(x=>/^n$/i.test(x)?'n':x),ni=rest.indexOf('n');
-    const c={root:'*'+p[0]+'#',pre:ni<0?rest:rest.slice(0,ni),post:ni<0?[]:rest.slice(ni+1),hasN:ni>=0};
-    const id=c.root+'>'+c.pre.join('>')+'>'+c.hasN+'>'+c.post.join('>');
-    if(seen[id])return;seen[id]=1;out.push(c);
-  });
-  return out;
-}
-const impSteps=c=>[c.root].concat(c.pre,c.n?['n']:[],c.post);
-const impNid=c=>c.root+'>'+c.pre.join('>')+(c.n?'>N>'+c.post.join('>'):'');
-function impStart(auto){
-  if(scan)return;
-  if(!hasBridge()||!NativeBridge.replyUssd)return auto?0:toast('Scan only works in the Android app');
-  if(window.Team&&!Team.canDial())return auto?0:toast('Sign in first');
-  if(auto&&window.Team&&Team.T&&Team.T.on&&!Team.isOwner())return;
-  if(busy())return auto?0:toast('Another dial is running. Try again in a moment.');
-  let n=normPhone(set.calNum);
-  if(!n){
-    if(auto)return;
-    const x=prompt('Your phone number','');if(x===null)return;
-    n=normPhone(x);if(!n)return toast('Enter a valid number like 0712345678');
-    set.calNum=n;save();
-  }
-  const codes=impParse(set.impCode||IMP_ROOTS);
-  if(!codes.length)return auto?0:toast('Enter a menu code like *444*3*1*n#');
-  const q=codes.map(c=>({root:c.root,pre:c.pre.slice(),post:c.post.slice(),n:c.hasN&&c.post.length>0,labels:[],pl:[],pg:0,seeded:true})),seen={};
-  q.forEach(c=>seen[impNid(c)]=1);
-  const roots=[];codes.forEach(c=>{if(!roots.includes(c.root))roots.push(c.root)});
-  scan={n,q,seen,items:[],nodes:0,cur:null,auto:!!auto,t:Date.now(),rep:[],roots,fb:{},noAir:false};
-  imp.tried=Date.now();W('bs_imp',imp);
-  addLog('Scanning '+codes.map(c=>advCode([c.root].concat(c.pre,c.hasN?['n']:[],c.post))).join(' '));toast('Scanning offers');
-  impNext();render();
-}
-function impRep(c,note,txt){const s=scan;if(!s)return;s.rep.push({p:c.root+' > '+(c.labels.length?c.labels:c.pre.concat(c.n?['n']:[],c.post)).join(' > '),n:note,m:String(txt||'').replace(/\s+/g,' ').slice(0,160)});if(s.rep.length>300)s.rep.shift()}
-function impStop(msg){
-  if(!scan)return;
-  const s=scan;scan=null;endSession();
-  const complete=msg==='done'&&!s.q.length&&s.nodes<IMP_MAXN;
-  /* an interrupted scan (customer arrived, Stop pressed, time or screen limit) must never wipe the list or hide the next rescan */
-  const partial=msg==='paused'||msg==='stopped'||!complete;
-  if(s.items.length||s.rep.length){
-    const items=s.items.length?(partial?s.items.concat(imp.items.filter(o=>!s.items.some(x=>x.k===o.k))):s.items):imp.items;
-    imp={t:partial&&imp.t?imp.t:Date.now(),items,note:'',rep:s.rep,part:partial?Date.now():0,tried:s.t};W('bs_imp',imp)
-  }else{imp.tried=s.t;W('bs_imp',imp)}
-  addLog('Scan '+(msg||'done')+': '+s.items.length+' offers found');
-  if(msg==='done'&&s.items.length)impGuard(s,complete);
-  nextAt=Date.now()+spd()[1];render();pump();
-}
-/* a finished scan: any imported offer whose menu changed (or vanished) is paused at once so no money is lost */
-function impGuard(s,complete){
-  let n=0;
-  offers.forEach(o=>{
-    if(!o.adv||!o.impKey||!o.on)return;
-    if(!s.roots.includes(o.steps[0]))return;
-    const it=s.items.find(x=>x.k===o.impKey)||s.items.find(x=>advCode(x.steps)===advCode(o.steps));
-    let why='';
-    if(it){if(impStatus(it)==='changed')why='Menu changed'}
-    else if(complete)why='Offer no longer in the menu';
-    if(!why)return;
-    o.on=false;o.chg={t:Date.now(),why};
-    o.cal={t:Date.now(),state:'bad',msg:why,trail:(o.cal&&o.cal.trail)||[],paused:true};
-    addLog(why+' for '+o.name+'. Offer paused');n++;
-  });
-  if(n){save();toast(n+' offer'+(n>1?'s':'')+' paused: Safaricom changed the menu. Open Offers > Import to get the new USSD.')}
-}
-function impGo(){tab='offers';ot='imp';fresh=true;render();if(!scan)impStart()}
-function impNext(){
-  const s=scan;if(!s)return;
-  if(sales.some(x=>x.status==='queued')){return impStop('paused')}
-  if(Date.now()-s.t>IMP_MAXT){addLog('Scan: time limit reached, will continue next time');return impStop('stopped')}
-  if(!s.q.length||s.nodes>=IMP_MAXN)return impStop('done');
-  const it=s.q.shift();s.nodes++;
-  s.cur={node:it,root:it.root,pre:it.pre,post:it.post,n:!!it.n,labels:it.labels||[],pl:it.pl||[],pg:it.pg||0,seeded:!!it.seeded,k:0,replies:[],air:null,stage:0,ts:Date.now()};
-  render();
-  try{if(NativeBridge.dialUssdWake)NativeBridge.dialUssdWake(s.cur.root,simSlot(),true);else NativeBridge.dialUssd(s.cur.root,simSlot())}
-  catch(e){impStop('stopped')}
-}
-function impAfter(ms){const s=scan;endSession();setTimeout(()=>{if(scan===s)impNext()},ms||2500)}
-/* the saved path did not work: look for the gift menu from the start instead (once per code) */
-function impFallback(s,c){
-  if(!c.seeded||s.fb[c.root])return;
-  s.fb[c.root]=1;
-  const d={root:c.root,pre:[],post:[],n:false,labels:[],pl:[],pg:0,seeded:false};
-  if(!s.seen[impNid(d)]){s.seen[impNid(d)]=1;s.q.unshift(d);addLog('Scan: saved path did not work, searching the menu for the gift option')}
-}
-function impAdd(s,c,steps,full){
-  const nm=(c.pl.length?c.pl:c.labels).filter(l=>!IMP_PAG.test(l));
-  const name=(nm[nm.length-1]||'Offer').replace(/\s+/g,' ').slice(0,60);
-  const cat=nm.length>1?nm[0].replace(/\s+/g,' ').slice(0,40):'';
-  const code=advCode(steps);
-  if(s.items.some(x=>advCode(x.steps)===code))return;
-  let k=impSlug(nm.length?nm:[name]);while(s.items.some(x=>x.k===k))k+='-2';
-  s.items.push({k,name,cat,cost:impPrice([c.prompt||'',c.payFull||'',full].concat(nm)),steps,menus:c.replies.map(menuSig),last:full,
-    trail:c.replies.map((m,i)=>({did:i===0?'Dialed '+steps[0]:'Sent '+steps[i],menu:m}))});
-  impRep(c,'FOUND '+name+' = '+code,full);
-}
-function impReply(txt){
-  const s=scan,c=s&&s.cur;if(!c)return;
-  const full=String(txt||'').trim();c.ts=Date.now();c.replies.push(full.slice(0,400));
-  const send=key=>setTimeout(()=>{if(scan!==s||s.cur!==c)return;try{NativeBridge.replyUssd(key)}catch(e){impAfter()}},spd()[0]);
-  const child=(o,extra)=>Object.assign({root:c.root,pre:c.pre,post:c.post,n:c.n,labels:c.labels,pl:c.pl,pg:c.pg,seeded:c.seeded},extra);
-  const opts=impOpts(full);
-  /* an error screen: a busy network often gives one by chance, so try the same path again before giving up on it */
-  if(FAILRE.test(full)&&!opts.length){
-    impRep(c,'error screen',full);
-    const tries=c.node.retry||0;
-    if(tries<(c.replies.length<=1?2:1)){s.q.unshift(Object.assign({},c.node,{retry:tries+1}));addLog('Scan: error screen, trying that path again');return impAfter(7000)}
-    impFallback(s,c);return impAfter();
-  }
-  /* walk the path again from the start: pre-number keys, the client number, then the keys after it */
-  const seq=c.pre.concat(c.n?[s.n]:[],c.post);
-  if(c.k<seq.length){const i=c.k++;return send(seq[i])}
-  /* Airtime was chosen last time: this is the confirm screen. Only its Accept key is noted, never pressed. */
-  if(c.stage==='pay'){
-    const a=opts.find(o=>IMP_ACCEPT.test(o.label)&&!/m-?pesa/i.test(o.label));
-    if(a)impAdd(s,c,impSteps(c).concat([c.air,a.key]),full);
-    else{
-      /* no confirm screen: Airtime bought it straight away. Keep the code, and never press Airtime again in this scan. */
-      s.noAir=true;impAdd(s,c,impSteps(c).concat([c.air]),full);
-      addLog('Scan: Airtime completes the purchase at once on this menu. Bn will not press it again');
-    }
-    return impAfter();
-  }
-  if(!c.n){
-    /* still before the client number */
-    if(!opts.length&&impPrompt(full)){
-      c.n=true;c.prompt=full;c.k=c.pre.length+1;           /* now send the client number and read what comes next */
-      return send(s.n);
-    }
-    if(opts.length&&c.pre.length-c.pg<IMP_MAXD){
-      impRep(c,'menu',full);
-      let ch=opts.filter(o=>!IMP_DENY.test(o.label)&&!/airtime/i.test(o.label)&&(!/^0{1,2}$/.test(o.key)||IMP_PAG.test(o.label)));
-      const pag=ch.filter(o=>IMP_PAG.test(o.label));
-      if(!c.labels.some(l=>IMP_GIFT.test(l))&&!(c.seeded&&c.pre.length)){     /* still looking for the gift menu: follow Gift, else More */
-        const g=ch.filter(o=>IMP_GIFT.test(o.label));
-        if(g.length)ch=g.concat(pag.filter(o=>!g.includes(o)));else if(pag.length)ch=pag.concat(ch.filter(o=>!pag.includes(o)));
-      }
-      ch.forEach(o=>{
-        const pg=c.pg+(IMP_PAG.test(o.label)?1:0);if(pg>IMP_MAXP)return;
-        const nd=child(o,{pre:c.pre.concat([o.key]),labels:c.labels.concat([o.label]),pg});
-        const id=impNid(nd);if(s.seen[id])return;s.seen[id]=1;s.q.push(nd);
-      });
-    }else{impRep(c,opts.length?'too deep':'unrecognised screen',full);impFallback(s,c)}
-    return impAfter();
-  }
-  /* after the client number */
-  const air=opts.find(o=>/airtime/i.test(o.label));
-  const paying=air&&(opts.some(o=>/m-?pesa/i.test(o.label))||/(pay|payment|method|using|via|buy|purchase)/i.test(full));
-  if(paying){                                             /* payment screen: the last menu choice is an offer */
-    impRep(c,'payment screen',full);c.payFull=full;
-    if(s.noAir){impAdd(s,c,impSteps(c).concat([air.key]),full);return impAfter()}
-    c.air=air.key;c.stage='pay';
-    return send(air.key);
-  }
-  const echo=full.replace(/\D/g,'').includes(String(s.n).slice(-9));
-  const gate=!c.post.length&&echo&&!/(accept|buy|purchase|ksh|kes)/i.test(full)&&opts.find(o=>/^(yes|ok|correct|continue|proceed)\b/i.test(o.label));
-  if(gate){                                               /* "Is this the right number? 1. Yes": just say yes and read the next screen */
-    impRep(c,'number check',full);
-    const nd=child(gate,{post:c.post.concat([gate.key])}),id=impNid(nd);
-    if(!s.seen[id]){s.seen[id]=1;s.q.push(nd)}
-    return impAfter();
-  }
-  const acc=opts.length<=3&&opts.find(o=>IMP_ACCEPT.test(o.label)&&!/m-?pesa/i.test(o.label));
-  if(acc&&!air){                                          /* the offer goes straight to an Accept screen */
-    impRep(c,'accept screen',full);
-    impAdd(s,c,impSteps(c).concat([acc.key]),full);
-    return impAfter();
-  }
-  if(opts.length&&c.post.length-c.pg<IMP_MAXD){           /* a list of offers or categories: open every entry */
-    impRep(c,'menu',full);
-    const ch=opts.filter(o=>!IMP_DENY.test(o.label)&&!/airtime/i.test(o.label)&&(!/^0{1,2}$/.test(o.key)||IMP_PAG.test(o.label)));
-    ch.forEach(o=>{
-      const pg=c.pg+(IMP_PAG.test(o.label)?1:0);if(pg>IMP_MAXP)return;
-      const nd=child(o,{post:c.post.concat([o.key]),labels:c.labels.concat([o.label]),pl:c.pl.concat([o.label]),pg});
-      const id=impNid(nd);if(s.seen[id])return;s.seen[id]=1;s.q.push(nd);
-    });
-  }else impRep(c,opts.length?'too deep':'unrecognised screen',full);
-  impAfter();
-}
-function impOffer(it){return offers.find(o=>o.adv&&o.impKey===it.k)||offers.find(o=>o.adv&&advCode(o.steps)===advCode(it.steps))}
-function impStatus(it){
-  const o=impOffer(it);if(!o)return 'new';
-  if(advCode(o.steps)!==advCode(it.steps)||(o.menus&&JSON.stringify(o.menus)!==JSON.stringify(it.menus)))return 'changed';
-  return 'done';
-}
-function impFind(k){return (scan?scan.items:[]).concat(imp.items).find(x=>x.k===k)}
-function impMake(it,cost){
-  const ex=impOffer(it);
-  const amount=ex&&ex.amount>0?ex.amount:cost;
-  const cal={t:Date.now(),state:'ok',msg:'Imported',trail:it.trail};
-  let o=ex;
-  if(o){Object.assign(o,{steps:it.steps,menus:it.menus,cost,cal,impKey:it.k,on:true});delete o.chg}
-  else{o={id:uid(),name:it.name,amount,cost,steps:it.steps,adv:true,on:true,impKey:it.k,menus:it.menus,cal};offers.push(o)}
-  return o;
-}
-function impImport(k){
-  const it=impFind(k);if(!it)return;
-  const ex=impOffer(it);
-  let cost=it.cost!=null?it.cost:(ex?ex.cost:null);
-  if(!(cost>0)){const x=prompt('Safaricom price for '+it.name+' (KSh)','');if(x===null)return;cost=+x;if(!(cost>0))return toast('Enter a valid price')}
-  const o=impMake(it,cost);
-  offers.sort((a,b)=>a.amount-b.amount);
-  addLog('Imported '+o.name);toast('Added to Advanced offers');save();fresh=false;render();
-}
-function impImportAll(){
-  const l=(scan?scan.items:imp.items).filter(it=>impStatus(it)==='new'&&it.cost>0),skip=(scan?scan.items:imp.items).filter(it=>impStatus(it)==='new'&&!(it.cost>0)).length;
-  if(!l.length)return toast(skip?'Those offers have no price yet. Import them one by one.':'Nothing new to import');
-  l.forEach(it=>{const o=impMake(it,it.cost);addLog('Imported '+o.name)});
-  offers.sort((a,b)=>a.amount-b.amount);
-  toast('Added '+l.length+' offer'+(l.length>1?'s':'')+' to Advanced'+(skip?' ('+skip+' need a price)':''));save();fresh=false;render();
-}
-function impCount(){return imp.items.filter(it=>impStatus(it)!=='done').length}
-const impDue=now=>now-(imp.tried||0)>(imp.part?IMP_RETRY:IMP_EVERY);
-function impView(){
-  const sc=scan,btn=sc?'<button class="btn d" onclick="impStop(\'stopped\')">Stop</button>':'<button class="btn p" onclick="impStart()">Scan now</button>';
-  const list=sc?sc.items:imp.items,nNew=list.filter(it=>impStatus(it)==='new').length;
-  const st=sc?'Scanning \u00B7 '+sc.nodes+' screens \u00B7 found '+sc.items.length:(imp.t?(imp.part?'Last scan stopped early ('+tm(imp.part)+'). Scan again':'Last scan '+tm(imp.t)):'Not scanned yet');
-  const nx=!sc&&set.impAuto!==false&&imp.tried?' \u00B7 next scan about '+tm(imp.tried+(imp.part?IMP_RETRY:IMP_EVERY)):'';
-  const head='<div class="tools own">'+btn+(!sc&&nNew?'<button class="btn" onclick="impImportAll()">Import all new ('+nNew+')</button>':'')+'</div><p class="hint" style="margin:2px 2px 8px">'+st+nx+'</p>'
-    +'<details class="own cd" style="margin-bottom:8px"><summary>Scan settings</summary>'
-    +'<label class="f" for="icode">Menu code (n is the client number)</label><input type="text" id="icode" inputmode="text" autocapitalize="off" spellcheck="false" value="'+esc(set.impCode||IMP_ROOTS)+'" onchange="set.impCode=this.value.trim()||IMP_ROOTS;save()">'
-    +'<p class="hint">Bn dials the code, types your own number where n is, opens every menu that follows, lists the offers and works out the full code of each. It never taps the last Accept.</p>'
-    +'<label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" '+(set.impAuto!==false?'checked':'')+' onchange="set.impAuto=this.checked;save();render()" style="width:auto">Scan automatically every 40 minutes</label></details>';
-  const gone=sc?[]:offers.filter(o=>o.adv&&o.impKey&&imp.t&&!imp.items.some(it=>it.k===o.impKey));
-  const G={};list.forEach(it=>{const g=it.cat||'Offers';(G[g]=G[g]||[]).push(it)});
-  const lo=a=>Math.min.apply(null,a.map(x=>x.cost>0?x.cost:1e9));
-  const row=it=>{
-    const stt=impStatus(it);
-    const chip=stt==='new'?'':stt==='changed'?chipH('a','Changed'):chipH('g','Added');
-    const act=stt==='done'?'':'<button class="btn p own" aria-label="'+(stt==='new'?'Import':'Update')+' '+esc(it.name)+'" title="'+(stt==='new'?'Import':'Update')+'" onclick="impImport(\''+it.k+'\')" style="font-size:18px;min-width:44px">'+(stt==='new'?'\u2B07':'\u21BB')+'</button>';
-    return '<li class="oc"><div class="oc-h"><div class="amt">'+(it.cost!=null?it.cost:'?')+'<small>KSh</small></div><div class="mid"><b>'+esc(it.name)+'</b><div class="chips" style="margin-top:6px"><span class="sc d">'+esc(advCode(it.steps))+'</span></div></div>'+chip+act+'</div></li>';
-  };
-  const rows=Object.keys(G).sort((a,b)=>lo(G[a])-lo(G[b])||a.localeCompare(b)).map(g=>'<div class="grp">'+esc(g)+' \u00B7 '+G[g].length+'</div><ul>'+G[g].slice().sort((a,b)=>(a.cost>0?a.cost:1e9)-(b.cost>0?b.cost:1e9)||String(a.name).localeCompare(String(b.name))).map(row).join('')+'</ul>').join('');
-  const goneH=gone.length?'<div class="grp">Not in menu \u00B7 '+gone.length+'</div><ul>'+gone.map(o=>'<li class="oc off"><div class="oc-h"><div class="amt">'+o.amount+'<small>KSh</small></div><div class="mid"><b>'+esc(o.name)+'</b></div>'+chipH('r','Gone')+'</div>'+(o.on?'<div class="oc-b own"><button class="btn" onclick="togOffer(\''+o.id+'\')">\u23F8 Pause</button></div>':'')+'</li>').join('')+'</ul>':'';
-  const rp=(sc?sc.rep:imp.rep)||[];
-  const repH=rp.length?'<details class="own" style="margin-top:14px"><summary class="hint">Scan report ('+rp.length+' screens)</summary><ul>'+rp.slice().reverse().map(r=>'<li class="oc"><div class="mid"><b>'+esc(r.n)+'</b><div class="hint">'+esc(r.p)+'</div><pre style="white-space:pre-wrap;margin:4px 0 0;font-size:12px">'+esc(r.m)+'</pre></div></li>').join('')+'</ul></details>':'';
-  return head+(rows||'<p class="empty"><big></big>'+(sc?'Scanning...':'No offers found yet.')+'</p>')+goneH+repH;
 }
 
 /* ---------- airtime balance ---------- */
@@ -1356,7 +1095,7 @@ function stepChips(o){
 function chgList(){return offers.filter(o=>o.adv&&!o.on&&o.chg)}
 function chgBanner(){
   const l=chgList();if(!l.length)return '';
-  return '<div class="note own" role="alert"><b>\u26A0\uFE0F Safaricom changed the menu</b><br>'+l.map(o=>esc(o.name)).join(', ')+' '+(l.length>1?'were':'was')+' paused so no airtime is lost. Find the updated USSD and turn '+(l.length>1?'them':'it')+' back on.<div class="btns" style="margin-top:8px"><button class="btn p" onclick="impGo()">Find updated USSD</button></div></div>';
+  return '<div class="note own" role="alert"><b>\u26A0\uFE0F Safaricom changed the menu</b><br>'+l.map(o=>esc(o.name)).join(', ')+' '+(l.length>1?'were':'was')+' paused so no airtime is lost. Calibrate '+(l.length>1?'them':'it')+' again, then turn '+(l.length>1?'them':'it')+' back on.<div class="btns" style="margin-top:8px"><button class="btn p" onclick="tab=\'offers\';ot=\'adv\';fresh=true;render()">Open offers</button></div></div>';
 }
 function advRow(o){
   const c=o.cal;
@@ -1370,7 +1109,7 @@ const adlg=$('#adlg');
 function openAdv(id){
   const o=offers.find(x=>x.id===id)||{};
   $('#aT').textContent=id?'Edit advanced offer':'Add advanced offer';
-  $('#aId').value=id||'';$('#aName').value=o.name||'';$('#aAmt').value=o.amount||'';$('#aCost').value=o.cost!=null?o.cost:'';$('#aCode').value=advCode(o.steps);advPreview();
+  $('#aId').value=id||'';$('#aName').value=o.name||'';$('#aCode').value=advCode(o.steps);advPreview();
   adlg.showModal();
 }
 /* *444*5*3*2*1*n*2#  ->  ["*444#","5","3","2","1","n","2"] */
@@ -1392,14 +1131,25 @@ function advPreview(){
   if(!st){e.textContent='Check the code: it must start with *, end with #, and have at least one reply after the first part.';return}
   e.innerHTML='Dial <b>'+esc(st[0])+'</b>'+st.slice(1).map((x,i)=>'<br>Step '+(i+1)+': select <b>'+esc(/^n$/i.test(x)?'phone number':x)+'</b>').join('')+'<br>Then done.';
 }
+/* the sale price is read from the offer name ("250MB @ Ksh 20", "Ksh20", "20/-"); the Safaricom price is read from the last screen when calibration is confirmed */
+function priceIn(t){
+  t=String(t||'');
+  const m=t.match(/(?:\bksh?s?|\bkes|\bsh)\.?\s*(\d[\d,]*(?:\.\d+)?)/i)||t.match(/@\s*(\d[\d,]*(?:\.\d+)?)/)||t.match(/\b(\d[\d,]*(?:\.\d+)?)\s*(?:\/-|ksh?s?\b|bob\b)/i);
+  return m?parseFloat(m[1].replace(/,/g,'')):null;
+}
 function saveAdv(){
-  const name=$('#aName').value.trim(),amount=+$('#aAmt').value,cost=+$('#aCost').value,id=$('#aId').value;
+  const name=$('#aName').value.trim(),id=$('#aId').value;
   const steps=parseUssd($('#aCode').value);
-  if(!name||!(cost>0)||!(amount>0)||!steps||!steps.some(x=>/^n$/i.test(x)))return toast('Add a name, both prices and a full code like *444*5*3*n*2#');
-  if(amount<cost)return toast('Your price is below the Safaricom price');
+  if(!name||!steps||!steps.some(x=>/^n$/i.test(x)))return toast('Add the offer name and its full USSD code like *444*5*3*n*2#');
   let o,run=false;
-  if(id){o=offers.find(x=>x.id===id);run=advCode(o.steps)!==advCode(steps)||!o.cal;Object.assign(o,{name,amount,cost,steps});delete o.expect;if(run)delete o.menus;if(run)delete o.cal}
-  else{o={id:uid(),name,amount,cost,steps,adv:true,on:true};offers.push(o);run=true}
+  if(id){
+    o=offers.find(x=>x.id===id);run=advCode(o.steps)!==advCode(steps)||!o.cal;
+    Object.assign(o,{name,steps});delete o.expect;if(run)delete o.menus;if(run)delete o.cal;
+  }else{
+    let amount=priceIn(name);
+    if(!(amount>0)){const x=prompt('Price the customer pays for '+name+' (KSh)','');if(x===null)return;amount=+x;if(!(amount>0))return toast('Enter a valid price')}
+    o={id:uid(),name,amount,cost:amount,steps,adv:true,on:true,autoCost:true};offers.push(o);run=true;
+  }
   offers.sort((a,b)=>a.amount-b.amount);save();adlg.close();render();
   if(run)setTimeout(()=>calStart(o.id),300);
 }
@@ -1446,13 +1196,13 @@ function render(){
     const f=sales.filter(x=>sf==='all'||(sf==='refund'?(x.status==='failed'&&!x.refunded):sf==='failed'?x.status==='failed':sf==='live'?LIVE.includes(x.status):x.status==='success'));
     v.innerHTML=seg(sf,[['all','All ('+sales.length+')'],['live','Live'+(nl?' ('+nl+')':'')],['success','Success ('+sales.filter(x=>x.status==='success').length+')'],['failed','Failed'+(nf?' ('+nf+')':'')]],'sf')+(sf==='failed'&&f.length?'<p class="hint" style="margin:8px 2px 0">\u26A0\uFE0F '+f.length+' failed'+(nr?' \u00B7 KSh '+fmt(sales.filter(x=>x.status==='failed'&&!x.refunded).reduce((a,x)=>a+x.amount,0))+' to give back or retry ('+nr+' not refunded yet)':'')+'. Tap a sale, then Retry or Refunded.</p>':'')+(f.length?'<ul>'+f.slice(0,150).map(saleRow).join('')+'</ul>':'<p class="empty"><big></big>'+(sales.length?(sf==='live'?'Nothing in progress right now.':'Nothing here.'):'No sales yet. Payments sent to your till will appear here.')+'</p>');
   }else if(tab==='offers'){
+    if(ot==='imp')ot='adv';
     const adv=ot==='adv',list=offers.filter(o=>!!o.adv===adv).sort((a,b)=>a.amount-b.amount||String(a.name).localeCompare(String(b.name))),act=list.filter(o=>o.on),off=list.filter(o=>!o.on),rowFn=adv?advRow:offerRow;
-    const head=seg(ot,[['normal','Normal ('+offers.filter(o=>!o.adv).length+')'],['adv','Advanced ('+offers.filter(o=>o.adv).length+')'],['imp','Import'+(impCount()?' ('+impCount()+')':'')]],'ot');
+    const head=seg(ot,[['normal','Normal ('+offers.filter(o=>!o.adv).length+')'],['adv','Advanced ('+offers.filter(o=>o.adv).length+')']],'ot');
     const paused=list.filter(o=>o.cal&&o.cal.state==='bad'&&!o.on).length;
     const tools='<div class="tools own"><button class="btn p" onclick="'+(adv?'openAdv()':'openOffer()')+'">+ Add offer</button>'+(adv?'<button class="btn" onclick="calAll()">\uD83E\uDDEA Calibrate all</button>':'')+'</div>';
     const info='';
-    if(ot==='imp'){const typing=v.contains(document.activeElement)&&document.activeElement.tagName==='INPUT';if(!typing)v.innerHTML=head+impView()}
-    else v.innerHTML=head+chgBanner()+tools+(paused?'<p class="note">\u26A0\uFE0F '+paused+' offer'+(paused>1?'s were':' was')+' paused because calibration failed. Fix the code, then calibrate again.</p>':'')
+    v.innerHTML=head+chgBanner()+tools+(paused?'<p class="note">\u26A0\uFE0F '+paused+' offer'+(paused>1?'s were':' was')+' paused because calibration failed. Fix the code, then calibrate again.</p>':'')
       +(act.length?'<div class="grp">Active \u00B7 '+act.length+'</div><ul>'+act.map(rowFn).join('')+'</ul>':'')
       +(off.length?'<div class="grp">Off \u00B7 '+off.length+'</div><ul>'+off.map(rowFn).join('')+'</ul>':'')
       +(list.length?'':'<p class="empty"><big></big>No '+(adv?'advanced ':'')+'offers yet.</p>')+info;
@@ -1850,7 +1600,7 @@ const money=n=>'KSh '+fmt(Math.round((+n||0)*100)/100);
 const who=()=>{try{const m=Team.T.me;return m?(m.name||m.email||'Owner'):'Owner'}catch(e){return 'Owner'}};
 const dlab=t=>{const d=new Date(t),n=new Date();n.setHours(0,0,0,0);const a=new Date(d);a.setHours(0,0,0,0);const k=Math.round((n-a)/864e5);return k===0?'today':k===1?'yesterday':k<7?k+' days ago':d.toLocaleDateString([],{day:'numeric',month:'short'})};
 const hm=t=>new Date(t).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-[['lowOn',true],['lowBal',100],['near',true],['eodTime','21:00'],['target',0]].forEach(([k,v])=>{if(set[k]===undefined)set[k]=v});
+[['lowOn',true],['lowBal',20],['near',true],['eodTime','21:00'],['target',0]].forEach(([k,v])=>{if(set[k]===undefined)set[k]=v});
 if(!Array.isArray(set.block))set.block=[];
 
 /* ---------- activity (audit) log: kept, not cleared after 24h ---------- */
@@ -1932,6 +1682,7 @@ function nearOffers(s){
 }
 
 /* ---------- low airtime: hold dialing when the balance cannot cover the next sale ---------- */
+const LOW_AIRTIME=20;   /* the low-airtime alert shows only below KSh 20 */
 let lowFlag=0,lowOver=0,lowAt=0;
 function alertOwner(msg){
   const n=normPhone(set.ownerNum);if(!n)return;
@@ -1942,7 +1693,7 @@ function bnHold(q){
   if(set.lowOn===false||!bal||Date.now()<lowOver)return false;
   const need=Math.max(0,q.amount-profitOf(q));
   if(bal.v>=need){if(lowFlag){lowFlag=0;addLog('Airtime is enough again. Dialing resumed')}return false}
-  if(!lowFlag){lowFlag=Date.now();addLog('Airtime KSh '+bal.v+' cannot cover a KSh '+need+' sale. Dialing is on hold');alertOwner('Bn: airtime is low (KSh '+bal.v+'). Sales are on hold. Please top up.');render()}
+  if(!lowFlag){lowFlag=Date.now();addLog('Airtime KSh '+bal.v+' cannot cover a KSh '+need+' sale. Dialing is on hold');if(bal.v<LOW_AIRTIME)alertOwner('Bn: airtime is low (KSh '+bal.v+'). Sales are on hold. Please top up.');render()}
   if(Date.now()-bal.t>120000&&Date.now()-lowAt>120000&&hasBridge()&&set.balCode&&!busy()){lowAt=Date.now();refreshBal(true)}
   return true;
 }
@@ -2084,13 +1835,13 @@ function healthRows(force){
     add(pin==='true'?2:1,'Phone PIN for screen-off selling',pin==='true'?'Saved.':'Not set. Sales can fail while the screen is off.');
   }else add(1,'Phone checks','Only available in the Android app.');
   add(set.auto?2:1,'Auto-dial',set.auto?'ON.':'OFF. Payments wait until you dial them.','auto','Turn on');
-  if(bal){const lw=bal.v<(+set.lowBal||0);add(lw?(lowFlag?0:1):2,'Airtime balance','KSh '+bal.v+' (checked '+hm(bal.t)+')'+(lowFlag?'. Dialing is on hold.':lw?'. Getting low.':'.'),'bal','Refresh')}
+  if(bal){const lw=bal.v<LOW_AIRTIME;add(lw?(lowFlag?0:1):2,'Airtime balance','KSh '+bal.v+' (checked '+hm(bal.t)+')'+(lowFlag?'. Dialing is on hold.':lw?'. Low (below KSh 20).':'.'),'bal','Refresh')}
   else add(1,'Airtime balance','Not checked yet.','bal','Check now');
   const qw=sales.filter(x=>x.status==='queued'&&Date.now()-x.ts>180000).length;
   add(qw&&set.auto?0:2,'Sales waiting',qw?qw+' sale'+(qw>1?'s':'')+' queued for over 3 minutes.':'None stuck.');
   if(window.Team&&Team.T.on)add(Team.canDial()?2:0,'Shop sign-in',Team.canDial()?'Signed in.':'Not signed in. Bn will not sell.');
-  const ch=chgList().length;add(ch?0:2,'Menu changes',ch?ch+' offer'+(ch>1?'s were':' was')+' paused because Safaricom changed a menu.':'No offers paused for menu changes.','imp','Find updated USSD');
-  add(normPhone(set.calNum)?2:1,'Your own number',normPhone(set.calNum)?'Saved for calibration and scans.':'Not set. Scans and calibration need it (Settings > Dialing).');
+  const ch=chgList().length;add(ch?0:2,'Menu changes',ch?ch+' offer'+(ch>1?'s were':' was')+' paused because Safaricom changed a menu.':'No offers paused for menu changes.','offers','Open offers');
+  add(normPhone(set.calNum)?2:1,'Your own number',normPhone(set.calNum)?'Saved for calibration.':'Not set. Calibration needs it (Settings > Dialing).');
   add(normPhone(set.ownerNum)?2:1,'Owner alert number',normPhone(set.ownerNum)?'Low-airtime alerts and the daily report go to '+normPhone(set.ownerNum)+'.':'Not set. Add it in More > Tools to get alerts by SMS.');
   hcache=R;hcT=Date.now();return R;
 }
@@ -2098,7 +1849,7 @@ const healthBad=()=>healthRows().filter(r=>r.ok===0).length;
 function bnFix(k){
   if(k==='auto'){set.auto=true;try{$('#auto').checked=true}catch(e){}save();pump();hcache=null;return render()}
   if(k==='bal'){hcache=null;return refreshBal()}
-  if(k==='imp'){return impGo()}
+  if(k==='offers'){tab='offers';ot='adv';fresh=true;return render()}
   try{NativeBridge.openSetting(k)}catch(e){toast('Open your phone settings to fix this')}
 }
 function healthView(){
@@ -2121,8 +1872,8 @@ function bnGapOk(){W('bs_gapseen',Date.now());gap=null;render()}
 function bnBanners(){
   let h='';
   if(bal&&set.lowOn!==false){
-    const low=bal.v<(+set.lowBal||0);
-    if(lowFlag)h+='<p class="note" role="alert"><b>\u26D4 Airtime KSh '+bal.v+' is too low for the next sale.</b> Dialing is on hold. Top up, then tap the balance to refresh.<span class="btns"><button class="btn" onclick="bnOverride()">Dial anyway</button></span></p>';
+    const low=bal.v<LOW_AIRTIME;
+    if(lowFlag&&low)h+='<p class="note" role="alert"><b>\u26D4 Airtime KSh '+bal.v+' is too low for the next sale.</b> Dialing is on hold. Top up, then tap the balance to refresh.<span class="btns"><button class="btn" onclick="bnOverride()">Dial anyway</button></span></p>';
     else if(low)h+='<p class="note" role="alert">\u26A0\uFE0F Airtime is low: <b>KSh '+bal.v+'</b>. Top up soon.</p>';
   }
   if(gap)h+='<p class="note" role="alert">\u26A0\uFE0F Bn was not running from <b>'+hm(gap.a)+'</b> to <b>'+hm(gap.b)+'</b> ('+Math.round((gap.b-gap.a)/60000)+' min). Payment texts from that time were caught up from your inbox. Check the Sales tab.<span class="btns"><button class="btn" onclick="bnGapOk()">OK</button></span></p>';
@@ -2183,7 +1934,7 @@ function toolsView(){
   return '<div class="own"><h2>Alerts</h2>'
    +'<label class="f" for="own">Owner number (alerts and daily report go here)</label><input type="text" id="own" inputmode="tel" placeholder="0712345678" value="'+esc(set.ownerNum||'')+'" onchange="bnSetOwner(this.value)">'
    +'<label class="tg"><span>Hold dialing when airtime cannot cover a sale</span><input type="checkbox" '+(set.lowOn!==false?'checked':'')+' onchange="set.lowOn=this.checked;save();render()"><span class="sl"></span></label>'
-   +'<label class="f" for="lb">Warn me when airtime is below (KSh)</label><input type="number" id="lb" inputmode="numeric" value="'+(+set.lowBal||0)+'" onchange="set.lowBal=Math.max(0,+this.value||0);save();render()">'
+   +'<p class="hint">The low-airtime alert shows only when airtime is below KSh 20.</p>'
    +'<label class="tg"><span>Send the day\'s report to the owner number</span><input type="checkbox" '+(set.eodOn?'checked':'')+' onchange="set.eodOn=this.checked;save()"><span class="sl"></span></label>'
    +'<label class="f" for="et">Send at</label><input type="text" id="et" inputmode="numeric" placeholder="21:00" value="'+esc(set.eodTime||'21:00')+'" onchange="bnEodTime(this.value)">'
    +'<div class="btns"><button class="btn" onclick="bnEodNow()">Send report now</button></div>'
