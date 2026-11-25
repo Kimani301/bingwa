@@ -8,13 +8,13 @@ dial USSD codes, send step-by-step replies, and read payment SMS.
 - **Home**: Total sales and Profit side by side with Today / All time above them, sales per day, recent activity (shows the client's name, taken from the M-Pesa message or typed on the Sell tab). The Failed card jumps to failed sales.
 - **Sell**: tap an offer, type the client's phone number (and optionally their name), tap Sell. The sale is dialed straight away,
   even if Auto-dial is off, and shows under Latest. Attendants can use it too.
-- **Sales**: All, **Live** (queued, dialing or waiting for Safaricom), Success, Failed. Retry failed sales here.
-- **Offers**: Normal and Advanced, with a count on each. Offers are grouped into Active and Off; each is a card with its steps shown as
+- **Sales**: All, **Live** (queued, dialing or waiting for Safaricom), Success, Failed. Failed shows how much is still to give back or retry; retry or mark Refunded from a sale.
+- **Offers**: Normal, Advanced and Import, with a count on each. **Import** opens the menu code (default `*444*3*1*n#`), types your own number where `n` is, opens every menu after it, and lists the offers it finds under their menu group with the full code of each (for example `*444*3*1*n*3*2*1#`). It never taps the last Accept. It rescans every 40 minutes when no sale is waiting. Offers are grouped into Active and Off; each is a card with its steps shown as
   chips and Calibrate / Steps / Edit / pause / delete buttons (advanced), or Edit / pause / delete (normal). Calibrate all sits at the top.
   A badge on the tab shows offers that were paused because calibration failed.
 - **More** (owner only): **Reports** (paid in vs delivered vs not delivered, profit by offer, share/CSV, daily report by SMS), **Customers** (regulars, bulk offer texts), **Health** (permissions, helper, battery, balance, stuck sales) and **Tools** (alerts, owner PIN, blocked numbers, backup/restore, activity history).
 - **Money protection**: dialing is held when airtime cannot cover the next sale; failed sales go to the **Refund** filter in Sales; offers can have active hours (clock button on an offer); a payment for an amount with no live offer gets a text listing the closest offers.
-- **Team** (owner only): attendants and their sales.
+- **Team** (owner only, now inside **More**): attendants and their sales.
 - **Settings**, split into four tabs: **General** (account, theme, profit, data), **Dialing** (speed, wait,
   airtime balance, SIMs, calibrate), **Texts** (customer messages), **Phone** (USSD helper, screen off, test SMS, activity log).
 
